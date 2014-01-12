@@ -24,12 +24,16 @@
         if(val > max) return max;
         return val;
       }
-      function calculateAngle(coords, dims) {
+
+      function calculateTransform(coords, dims) {
         var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
             perY = ((coords.y - dims.y) * 2 / dims.height) - 1,
-            degX = bound(x * 15, -15, 15),
-            degY = bound(y * -15, -15, 15);
+            degX = bound(perX * 15, -15, 15),
+            degY = bound(perY * -15, -15, 15);
 
+        var rotY = " rotateY("+degX+"deg)",
+            rotX = " rotateX("+degY+"deg)";
+        return "translate3d(0,0,20px)" + rotY + rotX;
       }
 
       Polymer("route-tile", {
@@ -59,17 +63,19 @@
             x: e.clientX || e.touches[0].clientX,
             y: e.clientY || e.touches[0].clientY,
           };
+          this.coords = coords;
+          var transform = calculateTransform(coords, this.dims);
 
           var anim = new Animation(this.$.tile, [
             {transform: "translateZ(0px)"},
-            {transform: "translateZ(20px)"}
+            {transform: transform},
           ], {duration: 0.1});
           var player = document.timeline.play(anim);
 
           this.moveHandler = this.moveHandler.bind(this);
-          this.upHandler = this.endHandler.bind(this);
-          console.log(this.events.move);
           document.addEventListener(this.events.move, this.moveHandler);
+
+          this.upHandler = this.endHandler.bind(this);
           document.addEventListener(this.events.end, this.upHandler);
         },
         moveHandler: function(e) {
@@ -79,25 +85,43 @@
             x: e.clientX || e.touches[0].clientX,
             y: e.clientY || e.touches[0].clientY,
           }
+          this.coords = coords;
 
-          var xdiff = coords.x - (this.dims.x + (this.dims.width / 2)),
-              ydiff = coords.y - (this.dims.y + this.dims.height/2);
-          var xdeg = Math.max(Math.min(Math.floor((xdiff * 2 / this.dims.width) * 15), 15), -15);
-          var ydeg = Math.max(Math.min(Math.floor((-ydiff  * 2 / this.dims.height) * 15), 15), -15);
-          // console.log(coords, this.dims, xdeg, ydeg);
-
-          this.$.tile.style._style.webkitTransform = "translate3d(0,0,20px) rotateY("+xdeg+"deg) rotateX("+ydeg+"deg)";
+          var transform = calculateTransform(coords, this.dims);
+          this.$.tile.style._style.webkitTransform = transform;
         },
         endHandler: function(e) {
-          console.log("called end");
+          e.preventDefault();
+
           document.removeEventListener(this.events.move, this.moveHandler);
           document.removeEventListener(this.events.end, this.upHandler);
 
-          e.preventDefault();
+          var dims = this.dims,
+              coords = this.coords;
+          var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
+            perY = ((coords.y - dims.y) * 2 / dims.height) - 1;
+
+          if(perX < .3 && perX > -.3 && perY > -0.3 && perY < .3) {
+            console.log("CENTER");
+            this.fire("center");
+          } else if(perX > .3 && perY > -0.3 && perY < .3) {
+            console.log("RIGHT");
+            this.fire("right");
+          } else if(perX < -.3 && perY > -0.3 && perY < .3) {
+            console.log("LEFT");
+            this.fire("left");
+          } else if(perX < .3 && perX > -.3 && perY < -0.3) {
+            console.log("TOP");
+            this.fire("top");
+          } else if(perX < .3 && perX > -.3 && perY > 0.3) {
+            console.log("BOTTOM");
+            this.fire("bottom");
+          }
+
           var anim = new Animation(this.$.tile, [
-            {transform: "translateZ(20px)"},
+            {transform: this.$.tile.style._style.webkitTransform},
             {transform: "translateZ(0px)"}
-          ], {duration: 0.2});
+          ], {duration: .5});
           var player = document.timeline.play(anim);
         },
       });

@@ -1,15 +1,16 @@
 <link rel="import" href="../components/polymer/polymer.html">
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="route-tile.html">
+<link rel="import" href="route-tile-media.html">
 
-<polymer-element name="route-tile-manager" attributes="">
+<polymer-element name="route-tile-manager" attributes="messenger">
   <template>
     <link rel="stylesheet" href="css/route-tile-manager.css">
 
     <polymer-flex-layout></polymer-flex-layout>
     <div flex>
       <polymer-flex-layout vertical></polymer-flex-layout>
-      <route-tile flex>Foo</route-tile>
+      <route-tile-media messenger="{{messenger}}" flex></route-tile-media>
       <route-tile flex>Foo</route-tile>
     </div>
     <div flex>

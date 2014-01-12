@@ -1,0 +1,19 @@
+<polymer-element name="route-messenger">
+  <template>
+
+  </template>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script>
+    (function() {
+      Polymer("route-messenger", {
+        ready: function() {
+          this.socket = io.connect('http://10.1.1.59');
+          this.socket.on("connect", function() {
+            console.log("Connected!");
+          });
+        },
+        enteredView: function() {},
+      })
+    })();
+  </script>
+</polymer-element>

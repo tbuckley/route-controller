@@ -2,13 +2,17 @@
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="route-tile-manager.html">
 <link rel="import" href="route-menu-bar.html">
+<link rel="import" href="route-messenger.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
     <link rel="stylesheet" href="css/route-app.css">
 
+    <route-messenger id="messenger"></route-messenger>
+
     <polymer-flex-layout></polymer-flex-layout>
-    <route-tile-manager></route-tile-manager>
+
+    <route-tile-manager messenger="{{$.messenger.socket}}"></route-tile-manager>
     <route-menu-bar flex></route-menu-bar>
 
   </template>

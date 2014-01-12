@@ -1,0 +1,93 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/polymer-google-jsapi/polymer-google-jsapi.html">
+<link rel="import" href="route-tile.html">
+
+<polymer-element name="route-tile-media" attributes="messenger">
+  <template>
+    <link rel="stylesheet" href="css/route-tile-media.css">
+    <polymer-google-jsapi id="jsapi"></polymer-google-jsapi>
+
+    <polymer-flex-layout vertical></polymer-flex-layout>
+
+    <route-tile id="tile" flex>
+      <div style="position: absolute; background-color: rgba(0,0,0,.5); padding: 8px;color: white; height: 20px; bottom: 0; left: 0; right: 0;">{{name}}</div>
+      <img id="artwork" src="{{artwork}}" />
+    </route-tile>
+
+  </template>
+  <script>
+    (function() {
+
+      Polymer("route-tile-media", {
+        ready: function() {
+        },
+        handleResults: function(results) {
+          var dim = (this.$.tile.offsetWidth - 8);
+          var best = -1, bestDim = Infinity;
+          for (var i = 0; i < results.length; i++) {
+            var result = results[i];
+            if(result.url in this.badurls) continue
+            if(result.width > dim && result.height > dim && (result.width * result.height) < bestDim) {
+              console.log("BEST: ", result.url);
+              bestDim = result.width * result.height;
+              best = i;
+            }
+            console.log(result.url, result.width, result.height, result.tbWidth, result.tbHeight);
+          }
+
+          var onerror = function() {
+            console.log("ERROR: ", results[best].url);
+            this.badurls[results[best].url] = true;
+            this.handleResults(results);
+          }.bind(this);
+          this.$.artwork.addEventListener("error", onerror);
+          console.log(best);
+          this.artwork = results[best].url;
+          this.$.artwork.style.width = (this.$.tile.offsetWidth - 8) + "px";
+          this.$.artwork.style.height = "auto";
+        },
+        searchComplete: function() {
+          if(this.search.results && this.search.results.length > 0) {
+            var results = this.search.results;
+            this.handleResults(results);
+          } else {
+            console.log("NO RESULTS");
+          }
+        },
+        enteredView: function() {
+          this.badurls = {};
+
+          this.$.jsapi.addEventListener('polymer-google-jsapi-loaded', function() {
+            google.setOnLoadCallback(function() {
+              var search = new google.search.ImageSearch();
+              search.setSearchCompleteCallback(this, this.searchComplete, null);
+              this.search = search;
+            }.bind(this));
+            google.load("search", "1");
+          }.bind(this));
+
+
+          this.messenger.on("Sonos.Main.TrackInfo", function(data) {
+            this.artwork = data.artwork;
+            this.name = data.name;
+            this.$.artwork.style.width = (this.$.tile.offsetWidth - 8) + "px";
+            this.$.artwork.style.height = "auto";
+
+            var query = data.artist + " " + data.album + " album art";
+            // this.search.execute(query);
+          }.bind(this));
+
+          this.$.tile.addEventListener("center", function() {
+            this.messenger.emit("DeviceEvent", "PlayPause", {});
+          }.bind(this));
+          this.$.tile.addEventListener("left", function() {
+            this.messenger.emit("DeviceEvent", "NextTrack", {});
+          }.bind(this));
+          this.$.tile.addEventListener("right", function() {
+            this.messenger.emit("DeviceEvent", "PrevTrack", {});
+          }.bind(this));
+        },
+      })
+    })();
+  </script>
+</polymer-element>
