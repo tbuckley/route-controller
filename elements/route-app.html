@@ -1,0 +1,23 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="route-tile-manager.html">
+<link rel="import" href="route-menu-bar.html">
+
+<polymer-element name="route-app" attributes="">
+  <template>
+    <link rel="stylesheet" href="css/route-app.css">
+
+    <polymer-flex-layout></polymer-flex-layout>
+    <route-tile-manager></route-tile-manager>
+    <route-menu-bar flex></route-menu-bar>
+
+  </template>
+  <script>
+    (function() {
+      Polymer("route-app", {
+        ready: function() {},
+        enteredView: function() {},
+      });
+    })();
+  </script>
+</polymer-element>

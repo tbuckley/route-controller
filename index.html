@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Route</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+  <script type="text/javascript" src="components/platform/platform.js"></script>
+  <script type="text/javascript" src="components/web-animations-js/web-animations.js"></script>
+  <link rel="import" href="elements/route-app.html" />
+</head>
+
+<body>
+  <route-app></route-app>
+
+  <script type="text/javascript">
+    document.ontouchmove = function(e) {
+      e.preventDefault();
+    };
+  </script>
+</body>
+</html>

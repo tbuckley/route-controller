@@ -1,0 +1,106 @@
+<link rel="import" href="../components/polymer/polymer.html">
+
+<polymer-element name="route-tile" attributes="">
+  <template>
+    <link rel="stylesheet" href="css/route-tile.css">
+    <div id="tile" class="tile">
+      <content></content>
+    </div>
+  </template>
+  <script>
+    (function() {
+
+      function getPos(el) {
+        // yay readability
+        var orig = el;
+        for (var lx=0, ly=0;
+             el != null;
+             lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+        return {x: lx, y: ly, width: orig.offsetWidth, height: orig.offsetHeight};
+      }
+
+      function bound(val, min, max) {
+        if(val < min) return min;
+        if(val > max) return max;
+        return val;
+      }
+      function calculateAngle(coords, dims) {
+        var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
+            perY = ((coords.y - dims.y) * 2 / dims.height) - 1,
+            degX = bound(x * 15, -15, 15),
+            degY = bound(y * -15, -15, 15);
+
+      }
+
+      Polymer("route-tile", {
+        ready: function() {
+          if ('ontouchstart' in document.documentElement) {
+            this.events = {
+              start: "touchstart",
+              end: "touchend",
+              move: "touchmove"
+            };
+          } else {
+            this.events = {
+              start: "mousedown",
+              end: "mouseup",
+              move: "mousemove"
+            };
+          }
+
+          this.$.tile.addEventListener(this.events.start, this.startHandler.bind(this));
+        },
+        enteredView: function() {},
+        startHandler: function(e) {
+          e.preventDefault();
+          this.dims = getPos(this.$.tile);
+
+          var coords = {
+            x: e.clientX || e.touches[0].clientX,
+            y: e.clientY || e.touches[0].clientY,
+          };
+
+          var anim = new Animation(this.$.tile, [
+            {transform: "translateZ(0px)"},
+            {transform: "translateZ(20px)"}
+          ], {duration: 0.1});
+          var player = document.timeline.play(anim);
+
+          this.moveHandler = this.moveHandler.bind(this);
+          this.upHandler = this.endHandler.bind(this);
+          console.log(this.events.move);
+          document.addEventListener(this.events.move, this.moveHandler);
+          document.addEventListener(this.events.end, this.upHandler);
+        },
+        moveHandler: function(e) {
+          e.preventDefault();
+
+          var coords = {
+            x: e.clientX || e.touches[0].clientX,
+            y: e.clientY || e.touches[0].clientY,
+          }
+
+          var xdiff = coords.x - (this.dims.x + (this.dims.width / 2)),
+              ydiff = coords.y - (this.dims.y + this.dims.height/2);
+          var xdeg = Math.max(Math.min(Math.floor((xdiff * 2 / this.dims.width) * 15), 15), -15);
+          var ydeg = Math.max(Math.min(Math.floor((-ydiff  * 2 / this.dims.height) * 15), 15), -15);
+          // console.log(coords, this.dims, xdeg, ydeg);
+
+          this.$.tile.style._style.webkitTransform = "translate3d(0,0,20px) rotateY("+xdeg+"deg) rotateX("+ydeg+"deg)";
+        },
+        endHandler: function(e) {
+          console.log("called end");
+          document.removeEventListener(this.events.move, this.moveHandler);
+          document.removeEventListener(this.events.end, this.upHandler);
+
+          e.preventDefault();
+          var anim = new Animation(this.$.tile, [
+            {transform: "translateZ(20px)"},
+            {transform: "translateZ(0px)"}
+          ], {duration: 0.2});
+          var player = document.timeline.play(anim);
+        },
+      });
+    })();
+  </script>
+</polymer-element>

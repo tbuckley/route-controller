@@ -1,0 +1,45 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="route-tile.html">
+
+<polymer-element name="route-tile-manager" attributes="">
+  <template>
+    <link rel="stylesheet" href="css/route-tile-manager.css">
+
+    <polymer-flex-layout></polymer-flex-layout>
+    <div flex>
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <route-tile flex>Foo</route-tile>
+      <route-tile flex>Foo</route-tile>
+    </div>
+    <div flex>
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <route-tile flex>Foo</route-tile>
+      <route-tile flex>Foo</route-tile>
+    </div>
+    <div flex>
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <route-tile flex>Foo</route-tile>
+      <route-tile flex>Foo</route-tile>
+    </div>
+  </template>
+  <script>
+    (function() {
+      Polymer("route-tile-manager", {
+        ready: function() {
+          window.addEventListener("resize", this.screenSizeChange.bind(this));
+          this.screenSizeChange();
+        },
+        enteredView: function() {},
+        screenSizeChange: function(e) {
+          var w = window.innerWidth - 32,
+              h = window.innerHeight - 32,
+              u = Math.floor(Math.min(w/3, h/2));
+          console.log(w, h, u, this.$.tiles);
+          this.style.width = u * 3 + "px";
+          this.style.height = u * 2 + "px";
+        },
+      });
+    })();
+  </script>
+</polymer-element>
