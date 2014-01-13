@@ -2,6 +2,7 @@
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="route-tile.html">
 <link rel="import" href="route-tile-media.html">
+<link rel="import" href="route-tile-lights.html">
 
 <polymer-element name="route-tile-manager" attributes="messenger">
   <template>
@@ -20,8 +21,8 @@
     </div>
     <div flex>
       <polymer-flex-layout vertical></polymer-flex-layout>
-      <route-tile flex>Foo</route-tile>
-      <route-tile flex>Foo</route-tile>
+      <route-tile-lights messenger="{{messenger}}" lights="(1|2)" flex></route-tile-lights>
+      <route-tile-lights messenger="{{messenger}}" lights="(3)" flex></route-tile-lights>
     </div>
   </template>
   <script>

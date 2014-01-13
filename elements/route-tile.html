@@ -66,6 +66,7 @@
           this.coords = coords;
           var transform = calculateTransform(coords, this.dims);
 
+          this.style.zIndex = 20;
           var anim = new Animation(this.$.tile, [
             {transform: "translateZ(0px)"},
             {transform: transform},
@@ -122,6 +123,9 @@
             {transform: this.$.tile.style._style.webkitTransform},
             {transform: "translateZ(0px)"}
           ], {duration: .5});
+          anim.onend = function() {
+            this.style.zIndex = 0;
+          }.bind(this);
           var player = document.timeline.play(anim);
         },
       });

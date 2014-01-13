@@ -1,0 +1,55 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="route-tile.html">
+<link rel="import" href="polymer-image-search.html">
+
+<polymer-element name="route-tile-lights" attributes="messenger lights">
+  <template>
+    <link rel="stylesheet" href="css/route-tile-lights.css">
+
+    <route-tile id="tile">
+      <div style="position: absolute; left:0;right:0;top:0;bottom:0;">
+        <polymer-flex-layout vertical></polymer-flex-layout>
+        <div flex></div>
+        <div style="height: 128px;">
+          <polymer-flex-layout></polymer-flex-layout>
+          <div flex></div>
+          <div style="width: 128px; position: relative;">
+            <div class="left">Left</div>
+            <div class="right">Right</div>
+            <div class="top">Top</div>
+            <div class="bottom">Bottom</div>
+            <div class="icon">FOO</div>
+          </div>
+          <div flex></div>
+        </div>
+        <div flex></div>
+    </div>
+    </route-tile>
+
+  </template>
+  <script>
+    (function() {
+
+      Polymer("route-tile-lights", {
+        ready: function() {},
+        enteredView: function() {
+          // this.messenger.on("Sonos.Main.TrackInfo", function(data) {
+          //   this.name = data.name;
+          //   this.query = data.artist + " " + data.album + " album art";
+          // }.bind(this));
+
+          this.$.tile.addEventListener("center", function() {
+            this.messenger.emit("DeviceEvent", "ToggleLights", {bulbName: this.lights});
+          }.bind(this));
+          this.$.tile.addEventListener("top", function() {
+            this.messenger.emit("DeviceEvent", "LightUp", {bulbName: this.lights});
+          }.bind(this));
+          this.$.tile.addEventListener("bottom", function() {
+            this.messenger.emit("DeviceEvent", "LightDown", {bulbName: this.lights});
+          }.bind(this));
+        },
+      });
+    })();
+  </script>
+</polymer-element>
