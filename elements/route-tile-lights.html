@@ -3,7 +3,7 @@
 <link rel="import" href="route-tile.html">
 <link rel="import" href="polymer-image-search.html">
 
-<polymer-element name="route-tile-lights" attributes="messenger lights">
+<polymer-element name="route-tile-lights" attributes="messenger lights name">
   <template>
     <link rel="stylesheet" href="css/route-tile-lights.css">
 
@@ -15,11 +15,16 @@
           <polymer-flex-layout></polymer-flex-layout>
           <div flex></div>
           <div style="width: 128px; position: relative;">
-            <div class="left">Left</div>
-            <div class="right">Right</div>
-            <div class="top">Top</div>
-            <div class="bottom">Bottom</div>
-            <div class="icon">FOO</div>
+            <div class="left">Hue</div>
+            <div class="right">Hue</div>
+            <div class="top">Bright</div>
+            <div class="bottom">Dim</div>
+            <div class="icon">
+              <polymer-flex-layout vertical></polymer-flex-layout>
+              <div flex></div>
+              <div class="name">{{name}}</div>
+              <div flex></div>
+            </div>
           </div>
           <div flex></div>
         </div>
@@ -32,22 +37,58 @@
     (function() {
 
       Polymer("route-tile-lights", {
+        brightness: 0,
+        state: false,
+
         ready: function() {},
         enteredView: function() {
-          // this.messenger.on("Sonos.Main.TrackInfo", function(data) {
-          //   this.name = data.name;
-          //   this.query = data.artist + " " + data.album + " album art";
-          // }.bind(this));
+          this.messenger.on("Hue.LightInfo", function(data) {
+            console.log("LIGHTS", data);
+            for(key in data) {
+              if(data.hasOwnProperty(key) && key != "stateUpdatedTime") {
+                var light = data[key];
+                if(light.name.match(this.lights)) {
+                  var brightness = light.state.bri / 255,
+                      state = light.state.on;
+                  this.brightness = Math.max(this.brightness, brightness);
+                  this.state = this.state || state;
+                }
+              }
+            }
+            this.update();
+          }.bind(this));
+
+          this.messenger.emit("getState", "Hue.LightInfo");
 
           this.$.tile.addEventListener("center", function() {
-            this.messenger.emit("DeviceEvent", "ToggleLights", {bulbName: this.lights});
+            this.state = !this.state;
+            this.update();
           }.bind(this));
           this.$.tile.addEventListener("top", function() {
-            this.messenger.emit("DeviceEvent", "LightUp", {bulbName: this.lights});
+            var bri = Math.min(1, this.brightness + 0.05);
+            if(bri != this.brightness) {
+              this.brightness = bri;
+              this.update();
+            }
           }.bind(this));
           this.$.tile.addEventListener("bottom", function() {
-            this.messenger.emit("DeviceEvent", "LightDown", {bulbName: this.lights});
+            var bri = Math.max(0, this.brightness - 0.05);
+            if(bri != this.brightness) {
+              this.brightness = bri;
+              this.update();
+            }
           }.bind(this));
+          this.$.tile.addEventListener("tilt", function(e, details, sender) {
+            console.log(details);
+          }.bind(this));
+        },
+        update: function() {
+          this.messenger.emit("DeviceEvent", "SetLights", {
+            bulbName: this.lights,
+            bri: this.brightness,
+            state: this.state,
+            duration: 0.1,
+          });
         },
       });
     })();

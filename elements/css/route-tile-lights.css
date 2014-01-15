@@ -9,6 +9,20 @@
   height: 20px;
   width: 88px;
   text-align: center;
+
+  font-size: 14px;
+  font-family: "Roboto Condensed";
+  font-weight: 300;
+  color: #FFF;
+  text-transform: uppercase;
+  opacity: 0;
+  -webkit-transition: opacity 0.5s;
+}
+.active .top,
+.active .left,
+.active .right,
+.active .bottom {
+  opacity: 0.5;
 }
 .top {
   top: 0;
@@ -38,11 +52,19 @@
 }
 .icon {
   position: absolute;
-  background-color: red;
   left: 20px;
   right: 20px;
   top: 20px;
   bottom: 20px;
+  /*background-image: -webkit-radial-gradient(center center, circle contain, rgba(0,0,0,.5) 0%, rgba(0,0,0,.5) 70%, rgba(0,0,0,0) 100%); /* New WebKit syntax */*/
+}
+.icon .name {
+  text-align: center;
+  font-family: "Roboto Condensed";
+  font-weight: 300;
+  color: #FFF;
+  text-transform: uppercase;
+  font-size: 18px;
 }
 
 route-tile {

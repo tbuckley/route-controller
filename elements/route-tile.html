@@ -78,6 +78,10 @@
 
           this.upHandler = this.endHandler.bind(this);
           document.addEventListener(this.events.end, this.upHandler);
+
+          this.triggered = false;
+          this.eventHandler();
+          this.classList.add('active');
         },
         moveHandler: function(e) {
           e.preventDefault();
@@ -88,15 +92,34 @@
           }
           this.coords = coords;
 
+          var dims = this.dims,
+              coords = this.coords;
+          var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
+            perY = ((coords.y - dims.y) * 2 / dims.height) - 1;
+          this.fire("tilt", {
+            x: perX,
+            y: perY,
+          });
+
           var transform = calculateTransform(coords, this.dims);
           this.$.tile.style._style.webkitTransform = transform;
         },
-        endHandler: function(e) {
-          e.preventDefault();
-
-          document.removeEventListener(this.events.move, this.moveHandler);
-          document.removeEventListener(this.events.end, this.upHandler);
-
+        eventHandler: function(coords) {
+          console.log("EVENT HANDLER");
+          if(this.triggered) {
+            this.timer = setTimeout(function() {
+              this.fireEvent();
+              this.eventHandler();
+            }.bind(this), 100);
+          } else {
+            this.timer = setTimeout(function() {
+              this.fireEvent();
+              this.triggered = true;
+              this.eventHandler();
+            }.bind(this), 1000)
+          }
+        },
+        fireEvent: function() {
           var dims = this.dims,
               coords = this.coords;
           var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
@@ -117,6 +140,18 @@
           } else if(perX < .3 && perX > -.3 && perY > 0.3) {
             console.log("BOTTOM");
             this.fire("bottom");
+          }
+        },
+        endHandler: function(e) {
+          this.classList.remove('active');
+          e.preventDefault();
+          clearTimeout(this.timer);
+
+          document.removeEventListener(this.events.move, this.moveHandler);
+          document.removeEventListener(this.events.end, this.upHandler);
+
+          if(!this.triggered) {
+            this.fireEvent();
           }
 
           var anim = new Animation(this.$.tile, [
