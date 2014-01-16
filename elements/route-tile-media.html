@@ -1,5 +1,5 @@
 <link rel="import" href="../components/polymer/polymer.html">
-<link rel="import" href="route-tile.html">
+<link rel="import" href="./route-ui-tile/route-ui-tile.html">
 <link rel="import" href="polymer-image-search.html">
 
 <polymer-element name="route-tile-media" attributes="messenger">
@@ -9,12 +9,12 @@
     <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search>
 
     <polymer-flex-layout vertical></polymer-flex-layout>
-    <route-tile id="tile" flex>
+    <route-ui-tile id="tile" flex>
       <div class="album-name">{{name}}</div>
       <div id="artwork">
         <!-- <img id="defaultArtwork" src="{{artwork}}" /> -->
       </div>
-    </route-tile>
+    </route-ui-tile>
 
   </template>
   <script>

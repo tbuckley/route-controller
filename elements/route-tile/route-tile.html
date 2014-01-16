@@ -8,20 +8,13 @@
   <script>
     (function() {
       // Determine whether to use touch or mouse events
-      var events;
-      if("ontouchstart" in document.documentElement) {
-        events = {
-          start: "touchstart",
-          end: "touchend",
-          move: "touchmove",
-        };
-      } else {
-        events = {
-          start: "mousedown",
-          end: "mouseup",
-          move: "mousemove",
-        };
-      }
+      var events, supportsTouch;
+      supportsTouch = "ontouchstart" in document.documentElement;
+      events = {
+        start: supportsTouch ? "touchstart" : "mousedown",
+        end:   supportsTouch ? "touchend"   : "mouseup",
+        move:  supportsTouch ? "touchmove"  : "mousemove",
+      };
 
       // getPos calculates the bounding rectangle of the element on the screen
       function getPos(el) {
@@ -41,12 +34,13 @@
       }
 
       function getPoint(coords, dims) {
+        console.log(coords.x, coords.y, dims.x, dims.y, dims.width, dims.height);
         var perX = ((coords.x - dims.x) * 2 / dims.width) - 1,
             perY = ((coords.y - dims.y) * 2 / dims.height) - 1;
         perX = bound(perX, -1, 1);
-        perY = bound(perY, -1, 1);
+        perY = -bound(perY, -1, 1); /* Negate to get normal coord system */
 
-        var amplitude = Math.sqrt(perX^2 + perY^2);
+        var amplitude = Math.sqrt(perX*perX + perY*perY);
         return {
           amplitude: amplitude,
           x: perX,
@@ -55,18 +49,12 @@
       }
 
       function getZone(point) {
-          if(point.amplitude <= .4) {
-            return "center";
-          } else if(point.y >= point.x && point.y >= -point.x) {
-            return "topoint"
-          } else if(point.y >= point.x && point.y <= -point.x) {
-            return "left";
-          } else if(point.y <= point.x && point.y >= -point.x) {
-            return "right";
-          } else if(point.y <= point.x && point.y <= -point.x) {
-            return "bottom"
-          }
-        },
+        if(point.amplitude <= .4) return "center";
+        if(point.y >= point.x) {
+          return point.y >= -point.x ? "top" : "left";
+        }
+        return point.y >= -point.x ? "right" : "bottom";
+      };
 
       Polymer("route-tile", {
         ready: function() {
@@ -77,16 +65,16 @@
           }
           this.addEventListener(events.start, this.handlers.start);
         },
-        attached: function() {},
         startHandler: function(e) {
+          console.log("start");
           e.preventDefault();
 
           // Calculate current dimensions (can probably be moved elsewhere)
           this.dims = getPos(this);
 
           // Add event listeners
-          document.addEventListener(events.move, this.handlers.end);
-          document.addEventListener(events.end, this.handlers.start);
+          document.addEventListener(events.move, this.handlers.move);
+          document.addEventListener(events.end, this.handlers.end);
 
           // Calculate the starting point of the gesture
           this.point = this.startPoint = getPoint({
@@ -94,11 +82,14 @@
             y: (e.clientY || e.touches[0].clientY),
           }, this.dims);
 
+          this.zone = getZone(this.point);
+
           this.triggered = false;
           this.eventHandler();
           this.classList.add('active');
         },
         moveHandler: function(e) {
+          console.log("move");
           e.preventDefault();
 
           // Calculate the latest point of the gesture
@@ -106,34 +97,19 @@
             x: (e.clientX || e.touches[0].clientX),
             y: (e.clientY || e.touches[0].clientY),
           }, this.dims);
+
+          this.zone = getZone(this.point);
         },
         endHandler: function(e) {
+          console.log("end");
           e.preventDefault();
 
           // Remove event listeners
           document.removeEventListener(events.move, this.handlers.move);
           document.removeEventListener(events.end, this.handlers.end);
 
-          clearTimeout(this.timer);
           this.classList.remove('active');
-          if(!this.triggered) {
-            this.fireEvent();
-          }
-        },
-        eventHandler: function() {
-          console.log("EVENT HANDLER");
-          if(this.triggered) {
-            this.timer = setTimeout(function() {
-              this.fireEvent();
-              this.eventHandler();
-            }.bind(this), 100);
-          } else {
-            this.timer = setTimeout(function() {
-              this.fireEvent();
-              this.triggered = true;
-              this.eventHandler();
-            }.bind(this), 1000)
-          }
+          this.asyncFire(this.zone);
         },
       });
     })();

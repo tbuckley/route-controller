@@ -1,0 +1,18 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-tile/route-tile.html">
+
+<polymer-element name="route-ui-tile" extends="route-tile" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-ui-tile.css">
+    <content></content>
+  </template>
+  <script>
+    (function() {
+      Polymer("route-ui-tile", {
+        ready: function() {
+          this.super();
+        },
+      });
+    })();
+  </script>
+</polymer-element>

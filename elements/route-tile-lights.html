@@ -1,13 +1,13 @@
 <link rel="import" href="../components/polymer/polymer.html">
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
-<link rel="import" href="route-tile.html">
+<link rel="import" href="./route-ui-tile/route-ui-tile.html">
 <link rel="import" href="polymer-image-search.html">
 
 <polymer-element name="route-tile-lights" attributes="messenger lights name">
   <template>
     <link rel="stylesheet" href="css/route-tile-lights.css">
 
-    <route-tile id="tile">
+    <route-ui-tile id="tile">
       <div style="position: absolute; left:0;right:0;top:0;bottom:0;">
         <polymer-flex-layout vertical></polymer-flex-layout>
         <div flex></div>
@@ -30,7 +30,7 @@
         </div>
         <div flex></div>
     </div>
-    </route-tile>
+    </route-ui-tile>
 
   </template>
   <script>
