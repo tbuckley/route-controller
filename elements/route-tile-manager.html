@@ -11,18 +11,36 @@
     <polymer-flex-layout></polymer-flex-layout>
     <div flex>
       <polymer-flex-layout vertical></polymer-flex-layout>
-      <route-tile-media messenger="{{messenger}}" flex></route-tile-media>
-      <route-tile flex>Foo</route-tile>
+      <div class="wrapper" flex>
+        <route-ui-tile>
+          <route-block-media messenger="{{messenger}}"></route-block-media>
+        </route-ui-tile>
+      </div>
+      <div class="wrapper" flex>
+        <route-ui-tile></route-ui-tile>
+      </div>
     </div>
     <div flex>
       <polymer-flex-layout vertical></polymer-flex-layout>
-      <route-tile flex>Foo</route-tile>
-      <route-tile flex>Foo</route-tile>
+      <div class="wrapper" flex>
+        <route-ui-tile></route-ui-tile>
+      </div>
+      <div class="wrapper" flex>
+        <route-ui-tile></route-ui-tile>
+      </div>
     </div>
     <div flex>
       <polymer-flex-layout vertical></polymer-flex-layout>
-      <route-tile-lights messenger="{{messenger}}" lights="(1|2)" name="lights" flex></route-tile-lights>
-      <route-tile-lights messenger="{{messenger}}" lights="(3)" name="lamp" flex></route-tile-lights>
+      <div class="wrapper" flex>
+        <route-ui-tile>
+          <route-block-lights messenger="{{messenger}}" lights="(1|2)" name="lights"></route-block-lights>
+        </route-ui-tile>
+      </div>
+      <div class="wrapper" flex>
+        <route-ui-tile>
+          <route-block-lights messenger="{{messenger}}" lights="(3)" name="lamp"></route-block-lights>
+        </route-ui-tile>
+      </div>
     </div>
   </template>
   <script>

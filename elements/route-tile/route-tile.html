@@ -1,10 +1,6 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 
 <polymer-element name="route-tile" attributes="">
-  <template>
-    <link rel="stylesheet" href="route-tile.css">
-    <content></content>
-  </template>
   <script>
     (function() {
       // Determine whether to use touch or mouse events
@@ -99,6 +95,8 @@
           }, this.dims);
 
           this.zone = getZone(this.point);
+
+          this.fire("_move", this.zone);
         },
         endHandler: function(e) {
           console.log("end");

@@ -8,9 +8,37 @@
   </template>
   <script>
     (function() {
+      function bound(value, min, max) {
+        if(value < min) return min;
+        if(value > max) return max;
+        return value;
+      }
+
+      function getRotation(perX, perY) {
+        var xRotation = bound(perX * 15, -15, 15),
+            yRotation = bound(perY * -15, -15, 15),
+            rotY = " rotateY(" + xRotation + "deg)",
+            rotX = " rotateX(" + yRotation + "deg)";
+        return rotY + rotX;
+      }
+
+      function parseTransform(transform) {
+        return transform;
+      }
+
       Polymer("route-ui-tile", {
         ready: function() {
           this.super();
+        },
+        startHandler: function(event, details, sender) {
+          this.style.zIndex = 10;
+          this.transform = parseTransform(this.style.transform || this.style.webkitTransform || "");
+        },
+        moveHandler: function(event, details, sender) {
+
+        },
+        endHandler: function(event, details, sender) {
+
         },
       });
     })();
