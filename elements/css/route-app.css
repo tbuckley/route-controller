@@ -1,11 +1,24 @@
 @host {
   :scope {
-    position: absolute;
+    /*position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
     bottom: 0;
+    left: 0;
+    right: 0;*/
+
+    display: block;
+    position: relative;
+    width: 1280px;
+    height: 800px;
 
     background: -webkit-linear-gradient(135deg, #442222, #221111);
   }
+}
+
+#tiles {
+  position: absolute;
+  top: 32px;
+  bottom: 32px;
+  left: 32px;
+  right: 32px;
 }

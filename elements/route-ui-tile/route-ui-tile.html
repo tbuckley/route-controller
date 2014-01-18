@@ -1,46 +1,134 @@
-<link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../route-tile/route-tile.html">
+<!--
+Copyright 2013 The Polymer Authors. All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+-->
 
-<polymer-element name="route-ui-tile" extends="route-tile" attributes="">
+<!--
+/**
+ * @module Polymer UI Elements
+ */
+/**
+ * polymer-ui-card <b>(WIP)</b>
+ *
+ * Example:
+ *
+ *     <polymer-ui-card>
+ *       ...
+ *     </polymer-ui-card>
+ *
+ * @class polymer-ui-card
+ */
+/**
+ * Fired when the card is swiped away.
+ *
+ * @event polymer-card-swipe-away
+ */
+-->
+<link rel="import" href="../components/polymer/polymer.html">
+
+<polymer-element name="route-ui-tile" attributes="swipeable noCurve">
   <template>
     <link rel="stylesheet" href="route-ui-tile.css">
-    <content></content>
+    <div id="tile" on-pointerdown="{{pointerDown}}" on-trackstart="{{trackStart}}" on-track="{{track}}" on-trackend="{{trackEnd}}" on-tap="{{trackEnd}}">
+      <div hidden?="{{messageVisible}}">{{"foo"}}</div>
+      <content></content>
+    </div>
   </template>
   <script>
-    (function() {
-      function bound(value, min, max) {
-        if(value < min) return min;
-        if(value > max) return max;
-        return value;
+    Polymer('route-ui-tile', {
+      /**
+       * Sets how much the tile should be able to rotate.
+       *
+       * @attribute swipeable
+       * @type boolean
+       * @default false
+       */
+      maxRotation: 15,
+      ready: function() {
+        this.transitionEndListener = this.transitionEnd.bind(this);
+      },
+      leftView: function() {
+        this.removeListeners();
+      },
+      addListeners: function() {
+        this.addEventListener('webkitTransitionEnd',
+            this.transitionEndListener);
+        this.addEventListener('transitionend', this.transitionEndListener);
+      },
+      removeListeners: function() {
+        this.removeEventListener('webkitTransitionEnd',
+            this.transitionEndListener);
+        this.removeEventListener('transitionend', this.transitionEndListener);
+      },
+      swipeableChanged: function() {
+        if (this.swipeable) {
+          this.addListeners();
+        } else {
+          this.removeListeners();
+        }
+      },
+      animate: function(diffX, diffY, raised) {
+        var bound = function(value, min, max) {
+          if(value < min) return min;
+          if(value > max) return max;
+          return value;
+        };
+
+        var x = (diffX * 2 / this.w),
+            y = (diffY * 2 / this.h);
+        var rotationX = bound(x, -1, 1) * 15,
+            rotationY = bound(-y, -1, 1) * 15;
+
+        var s = this.$.tile.style;
+        var transform = raised ? "translate3d(0,0,20px)" : "";
+        var rotate = "rotateX("+rotationY+"deg) rotateY("+rotationX+"deg)";
+
+        s.webkitTransform = s.mozTransform = s.msTransform = s.transform =
+            transform + " " + rotate;
+      },
+      pointerDown: function(e) {
+        e.preventDefault();
+        this.x = this.offsetLeft;
+        this.y = this.offsetTop;
+        for(var el = this.offsetParent;
+            el != null;
+            this.x += el.offsetLeft, this.y += el.offsetTop, el = el.offsetParent);
+        this.w = this.offsetWidth;
+        this.h = this.offsetHeight;
+        this.cx = this.x + (this.w / 2);
+        this.cy = this.y + (this.h / 2);
+
+        this.dx = 0;
+        this.dy = 0;
+
+        this.animate(0, 0, true);
+      },
+      trackStart: function(e) {
+        e.preventTap();
+
+        this.animate(e.clientX - this.cx, e.clientY - this.cy, true);
+        this.async(function() {
+          this.$.tile.classList.add('dragging');
+        }.bind(this));
+      },
+      track: function(e) {
+        e.preventDefault();
+        this.animate(e.clientX - this.cx, e.clientY - this.cy, true);
+        this.dx = e.dx;
+        this.dy = e.dy;
+      },
+      trackEnd: function(e) {
+        e.preventDefault();
+        this.$.tile.classList.remove('dragging');
+        this.animate(0, 0);
+        console.log("TRACKEND", this.dx, this.dy);
+      },
+      transitionEnd: function() {
+        if (this.away) {
+          this.fire('polymer-card-swipe-away');
+        }
       }
-
-      function getRotation(perX, perY) {
-        var xRotation = bound(perX * 15, -15, 15),
-            yRotation = bound(perY * -15, -15, 15),
-            rotY = " rotateY(" + xRotation + "deg)",
-            rotX = " rotateX(" + yRotation + "deg)";
-        return rotY + rotX;
-      }
-
-      function parseTransform(transform) {
-        return transform;
-      }
-
-      Polymer("route-ui-tile", {
-        ready: function() {
-          this.super();
-        },
-        startHandler: function(event, details, sender) {
-          this.style.zIndex = 10;
-          this.transform = parseTransform(this.style.transform || this.style.webkitTransform || "");
-        },
-        moveHandler: function(event, details, sender) {
-
-        },
-        endHandler: function(event, details, sender) {
-
-        },
-      });
-    })();
+    });
   </script>
 </polymer-element>
