@@ -4,8 +4,8 @@
   "dependencies": {
     "platform": "Polymer/platform#master",
     "polymer": "Polymer/polymer#master",
-    "polymer-ui-icon-button": "Polymer/polymer-ui-icon-button#master",
     "polymer-flex-layout": "Polymer/polymer-flex-layout#master",
+    "polymer-page": "Polymer/polymer-page#master",
     "web-animations-js": "web-animations/web-animations-js",
     "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master"
   }
