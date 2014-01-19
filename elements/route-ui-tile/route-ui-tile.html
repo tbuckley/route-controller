@@ -35,7 +35,7 @@ license that can be found in the LICENSE file.
  * @event route-ui-tile-release
  */
 -->
-<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer/polymer.html">
 
 <polymer-element name="route-ui-tile" attributes="maxRotation autofireDelay autofireInterval autofire">
   <template>
@@ -177,6 +177,8 @@ license that can be found in the LICENSE file.
         this.$.tile.classList.add('dragging');
 
         this.positionUpdated();
+
+        this.fire("route-ui-tile-press");
       },
       pointerMove: function(e) {
         e.preventDefault();
@@ -205,6 +207,7 @@ license that can be found in the LICENSE file.
         if(!this.fired) {
           this.fire("route-ui-tile-" + this.zone, this.latest);
         }
+        this.fire("route-ui-tile-release");
       },
       clearTimers: function() {
         if(this.fireTimer) clearTimeout(this.fireTimer);

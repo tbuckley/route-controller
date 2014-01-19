@@ -6,7 +6,6 @@
     "polymer": "Polymer/polymer#master",
     "polymer-flex-layout": "Polymer/polymer-flex-layout#master",
     "polymer-page": "Polymer/polymer-page#master",
-    "web-animations-js": "web-animations/web-animations-js",
     "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master"
   }
 }
