@@ -13,24 +13,33 @@ license that can be found in the LICENSE file.
  *
  * Example:
  *
- *     <polymer-ui-tile>
+ *     <route-ui-tile>
  *       ...
- *     </polymer-ui-tile>
+ *     </route-ui-tile>
  *
  * @class route-ui-tile
  */
 /**
- * Fired when the card is swiped away.
+ * Fired when the tile is tilted in some direction.
  *
- * @event polymer-card-swipe-away
+ * @event route-ui-tile-tilt
+ */
+/**
+ * Fired when the tile is pressed.
+ *
+ * @event route-ui-tile-press
+ */
+/**
+ * Fired when the tile is released.
+ *
+ * @event route-ui-tile-release
  */
 -->
 <link rel="import" href="../components/polymer/polymer.html">
 
-<polymer-element name="route-ui-tile" attributes="swipeable noCurve">
+<polymer-element name="route-ui-tile" attributes="maxRotation autofireDelay autofireInterval autofire">
   <template>
     <link rel="stylesheet" href="route-ui-tile.css">
-    <div id="message" hidden?="{{!messageVisible}}">{{message}}</div>
     <div id="tile">
       <content></content>
     </div>
@@ -46,13 +55,34 @@ license that can be found in the LICENSE file.
        */
       maxRotation: 15,
 
-      messageVisible: true,
-      message: "100",
+      /**
+       * Whether or not the tile should auto-fire zone events
+       *
+       * @attribute autofire
+       * @type bool
+       * @default false
+       */
+      autofire: false,
 
-      ctr: 0,
+      /**
+       * Amount of time to wait before automatically firing the first event, in milliseconds
+       *
+       * @attribute autofireDelay
+       * @type int
+       * @default 1000
+       */
+      autofireDelay: 1000,
+
+      /**
+       * Amount of time to wait between automatically firing events, in milliseconds
+       *
+       * @attribute autofireInterval
+       * @type int
+       * @default 100
+       */
+      autofireInterval: 100,
 
       ready: function() {
-        // this.transitionEndListener = this.transitionEnd.bind(this);
         this.pointerStartListener = this.pointerStart.bind(this);
         this.pointerMoveListener = this.pointerMove.bind(this);
         this.pointerEndListener = this.pointerEnd.bind(this);
@@ -62,32 +92,20 @@ license that can be found in the LICENSE file.
         this.moveEvent = hasTouch ? "touchmove" : "mousemove";
         this.endEvent = hasTouch ? "touchend" : "mouseup";
 
-        this.addListeners();
-      },
-      leftView: function() {
-        this.removeListeners();
-      },
-      addListeners: function() {
-        // this.addEventListener('webkitTransitionEnd', this.transitionEndListener);
-        // this.addEventListener('transitionend', this.transitionEndListener);
         this.addEventListener(this.startEvent, this.pointerStartListener);
       },
-      removeListeners: function() {
-        // this.removeEventListener('webkitTransitionEnd',this.transitionEndListener);
-        // this.removeEventListener('transitionend', this.transitionEndListener);
+      leftView: function() {
         this.removeEventListener(this.startEvent, this.pointerStartListener);
       },
-      animate: function(diffX, diffY, raised) {
+      animate: function(percentX, percentY, raised) {
         var bound = function(value, min, max) {
           if(value < min) return min;
           if(value > max) return max;
           return value;
         };
 
-        var x = (diffX * 2 / this.w),
-            y = (diffY * 2 / this.h);
-        var rotationX = bound(x, -1, 1) * 15,
-            rotationY = bound(-y, -1, 1) * 15;
+        var rotationX = bound(percentX, -1, 1) * 15,
+            rotationY = bound(percentY, -1, 1) * 15;
 
         var s = this.$.tile.style;
         var transform = raised ? "translate3d(0,0,20px)" : "";
@@ -96,38 +114,79 @@ license that can be found in the LICENSE file.
         s.webkitTransform = s.mozTransform = s.msTransform = s.transform =
             transform + " " + rotate;
       },
+      updateDimensions: function() {
+        this.dimensions = {};
+
+        var x = 0, y = 0;
+        for(var el = this; el != null; x += el.offsetLeft, y += el.offsetTop, el = el.offsetParent);
+        this.dimensions.left = x;
+        this.dimensions.top = y;
+        this.dimensions.width = this.offsetWidth;
+        this.dimensions.height = this.offsetHeight;
+        this.dimensions.centerX = this.dimensions.left + (this.dimensions.width / 2);
+        this.dimensions.centerY = this.dimensions.top + (this.dimensions.height / 2);
+      },
+      updateStartingPosition: function(clientX, clientY) {
+        this.start = {
+          x: clientX,
+          y: clientY,
+        };
+      },
+      updateLatestPosition: function(clientX, clientY) {
+        var distX = clientX - this.start.x,
+            distY = clientY - this.start.y;
+
+        this.latest = {
+          x: clientX,
+          y: clientY,
+          percent: {
+            x: (clientX - this.dimensions.centerX) * 2 / this.dimensions.width,
+            y: -(clientY - this.dimensions.centerY) * 2 / this.dimensions.height,
+          },
+          distance: Math.sqrt(distX*distX + distY*distY),
+        };
+      },
+      updateZone: function() {
+        var x = this.latest.percent.x,
+            y = this.latest.percent.y;
+
+        if(Math.sqrt(x*x + y*y) < .5) {
+          this.zone = "center";
+        } else if(this.latest.percent.x > this.latest.percent.y) {
+          this.zone = (this.latest.percent.x > -this.latest.percent.y) ? "right" : "bottom";
+        } else {
+          this.zone = (this.latest.percent.x > -this.latest.percent.y) ? "top" : "left";
+        }
+      },
       pointerStart: function(e) {
         e.preventDefault();
 
         document.addEventListener(this.moveEvent, this.pointerMoveListener);
         document.addEventListener(this.endEvent, this.pointerEndListener);
 
-        this.x = this.offsetLeft;
-        this.y = this.offsetTop;
-        for(var el = this.offsetParent;
-            el != null;
-            this.x += el.offsetLeft, this.y += el.offsetTop, el = el.offsetParent);
-        this.w = this.offsetWidth;
-        this.h = this.offsetHeight;
-        this.cx = this.x + (this.w / 2);
-        this.cy = this.y + (this.h / 2);
+        var clientX = e.clientX || e.touches[0].clientX,
+            clientY = e.clientY || e.touches[0].clientY;
 
-        this.startX = this.endX = e.clientX || e.touches[0].clientX;
-        this.startY = this.endY = e.clientY || e.touches[0].clientY;
-
+        this.fired = false;
+        this.updateDimensions();
+        this.updateStartingPosition(clientX, clientY);
+        this.updateLatestPosition(clientX, clientY);
+        this.updateZone();
         this.animate(0, 0, true);
-        this.async(function() {
-          this.$.tile.classList.add('dragging');
-        }.bind(this));
+
+        this.$.tile.classList.add('dragging');
 
         this.positionUpdated();
       },
       pointerMove: function(e) {
         e.preventDefault();
 
-        this.endX = e.clientX || e.touches[0].clientX,
-        this.endY = e.clientY || e.touches[0].clientY;
-        this.animate(this.endX - this.cx, this.endY - this.cy, true);
+        var clientX = e.clientX || e.touches[0].clientX,
+            clientY = e.clientY || e.touches[0].clientY;
+
+        this.updateLatestPosition(clientX, clientY);
+        this.updateZone();
+        this.animate(this.latest.percent.x, this.latest.percent.y, true);
 
         this.positionUpdated();
       },
@@ -139,70 +198,31 @@ license that can be found in the LICENSE file.
 
         this.$.tile.classList.remove('dragging');
         this.animate(0, 0);
-        console.log("TRACKEND", this.dx, this.dy);
 
         this.clearTimers();
         this.lastZone = null;
+
+        if(!this.fired) {
+          this.fire("route-ui-tile-" + this.zone, this.latest);
+        }
       },
       clearTimers: function() {
-        if(this.fireTimer) {
-          clearTimeout(this.fireTimer);
-        }
-        if(this.keepFiringTimer) {
-          clearTimeout(this.keepFiringTimer);
-        }
+        if(this.fireTimer) clearTimeout(this.fireTimer);
+        if(this.keepFiringTimer) clearTimeout(this.keepFiringTimer);
       },
       positionUpdated: function() {
-        var zone = "foo";
-        if(!this.lastZone || this.lastZone != zone) {
-          this.lastZone = zone;
+        if(this.autofire && (!this.lastZone || this.lastZone != this.zone)) {
+          this.lastZone = this.zone;
           this.clearTimers();
-          this.fireTimer = setTimeout(this.keepFiring.bind(this), 1000)
+          this.fireTimer = setTimeout(this.keepFiring.bind(this), this.autofireDelay);
         }
       },
       keepFiring: function() {
-        this.fireEvent();
-        this.keepFiringTimer = setTimeout(this.keepFiring.bind(this), 100);
+        this.fired = true;
+        this.fire("route-ui-tile-" + this.zone, this.latest);
+        console.log(this.autofireInterval);
+        this.keepFiringTimer = setTimeout(this.keepFiring.bind(this), this.autofireInterval);
       },
-      fireEvent: function() {
-        console.log("FIRE");
-        var percentX = (this.endX - this.cx) * 2 / this.w,
-            percentY = (this.endY - this.cy) * 2 / this.h,
-            distX = this.endX - this.startX,
-            distY = this.endY - this.startY,
-            movement = Math.sqrt(distX*distX + distY*distY);
-
-        var details = {
-          distance: movement,
-          percentX: percentX,
-          percentY: percentY,
-        };
-
-        if(percentY > 0.3) {
-          this.ctr += 1;
-          this.showMessage(this.ctr);
-          return "top";
-        } else if(percentY < 0.3) {
-          this.ctr -= 1;
-          this.showMessage(this.ctr);
-          return "bottom";
-        }
-      },
-      showMessage: function(msg) {
-        this.message = msg;
-        // this.messageVisible = true;
-
-        if(this.messageTimer) {
-          clearTimeout(this.messageTimer);
-        }
-        this.messageTimer = setTimeout(function() {
-          this.$.message.style.opacity = 0;
-        }.bind(this), 1000);
-
-        this.async(function() {
-          this.$.message.style.opacity = 1;
-        }.bind(this));
-      }
     });
   </script>
 </polymer-element>

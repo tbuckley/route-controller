@@ -1,0 +1,83 @@
+<!--
+Copyright 2013 The Polymer Authors. All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+-->
+
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-lights
+ *
+ * Example:
+ *
+ *     <route-ui-lights lights="(1|2)" name="Lights"></route-ui-lights>
+ *
+ * @class route-ui-lights
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../route-ui-message/route-ui-message.html">
+
+<polymer-element name="route-ui-lights" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-ui-lights.css">
+    <route-ui-message id="message">
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <div flex></div>
+      <div>{{brightness}}</div>
+      <div flex></div>
+    </route-ui-message>
+    <route-ui-tile id="tile" autofire autofireInterval="300">
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <div flex></div>
+      <div style="height: 128px;">
+        <polymer-flex-layout></polymer-flex-layout>
+        <div flex></div>
+        <div style="width: 128px; position: relative;">
+          <div class="left">Hue</div>
+          <div class="right">Hue</div>
+          <div class="top">Bright</div>
+          <div class="bottom">Dim</div>
+          <div class="icon">
+            <polymer-flex-layout vertical></polymer-flex-layout>
+            <div flex></div>
+            <div class="name">{{name}}</div>
+            <div flex></div>
+          </div>
+        </div>
+        <div flex></div>
+      </div>
+      <div flex></div>
+    </route-ui-tile>
+  </template>
+  <script>
+    Polymer('route-ui-lights', {
+      name: "Lights",
+      lights: null,
+
+      brightness: 0,
+
+      ready: function() {
+        this.$.tile.addEventListener("route-ui-tile-top", this.topHandler.bind(this));
+        this.$.tile.addEventListener("route-ui-tile-bottom", this.bottomHandler.bind(this));
+        this.$.tile.addEventListener("route-ui-tile-center", this.centerHandler.bind(this));
+      },
+      centerHandler: function() {
+
+      },
+      topHandler: function() {
+        this.brightness = Math.min(100, this.brightness + 5);
+        this.$.message.show();
+      },
+      bottomHandler: function() {
+        this.brightness = Math.max(0, this.brightness - 5);
+        this.$.message.show();
+      },
+    });
+  </script>
+</polymer-element>

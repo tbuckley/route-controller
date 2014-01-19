@@ -3,6 +3,7 @@
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="route-tile-layout/route-tile-layout.html">
 <link rel="import" href="route-ui-tile/route-ui-tile.html">
+<link rel="import" href="route-ui-lights/route-ui-lights.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
@@ -16,9 +17,8 @@
       <div style="position: relative" flex>
         <section id="tiles">
           <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
+          <route-ui-lights></route-ui-lights>
           <route-ui-tile></route-ui-tile>
-          <route-ui-tile></route-ui-tile>
-
           <route-ui-tile></route-ui-tile>
           <route-ui-tile></route-ui-tile>
           <route-ui-tile></route-ui-tile>
