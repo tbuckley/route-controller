@@ -6,18 +6,18 @@ license that can be found in the LICENSE file.
 
 <!--
 /**
- * @module Polymer UI Elements
+ * @module Route UI Elements
  */
 /**
- * polymer-ui-card <b>(WIP)</b>
+ * route-ui-tile
  *
  * Example:
  *
- *     <polymer-ui-card>
+ *     <polymer-ui-tile>
  *       ...
- *     </polymer-ui-card>
+ *     </polymer-ui-tile>
  *
- * @class polymer-ui-card
+ * @class route-ui-tile
  */
 /**
  * Fired when the card is swiped away.
@@ -30,43 +30,52 @@ license that can be found in the LICENSE file.
 <polymer-element name="route-ui-tile" attributes="swipeable noCurve">
   <template>
     <link rel="stylesheet" href="route-ui-tile.css">
-    <div id="tile" on-pointerdown="{{pointerDown}}" on-trackstart="{{trackStart}}" on-track="{{track}}" on-trackend="{{trackEnd}}" on-tap="{{trackEnd}}">
-      <div hidden?="{{messageVisible}}">{{"foo"}}</div>
+    <div id="message" hidden?="{{!messageVisible}}">{{message}}</div>
+    <div id="tile">
       <content></content>
     </div>
   </template>
   <script>
     Polymer('route-ui-tile', {
       /**
-       * Sets how much the tile should be able to rotate.
+       * Sets how much the tile should be able to rotate around the X/Y axes, in degrees.
        *
-       * @attribute swipeable
-       * @type boolean
-       * @default false
+       * @attribute maxRotation
+       * @type int
+       * @default 15
        */
       maxRotation: 15,
+
+      messageVisible: true,
+      message: "100",
+
+      ctr: 0,
+
       ready: function() {
-        this.transitionEndListener = this.transitionEnd.bind(this);
+        // this.transitionEndListener = this.transitionEnd.bind(this);
+        this.pointerStartListener = this.pointerStart.bind(this);
+        this.pointerMoveListener = this.pointerMove.bind(this);
+        this.pointerEndListener = this.pointerEnd.bind(this);
+
+        var hasTouch = ("ontouchstart" in document.documentElement);
+        this.startEvent = hasTouch ? "touchstart" : "mousedown";
+        this.moveEvent = hasTouch ? "touchmove" : "mousemove";
+        this.endEvent = hasTouch ? "touchend" : "mouseup";
+
+        this.addListeners();
       },
       leftView: function() {
         this.removeListeners();
       },
       addListeners: function() {
-        this.addEventListener('webkitTransitionEnd',
-            this.transitionEndListener);
-        this.addEventListener('transitionend', this.transitionEndListener);
+        // this.addEventListener('webkitTransitionEnd', this.transitionEndListener);
+        // this.addEventListener('transitionend', this.transitionEndListener);
+        this.addEventListener(this.startEvent, this.pointerStartListener);
       },
       removeListeners: function() {
-        this.removeEventListener('webkitTransitionEnd',
-            this.transitionEndListener);
-        this.removeEventListener('transitionend', this.transitionEndListener);
-      },
-      swipeableChanged: function() {
-        if (this.swipeable) {
-          this.addListeners();
-        } else {
-          this.removeListeners();
-        }
+        // this.removeEventListener('webkitTransitionEnd',this.transitionEndListener);
+        // this.removeEventListener('transitionend', this.transitionEndListener);
+        this.removeEventListener(this.startEvent, this.pointerStartListener);
       },
       animate: function(diffX, diffY, raised) {
         var bound = function(value, min, max) {
@@ -87,8 +96,12 @@ license that can be found in the LICENSE file.
         s.webkitTransform = s.mozTransform = s.msTransform = s.transform =
             transform + " " + rotate;
       },
-      pointerDown: function(e) {
+      pointerStart: function(e) {
         e.preventDefault();
+
+        document.addEventListener(this.moveEvent, this.pointerMoveListener);
+        document.addEventListener(this.endEvent, this.pointerEndListener);
+
         this.x = this.offsetLeft;
         this.y = this.offsetTop;
         for(var el = this.offsetParent;
@@ -99,35 +112,96 @@ license that can be found in the LICENSE file.
         this.cx = this.x + (this.w / 2);
         this.cy = this.y + (this.h / 2);
 
-        this.dx = 0;
-        this.dy = 0;
+        this.startX = this.endX = e.clientX || e.touches[0].clientX;
+        this.startY = this.endY = e.clientY || e.touches[0].clientY;
 
         this.animate(0, 0, true);
-      },
-      trackStart: function(e) {
-        e.preventTap();
-
-        this.animate(e.clientX - this.cx, e.clientY - this.cy, true);
         this.async(function() {
           this.$.tile.classList.add('dragging');
         }.bind(this));
+
+        this.positionUpdated();
       },
-      track: function(e) {
+      pointerMove: function(e) {
         e.preventDefault();
-        this.animate(e.clientX - this.cx, e.clientY - this.cy, true);
-        this.dx = e.dx;
-        this.dy = e.dy;
+
+        this.endX = e.clientX || e.touches[0].clientX,
+        this.endY = e.clientY || e.touches[0].clientY;
+        this.animate(this.endX - this.cx, this.endY - this.cy, true);
+
+        this.positionUpdated();
       },
-      trackEnd: function(e) {
+      pointerEnd: function(e) {
         e.preventDefault();
+
+        document.removeEventListener(this.moveEvent, this.pointerMoveListener);
+        document.removeEventListener(this.endEvent, this.pointerEndListener);
+
         this.$.tile.classList.remove('dragging');
         this.animate(0, 0);
         console.log("TRACKEND", this.dx, this.dy);
+
+        this.clearTimers();
+        this.lastZone = null;
       },
-      transitionEnd: function() {
-        if (this.away) {
-          this.fire('polymer-card-swipe-away');
+      clearTimers: function() {
+        if(this.fireTimer) {
+          clearTimeout(this.fireTimer);
         }
+        if(this.keepFiringTimer) {
+          clearTimeout(this.keepFiringTimer);
+        }
+      },
+      positionUpdated: function() {
+        var zone = "foo";
+        if(!this.lastZone || this.lastZone != zone) {
+          this.lastZone = zone;
+          this.clearTimers();
+          this.fireTimer = setTimeout(this.keepFiring.bind(this), 1000)
+        }
+      },
+      keepFiring: function() {
+        this.fireEvent();
+        this.keepFiringTimer = setTimeout(this.keepFiring.bind(this), 100);
+      },
+      fireEvent: function() {
+        console.log("FIRE");
+        var percentX = (this.endX - this.cx) * 2 / this.w,
+            percentY = (this.endY - this.cy) * 2 / this.h,
+            distX = this.endX - this.startX,
+            distY = this.endY - this.startY,
+            movement = Math.sqrt(distX*distX + distY*distY);
+
+        var details = {
+          distance: movement,
+          percentX: percentX,
+          percentY: percentY,
+        };
+
+        if(percentY > 0.3) {
+          this.ctr += 1;
+          this.showMessage(this.ctr);
+          return "top";
+        } else if(percentY < 0.3) {
+          this.ctr -= 1;
+          this.showMessage(this.ctr);
+          return "bottom";
+        }
+      },
+      showMessage: function(msg) {
+        this.message = msg;
+        // this.messageVisible = true;
+
+        if(this.messageTimer) {
+          clearTimeout(this.messageTimer);
+        }
+        this.messageTimer = setTimeout(function() {
+          this.$.message.style.opacity = 0;
+        }.bind(this), 1000);
+
+        this.async(function() {
+          this.$.message.style.opacity = 1;
+        }.bind(this));
       }
     });
   </script>

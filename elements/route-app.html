@@ -39,8 +39,17 @@
           [1, 2, 3],
           [4, 5, 6],
         ],
+        brightness: 0,
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
+          this.setBrightness();
+        },
+        setBrightness: function() {
+          if(window.Android) {
+            Android.setBrightness(this.brightness);
+            this.brightness = (this.brightness + 10) % 100;
+          }
+          // setTimeout(this.setBrightness.bind(this), 1000);
         },
         enteredView: function() {},
         resize: function(e) {

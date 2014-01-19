@@ -52,6 +52,7 @@
       });
 
       var colCount, rowCount;
+      var offsetLeft, offsetTop;
       var unit;
       var m = 0;
 
@@ -74,8 +75,8 @@
       function position(elt, left, right, top, bottom) {
         console.log("POSITION", left, right, top, bottom);
         elt.style["display"] = "block";
-        _position(elt.style, 'top', 'bottom', 'height', top * unit, bottom * unit);
-        _position(elt.style, 'left', 'right', 'width', left * unit, right * unit);
+        _position(elt.style, 'top', 'bottom', 'height', top * unit + offsetTop, bottom * unit + offsetTop);
+        _position(elt.style, 'left', 'right', 'width', left * unit + offsetLeft, right * unit + offsetLeft);
       }
 
       // Custom
@@ -87,7 +88,6 @@
       }
 
       function layout(matrix, anodes, parent) {
-        console.log("LAYOUT CALLED");
         nodes = anodes;
 
         rowCount = matrix.length;
@@ -96,7 +96,8 @@
         nodes.forEach(unposition);
 
         unit = calculateUnit(parent, colCount, rowCount);
-        console.log("Unit: ", unit)
+        offsetLeft = Math.floor((parent.offsetWidth - colCount * unit) / 2);
+        offsetTop = Math.floor((parent.offsetHeight - rowCount * unit) / 2);
 
         nodes.forEach(function(node, i) {
           // node indices are 1-based
