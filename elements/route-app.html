@@ -1,6 +1,7 @@
 <link rel="import" href="../components/polymer/polymer.html">
 <link rel="import" href="../components/polymer-page/polymer-page.html">
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../components/polymer-ui-pages/polymer-ui-pages.html">
 <link rel="import" href="route-tile-layout/route-tile-layout.html">
 <link rel="import" href="route-ui-tile/route-ui-tile.html">
 <link rel="import" href="route-messenger.html">
@@ -15,25 +16,33 @@
 
     <route-messenger id="messenger"></route-messenger>
 
-    <div id="page">
-      <polymer-flex-layout></polymer-flex-layout>
+    <polymer-ui-pages valueattr="id" selected="{{page}}">
 
-      <div style="position: relative" flex>
-        <section id="tiles">
-          <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
-          <route-ui-lights messenger="{{$.messenger.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
-          <route-ui-lights messenger="{{$.messenger.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
-          <route-ui-media messenger="{{$.messenger.socket}}"></route-ui-media>
-          <route-ui-tile></route-ui-tile>
-          <route-ui-tile></route-ui-tile>
-          <route-ui-tile></route-ui-tile>
+      <div id="panel" class="page">
+        <polymer-flex-layout></polymer-flex-layout>
+
+        <div style="position: relative" flex>
+          <section id="tiles">
+            <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
+            <route-ui-lights messenger="{{$.messenger.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
+            <route-ui-lights messenger="{{$.messenger.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
+            <route-ui-media messenger="{{$.messenger.socket}}"></route-ui-media>
+            <route-ui-tile></route-ui-tile>
+            <route-ui-tile></route-ui-tile>
+            <route-ui-tile></route-ui-tile>
+          </section>
+        </div>
+
+        <section id="bar">
+          BAR
         </section>
       </div>
 
-      <section id="bar">
-        BAR
-      </section>
-    </div>
+      <div id="clock" class="page" on-tap="{{activity}}">
+        <div class="time">{{time}}</div>
+      </div>
+
+    </polymer-ui-pages>
 
   </template>
   <script>
@@ -43,19 +52,59 @@
           [1, 2, 3],
           [4, 5, 6],
         ],
+
+        screenBrightness: 100,
+
+        page: "panel",
+        time: "",
+
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
-          this.setBrightness();
+          window.addEventListener("route-activity", this.activity.bind(this));
+          this.activity();
+          this.setTime();
+        },
+        activity: function() {
+          if(this.screenBrightness != 100) {
+            this.page = "panel";
+            this.screenBrightness = 100;
+            this.setBrightness();
+          }
+          if(this.screenTimer) {
+            clearTimeout(this.screenTimer);
+          }
+          this.screenTimer = setTimeout(function() {
+            console.log("TIMER");
+            this.page = "clock";
+            this.screenBrightness = 1;
+            this.setBrightness();
+          }.bind(this), 60 * 1000);
         },
         setBrightness: function() {
           if(window.Android) {
-            Android.setBrightness(100);
+            Android.setBrightness(this.screenBrightness);
           }
         },
         enteredView: function() {},
         resize: function(e) {
           this.$.tileLayout.invalidate();
-        }
+        },
+        setTime: function() {
+          var now = new Date();
+          var hrs = now.getHours();
+          var mins = now.getMinutes();
+          if(hrs == 0) {
+            hrs = 12;
+          } else if(hrs > 12) {
+            hrs -= 12;
+          }
+          if(mins < 10) {
+            mins = "0" + mins;
+          }
+          this.time = hrs + ":" + mins;
+
+          setTimeout(this.setTime.bind(this), 500);
+        },
       });
     })();
   </script>

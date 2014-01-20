@@ -22,7 +22,7 @@ license that can be found in the LICENSE file.
 /**
  * Fired when the tile is tilted in some direction.
  *
- * @event route-ui-tile-tilt
+ * @event route-ui-tile-[left/right/top/bottom]
  */
 /**
  * Fired when the tile is pressed.
@@ -160,6 +160,7 @@ license that can be found in the LICENSE file.
       },
       pointerStart: function(e) {
         e.preventDefault();
+        this.fire("route-activity");
 
         document.addEventListener(this.moveEvent, this.pointerMoveListener);
         document.addEventListener(this.endEvent, this.pointerEndListener);
@@ -182,6 +183,7 @@ license that can be found in the LICENSE file.
       },
       pointerMove: function(e) {
         e.preventDefault();
+        this.fire("route-activity");
 
         var clientX = e.clientX || e.touches[0].clientX,
             clientY = e.clientY || e.touches[0].clientY;
@@ -194,12 +196,13 @@ license that can be found in the LICENSE file.
       },
       pointerEnd: function(e) {
         e.preventDefault();
+        this.fire("route-activity");
 
         document.removeEventListener(this.moveEvent, this.pointerMoveListener);
         document.removeEventListener(this.endEvent, this.pointerEndListener);
 
         this.$.tile.classList.remove('dragging');
-        this.animate(0, 0);
+        this.animate(0, 0, false);
 
         this.clearTimers();
         this.lastZone = null;

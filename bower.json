@@ -6,6 +6,7 @@
     "polymer": "Polymer/polymer#master",
     "polymer-flex-layout": "Polymer/polymer-flex-layout#master",
     "polymer-page": "Polymer/polymer-page#master",
+    "polymer-ui-pages": "Polymer/polymer-ui-pages#master",
     "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master"
   }
 }

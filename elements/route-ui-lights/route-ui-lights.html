@@ -64,7 +64,7 @@ license that can be found in the LICENSE file.
       name: "Lights",
       lights: null,
 
-      brightness: 0,
+      brightness: 100,
       state: false,
 
       attached: function() {
@@ -80,7 +80,7 @@ license that can be found in the LICENSE file.
               }
             }
           }
-          this.update();
+          // this.update();
         }.bind(this));
 
         this.messenger.emit("getState", "Hue.LightInfo");
