@@ -3,8 +3,9 @@
 <link rel="import" href="../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="route-tile-layout/route-tile-layout.html">
 <link rel="import" href="route-ui-tile/route-ui-tile.html">
-<link rel="import" href="route-ui-lights/route-ui-lights.html">
 <link rel="import" href="route-messenger.html">
+<link rel="import" href="route-ui-lights/route-ui-lights.html">
+<link rel="import" href="route-ui-media/route-ui-media.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
@@ -22,7 +23,7 @@
           <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
           <route-ui-lights messenger="{{$.messenger.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
           <route-ui-lights messenger="{{$.messenger.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
-          <route-ui-tile></route-ui-tile>
+          <route-ui-media messenger="{{$.messenger.socket}}"></route-ui-media>
           <route-ui-tile></route-ui-tile>
           <route-ui-tile></route-ui-tile>
           <route-ui-tile></route-ui-tile>
@@ -42,17 +43,14 @@
           [1, 2, 3],
           [4, 5, 6],
         ],
-        brightness: 0,
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
           this.setBrightness();
         },
         setBrightness: function() {
           if(window.Android) {
-            Android.setBrightness(this.brightness);
-            this.brightness = (this.brightness + 10) % 100;
+            Android.setBrightness(100);
           }
-          // setTimeout(this.setBrightness.bind(this), 1000);
         },
         enteredView: function() {},
         resize: function(e) {

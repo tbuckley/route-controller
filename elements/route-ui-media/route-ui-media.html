@@ -1,0 +1,82 @@
+<!--
+Copyright 2013 The Polymer Authors. All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+-->
+
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-media
+ *
+ * Example:
+ *
+ *     <route-ui-media messenger="{{messenger}}"></route-ui-media>
+ *
+ * @class route-ui-media
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../polymer-image-search.html">
+
+<polymer-element name="route-ui-media" attributes="messenger">
+  <template>
+    <link rel="stylesheet" href="route-ui-media.css">
+
+    <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search>
+
+    <route-ui-tile id="tile" on-route-ui-tile-left="{{nextTrack}}" on-route-ui-tile-right="{{prevTrack}}"
+        on-route-ui-tile-center="{{playPause}}">
+      <div class="album-name">{{name}}</div>
+      <div id="artwork">
+    </route-ui-tile>
+  </template>
+  <script>
+    Polymer('route-ui-media', {
+      attached: function() {
+        this.messenger.on("Sonos.Main.TrackInfo", function(data) {
+          this.name = data.name;
+          this.query = data.artist + " " + data.album + " album art";
+        }.bind(this));
+        this.messenger.emit("getState", "Sonos.Main.TrackInfo");
+      },
+      playPause: function() {
+        this.messenger.emit("DeviceEvent", "PlayPause", {});
+      },
+      nextTrack: function() {
+        this.messenger.emit("DeviceEvent", "NextTrack", {});
+      },
+      prevTrack: function() {
+        this.messenger.emit("DeviceEvent", "PrevTrack", {});
+      },
+      loadHandler: function(error, img, sender) {
+        while(this.$.artwork.hasChildNodes()) {
+          this.$.artwork.removeChild(this.$.artwork.lastChild);
+        }
+        this.$.artwork.appendChild(img);
+
+        var dim = this.offsetWidth - 8;
+        if(img.width > img.height) {
+          var width = (dim * img.width / img.height),
+              offset = -Math.floor((width - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.height = dim + "px";
+          img.style.width = "auto";
+          img.style.left = offset + "px";
+        } else {
+          var height = (dim * img.height / img.width),
+              offset = -Math.floor((height - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.width = dim + "px";
+          img.style.height = "auto";
+          img.style.top = offset + "px";
+        }
+      },
+    });
+  </script>
+</polymer-element>
