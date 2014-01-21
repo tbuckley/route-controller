@@ -1,0 +1,79 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-lockscreen
+ *
+ * Example:
+ *
+ *     <route-ui-lockscreen></route-ui-lockscreen>
+ *
+ * @class route-ui-lockscreen
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+
+<polymer-element name="route-ui-lockscreen" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-ui-lockscreen.css">
+
+    <polymer-flex-layout vertical></polymer-flex-layout>
+    <div flex></div>
+    <div id="time">
+      <polymer-flex-layout></polymer-flex-layout>
+      <div class="hours" flex>{{hours}}</div>
+      <div>:</div>
+      <div class="minutes" flex>{{minutes}}</div>
+    </div>
+    <div flex></div>
+  </template>
+  <script>
+    Polymer('route-ui-lockscreen', {
+      time: "",
+      attached: function() {
+        this.setTime();
+        this.resize();
+      },
+      resize: function() {
+        var screenAmount = 0.75;
+
+        var w = this.offsetWidth,
+            h = this.offsetHeight;
+        var fontSize = 64;
+        while(this.$.time.offsetHeight < h * screenAmount) {
+          fontSize *= 2;
+          this.$.time.style.fontSize = fontSize + "px";
+        }
+        var min = 64, max = fontSize;
+        do {
+          var guess = Math.floor((max - min) / 2) + min;
+          this.$.time.style.fontSize = guess + "px";
+          if(this.$.time.offsetHeight < h * screenAmount) {
+            min = guess + 1;
+          } else {
+            max = guess - 1;
+          }
+        } while(min < max);
+      },
+      setTime: function() {
+        var now = new Date(),
+            hrs = now.getHours(),
+            mins = now.getMinutes();
+        if(hrs == 0) {
+          hrs = 12;
+        } else if(hrs > 12) {
+          hrs -= 12;
+        }
+        if(mins < 10) {
+          mins = "0" + mins;
+        }
+        this.hours = hrs;
+        this.minutes = mins;
+
+        setTimeout(this.setTime.bind(this), 1000);
+      },
+    });
+  </script>
+</polymer-element>

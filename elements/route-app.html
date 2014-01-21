@@ -6,8 +6,10 @@
 <link rel="import" href="route-ui-tile/route-ui-tile.html">
 <link rel="import" href="route-messenger.html">
 <link rel="import" href="route-power-manager/route-power-manager.html">
+<link rel="import" href="route-ui-lockscreen/route-ui-lockscreen.html">
 <link rel="import" href="route-ui-lights/route-ui-lights.html">
 <link rel="import" href="route-ui-media/route-ui-media.html">
+<link rel="import" href="route-ui-power/route-ui-power.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
@@ -15,7 +17,7 @@
 
     <polymer-page></polymer-page>
 
-    <route-power-manager id="powerManager" sleepdelay="2000"
+    <route-power-manager id="powerManager" sleepdelay="3000" auto
         on-route-sleep="{{sleep}}" on-route-wake="{{wake}}">
     </route-power-manager>
 
@@ -32,7 +34,7 @@
             <route-ui-lights messenger="{{$.messenger.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
             <route-ui-lights messenger="{{$.messenger.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
             <route-ui-media messenger="{{$.messenger.socket}}"></route-ui-media>
-            <route-ui-tile></route-ui-tile>
+            <route-ui-power></route-ui-power>
             <route-ui-tile></route-ui-tile>
             <route-ui-tile></route-ui-tile>
           </section>
@@ -41,9 +43,7 @@
         <section id="bar"></section>
       </div>
 
-      <div id="clock" class="page" on-tap="{{activity}}">
-        <div class="time">{{time}}</div>
-      </div>
+      <route-ui-lockscreen id="clock"></route-ui-lockscreen>
 
     </polymer-ui-pages>
 
@@ -61,7 +61,6 @@
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
-          this.setTime();
         },
         wake: function() {
           this.page = "panel";
@@ -71,22 +70,6 @@
         },
         resize: function(e) {
           this.$.tileLayout.invalidate();
-        },
-        setTime: function() {
-          var now = new Date();
-          var hrs = now.getHours();
-          var mins = now.getMinutes();
-          if(hrs == 0) {
-            hrs = 12;
-          } else if(hrs > 12) {
-            hrs -= 12;
-          }
-          if(mins < 10) {
-            mins = "0" + mins;
-          }
-          this.time = hrs + ":" + mins;
-
-          setTimeout(this.setTime.bind(this), 500);
         },
       });
     })();

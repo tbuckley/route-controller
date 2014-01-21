@@ -23,9 +23,13 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-signals/polymer-signals.html">
 
-<polymer-element name="route-power-manager" attributes="sleepDelay">
+<polymer-element name="route-power-manager" attributes="auto sleepDelay">
   <template>
+    <polymer-signals id="signals"
+        on-polymer-signal-wake="{{fireWake}}"
+        on-polymer-signal-sleep="{{fireSleep}}"></polymer-signals>
   </template>
   <script>
     (function() {
@@ -51,10 +55,21 @@
          */
         sleepDelay: 60 * 1000,
 
+        /**
+         * Whether this power manager should automaticallly dim the screen
+         *
+         * @attribute auto
+         * @type bool
+         * @default false
+         */
+        auto: false,
+
         enteredView: function() {
-          var parent = this.parentNode;
-          for(var i = 0; i < events.length; i++) {
-            parent.addEventListener(events[i], this.activity.bind(this));
+          if(this.auto) {
+            var parent = this.parentNode;
+            for(var i = 0; i < events.length; i++) {
+              parent.addEventListener(events[i], this.activity.bind(this));
+            }
           }
           this.activity();
         },
@@ -62,28 +77,40 @@
           if(state != "awake") {
             this.wake();
           }
-          if(this.timer) {
-            clearTimeout(this.timer);
+          if(this.auto) {
+            if(this.timer) {
+              clearTimeout(this.timer);
+            }
+            this.timer = setTimeout(this.sleep.bind(this), this.sleepDelay);
           }
-          this.timer = setTimeout(this.sleep.bind(this), this.sleepDelay);
         },
         wake: function() {
+          console.log("WAKE");
           state = "awake";
           this.setBrightness(100);
-          this.fire("route-wake");
+          this.fire("polymer-signal", {name: "wake"});
         },
         sleep: function() {
+          console.log("SLEEP");
           if(this.timer) {
             clearTimeout(this.timer);
           }
           state = "asleep";
           this.setBrightness(1);
-          this.fire("route-sleep");
+          this.fire("polymer-signal", {name: "sleep"});
         },
         setBrightness: function(brightness) {
           if(window.Android) {
             Android.setBrightness(brightness);
           }
+        },
+        fireWake: function() {
+          console.log("fireWake");
+          this.fire("route-wake");
+        },
+        fireSleep: function() {
+          console.log("fireSleep");
+          this.fire("route-sleep");
         },
       });
     })();

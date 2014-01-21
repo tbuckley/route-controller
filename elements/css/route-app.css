@@ -30,13 +30,8 @@ polymer-ui-pages {
   visibility: visible;
 }
 #clock {
-  background-color: #000;
   opacity: 0;
-  font-family: "Roboto Condensed", Helvetica, sans-serif;
-  font-size: 64px;
-  font-weight: 300;
-  color: white;
-  -webkit-transition: opacity 5s ease-in;
+  -webkit-transition: opacity 3s ease-in;
 }
 #clock.polymer-selected {
   opacity: 1;
