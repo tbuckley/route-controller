@@ -61,7 +61,21 @@ license that can be found in the LICENSE file.
   </template>
   <script>
     Polymer('route-ui-lights', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
       name: "Lights",
+      /**
+       * Regex used to match the lights to control
+       *
+       * @attribute lights
+       * @type regex
+       * @default null
+       */
       lights: null,
 
       brightness: 100,
