@@ -25,7 +25,10 @@ polymer-ui-pages {
   right: 0;
 }
 
-
+#panel {
+  z-index: 0;
+  visibility: visible;
+}
 #clock {
   background-color: #000;
   opacity: 0;
@@ -33,10 +36,11 @@ polymer-ui-pages {
   font-size: 64px;
   font-weight: 300;
   color: white;
-  -webkit-transition: opacity 5s ease-out;
+  -webkit-transition: opacity 5s ease-in;
 }
 #clock.polymer-selected {
   opacity: 1;
+  z-index: 1000;
 }
 
 #tiles {

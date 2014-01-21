@@ -5,6 +5,7 @@
 <link rel="import" href="route-tile-layout/route-tile-layout.html">
 <link rel="import" href="route-ui-tile/route-ui-tile.html">
 <link rel="import" href="route-messenger.html">
+<link rel="import" href="route-power-manager/route-power-manager.html">
 <link rel="import" href="route-ui-lights/route-ui-lights.html">
 <link rel="import" href="route-ui-media/route-ui-media.html">
 
@@ -12,7 +13,11 @@
   <template>
     <link rel="stylesheet" href="css/route-app.css">
 
-    <!-- <polymer-page></polymer-page> -->
+    <polymer-page></polymer-page>
+
+    <route-power-manager id="powerManager" sleepdelay="2000"
+        on-route-sleep="{{sleep}}" on-route-wake="{{wake}}">
+    </route-power-manager>
 
     <route-messenger id="messenger"></route-messenger>
 
@@ -33,9 +38,7 @@
           </section>
         </div>
 
-        <section id="bar">
-          BAR
-        </section>
+        <section id="bar"></section>
       </div>
 
       <div id="clock" class="page" on-tap="{{activity}}">
@@ -53,39 +56,19 @@
           [4, 5, 6],
         ],
 
-        screenBrightness: 100,
-
         page: "panel",
         time: "",
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
-          window.addEventListener("route-activity", this.activity.bind(this));
-          this.activity();
           this.setTime();
         },
-        activity: function() {
-          if(this.screenBrightness != 100) {
-            this.page = "panel";
-            this.screenBrightness = 100;
-            this.setBrightness();
-          }
-          if(this.screenTimer) {
-            clearTimeout(this.screenTimer);
-          }
-          this.screenTimer = setTimeout(function() {
-            console.log("TIMER");
-            this.page = "clock";
-            this.screenBrightness = 1;
-            this.setBrightness();
-          }.bind(this), 60 * 1000);
+        wake: function() {
+          this.page = "panel";
         },
-        setBrightness: function() {
-          if(window.Android) {
-            Android.setBrightness(this.screenBrightness);
-          }
+        sleep: function() {
+          this.page = "clock";
         },
-        enteredView: function() {},
         resize: function(e) {
           this.$.tileLayout.invalidate();
         },

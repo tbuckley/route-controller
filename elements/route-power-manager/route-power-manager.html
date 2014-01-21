@@ -1,0 +1,91 @@
+<!--
+/**
+ * @module Route Elements
+ */
+/**
+ * route-power-manager
+ *
+ * Example:
+ *
+ *     <route-power-manager></route-power-manager>
+ *
+ * @class route-power-manager
+ */
+ /**
+ * Fired when the app wakes up.
+ *
+ * @event route-wake
+ */
+ /**
+ * Fired when the app goes to sleep.
+ *
+ * @event route-sleep
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-power-manager" attributes="sleepDelay">
+  <template>
+  </template>
+  <script>
+    (function() {
+      var events, state;
+
+      events = [
+        "mousedown",
+        "mousemove",
+        "mouseup",
+        "touchstart",
+        "touchmove",
+        "touchend",
+      ];
+      state = "awake";
+
+      Polymer("route-power-manager", {
+        /**
+         * The amount of time to wait before dimming the screen, in milliseconds
+         *
+         * @attribute sleepDelay
+         * @type int
+         * @default 60000
+         */
+        sleepDelay: 60 * 1000,
+
+        enteredView: function() {
+          var parent = this.parentNode;
+          for(var i = 0; i < events.length; i++) {
+            parent.addEventListener(events[i], this.activity.bind(this));
+          }
+          this.activity();
+        },
+        activity: function() {
+          if(state != "awake") {
+            this.wake();
+          }
+          if(this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.timer = setTimeout(this.sleep.bind(this), this.sleepDelay);
+        },
+        wake: function() {
+          state = "awake";
+          this.setBrightness(100);
+          this.fire("route-wake");
+        },
+        sleep: function() {
+          if(this.timer) {
+            clearTimeout(this.timer);
+          }
+          state = "asleep";
+          this.setBrightness(1);
+          this.fire("route-sleep");
+        },
+        setBrightness: function(brightness) {
+          if(window.Android) {
+            Android.setBrightness(brightness);
+          }
+        },
+      });
+    })();
+  </script>
+</polymer-element>
