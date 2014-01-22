@@ -22,16 +22,14 @@
     <polymer-flex-layout vertical></polymer-flex-layout>
     <div flex></div>
     <div id="time">
-      <polymer-flex-layout></polymer-flex-layout>
-      <div class="hours" flex>{{hours}}</div>
-      <div>:</div>
-      <div class="minutes" flex>{{minutes}}</div>
+      <span class="hours">{{hours}}</span><span class="minutes">{{minutes}}</span>
     </div>
     <div flex></div>
   </template>
   <script>
     Polymer('route-ui-lockscreen', {
-      time: "",
+      hours: "12",
+      minutes: "00",
       attached: function() {
         this.setTime();
         this.resize();
