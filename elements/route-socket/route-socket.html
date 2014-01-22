@@ -1,0 +1,34 @@
+<link rel="import" href="../components/polymer/polymer.html">
+
+<polymer-element name="route-socket">
+  <template>
+
+  </template>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script>
+    (function() {
+      var socket;
+
+      function init() {
+        if(!socket) {
+          socket = io.connect('http://' + location.host);
+        }
+      }
+
+      Polymer("route-socket", {
+        ready: function() {
+          init();
+        },
+        on: function() {
+          socket.on.apply(socket, arguments);
+        },
+        emit: function() {
+          socket.emit.apply(socket, arguments);
+        },
+        get socket() {
+          return socket;
+        },
+      })
+    })();
+  </script>
+</polymer-element>
