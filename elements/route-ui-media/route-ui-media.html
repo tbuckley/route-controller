@@ -15,11 +15,13 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../route-ui-tile/route-ui-tile.html">
 <link rel="import" href="../polymer-image-search/polymer-image-search.html">
+<link rel="import" href="../route-state/route-state.html">
 
 <polymer-element name="route-ui-media" attributes="messenger">
   <template>
     <link rel="stylesheet" href="route-ui-media.css">
 
+    <route-state name="Sonos.Main.TrackInfo" on-state-change="{{trackChanged}}"></route-state>
     <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search>
 
     <route-ui-tile id="tile" on-route-ui-tile-left="{{nextTrack}}" on-route-ui-tile-right="{{prevTrack}}"
@@ -27,15 +29,13 @@
       <div class="album-name">{{name}}</div>
       <div id="artwork">
     </route-ui-tile>
+
   </template>
   <script>
     Polymer('route-ui-media', {
-      attached: function() {
-        this.messenger.on("Sonos.Main.TrackInfo", function(data) {
-          this.name = data.name;
-          this.query = data.artist + " " + data.album + " album art";
-        }.bind(this));
-        this.messenger.emit("getState", "Sonos.Main.TrackInfo");
+      trackChanged: function(event, details, sender) {
+        this.name = details.name;
+        this.query = details.artist + " " + details.album + " album art";
       },
       playPause: function() {
         this.messenger.emit("DeviceEvent", "PlayPause", {});

@@ -59,10 +59,15 @@
         loaded: false,
         ready: function() {},
         enteredView: function() {
-          this.$.jsapi.addEventListener('polymer-google-jsapi-loaded', function() {
-            google.setOnLoadCallback(this.searchLoaded.bind(this));
-            google.load("search", "1");
-          }.bind(this));
+          if(this.$.jsapi.google) {
+            this.$.jsapi.google.setOnLoadCallback(this.searchLoaded.bind(this));
+            this.$.jsapi.google.load("search", "1");
+          } else {
+            this.$.jsapi.addEventListener('polymer-google-jsapi-loaded', function() {
+              google.setOnLoadCallback(this.searchLoaded.bind(this));
+              google.load("search", "1");
+            }.bind(this));
+          }
         },
         searchLoaded: function() {
           this.loaded = true;

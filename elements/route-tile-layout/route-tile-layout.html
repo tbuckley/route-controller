@@ -14,11 +14,9 @@
           this.layout = [];
         },
         nodesChanged: function() {
-          console.log("nodes changed");
           this.invalidate();
         },
         layoutChanged: function() {
-          console.log("layout changed");
           this.invalidate();
         },
         autoNodes: function() {
@@ -34,7 +32,6 @@
         // invalidate will relayout the nodes. It debounces calls so that
         // relayout isn't called too frequently
         invalidate: function() {
-          console.log("INVALIDATE CALLED");
           if(this.layout && this.layout.length) {
             // this.job debounces layout, only letting it occur every N ms
             // debouncing: http://davidwalsh.name/function-debounce
@@ -73,7 +70,6 @@
       }
 
       function position(elt, left, right, top, bottom) {
-        console.log("POSITION", left, right, top, bottom);
         elt.style["display"] = "block";
         _position(elt.style, 'top', 'bottom', 'height', top * unit + offsetTop, bottom * unit + offsetTop);
         _position(elt.style, 'left', 'right', 'width', left * unit + offsetLeft, right * unit + offsetLeft);
@@ -81,7 +77,6 @@
 
       // Custom
       function calculateUnit(node, cols, rows) {
-        console.log("Node dimensions: ", node.offsetWidth, node.offsetHeight);
         var w = Math.floor(node.offsetWidth / cols),
             h = Math.floor(node.offsetHeight / rows);
         return Math.min(h, w);

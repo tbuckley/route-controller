@@ -25,6 +25,9 @@
         emit: function() {
           socket.emit.apply(socket, arguments);
         },
+        removeListener: function() {
+          socket.removeListener.apply(socket, arguments);
+        },
         get socket() {
           return socket;
         },

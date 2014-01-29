@@ -1,0 +1,51 @@
+<!--
+/**
+ * @module Route Elements
+ */
+/**
+ * route-state
+ *
+ * Example:
+ *
+ *     <route-state name="Sonos.CurrentTrack" value="{{current}}"></route-state>
+ *
+ * @class route-state
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-socket/route-socket.html">
+
+<polymer-element name="route-state" attributes="name value">
+  <template>
+    <route-socket id="socket"></route-socket>
+  </template>
+  <script>
+    Polymer('route-state', {
+      name: null,
+      value: null,
+      ready: function() {
+        this.handler = this.stateHandler.bind(this);
+      },
+      detached: function() {
+        this.removeListeners(this.name);
+      },
+      addListeners: function(name) {
+        if(this.name !== null) this.$.socket.on(name, this.handler);
+      },
+      removeListeners: function(name) {
+        if(this.name !== null) this.$.socket.removeListener(name, this.handler);
+      },
+      nameChanged: function(oldName, newName) {
+        console.log("NAME CHANGED: ", oldName, newName, this.name);
+        this.removeListeners(oldName);
+        this.addListeners(newName);
+        this.$.socket.emit("getState", newName);
+      },
+      stateHandler: function(data) {
+        console.log("HANDLED: ", data);
+        this.value = data;
+        this.fire("state-change", data);
+      },
+    });
+  </script>
+</polymer-element>
