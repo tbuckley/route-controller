@@ -12,8 +12,11 @@ route-ui-tile {
   right: 0;
 }
 
-route-ui-tile.active {
-  background-color: red;
+route-ui-tile.active #tile {
+  background-color: rgba(255,0,0,.5);
+}
+route-ui-tile.disabled {
+  opacity: 0.5;
 }
 
 .icon {

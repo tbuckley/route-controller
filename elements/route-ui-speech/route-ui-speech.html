@@ -43,16 +43,22 @@
   <script>
     Polymer('route-ui-speech', {
       ready: function() {
-        var recognition = this.recognition = new webkitSpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
-        recognition.onresult = this.resultHandler.bind(this);
-        recognition.onend = this.endHandler.bind(this);
+        if(!('webkitSpeechRecognition' in window)) {
+          this.$.tile.classList.add("disabled");
+        } else {
+          var recognition = this.recognition = new webkitSpeechRecognition();
+          recognition.continuous = false;
+          recognition.interimResults = false;
+          recognition.lang = "en-US";
+          recognition.onresult = this.resultHandler.bind(this);
+          recognition.onend = this.endHandler.bind(this);
+        }
       },
       centerHandler: function() {
-        this.$.tile.classList.add("active");
-        this.recognition.start();
+        if(this.recognition) {
+          this.$.tile.classList.add("active");
+          this.recognition.start();
+        }
       },
       resultHandler: function(e) {
         for (var i = e.resultIndex; i < e.results.length; i++) {
