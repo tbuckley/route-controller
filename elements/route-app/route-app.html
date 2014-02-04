@@ -11,6 +11,7 @@
 <link rel="import" href="../route-ui-media/route-ui-media.html">
 <link rel="import" href="../route-ui-power/route-ui-power.html">
 <link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
+<link rel="import" href="../route-ui-speech/route-ui-speech.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
@@ -36,8 +37,8 @@
             <route-ui-lights messenger="{{$.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
             <route-ui-media messenger="{{$.socket}}"></route-ui-media>
             <route-ui-power></route-ui-power>
-            <route-ui-alarm messenger="{{$.socket}}"></route-ui-alarm>
             <route-ui-tile></route-ui-tile>
+            <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
           </section>
         </div>
 

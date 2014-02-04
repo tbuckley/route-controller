@@ -1,0 +1,70 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-speech
+ *
+ * Example:
+ *
+ *     <route-ui-speech></route-ui-speech>
+ *
+ * @class route-ui-speech
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+
+<polymer-element name="route-ui-speech" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-ui-speech.css">
+
+    <route-ui-tile id="tile" on-route-ui-tile-center="{{centerHandler}}">
+
+      <div style="height: 100%">
+        <polymer-flex-layout vertical></polymer-flex-layout>
+
+        <div flex></div>
+        <div style="width: 128px; height: 128px; margin: auto;position: relative;">
+          <div class="icon">
+            <polymer-flex-layout vertical></polymer-flex-layout>
+            <div flex></div>
+            <div class="name">Voice</div>
+            <div flex></div>
+          </div>
+        </div>
+        <div flex></div>
+      </div>
+
+    </route-ui-tile>
+
+  </template>
+  <script>
+    Polymer('route-ui-speech', {
+      ready: function() {
+        var recognition = this.recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        recognition.onresult = this.resultHandler.bind(this);
+        recognition.onend = this.endHandler.bind(this);
+      },
+      centerHandler: function() {
+        this.$.tile.classList.add("active");
+        this.recognition.start();
+      },
+      resultHandler: function(e) {
+        for (var i = e.resultIndex; i < e.results.length; i++) {
+          if(e.results[i].isFinal) {
+            console.log(e.results[i][0].transcript);
+          }
+        }
+      },
+      endHandler: function(e) {
+        this.$.tile.classList.remove("active");
+        console.log("ENDED")
+      },
+    });
+  </script>
+</polymer-element>
