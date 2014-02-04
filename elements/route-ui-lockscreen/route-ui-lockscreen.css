@@ -12,8 +12,9 @@
   text-align: center;
 }
 .hours {
-  font-weight: 400;
+  font-weight: 300;
+  color: #999;
 }
 .minutes {
-  color: #999;
+  color: #444;
 }
