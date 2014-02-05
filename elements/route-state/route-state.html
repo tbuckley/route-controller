@@ -23,17 +23,17 @@
     Polymer('route-state', {
       name: null,
       value: null,
-      ready: function() {
+      attached: function() {
         this.handler = this.stateHandler.bind(this);
       },
       detached: function() {
         this.removeListeners(this.name);
       },
       addListeners: function(name) {
-        if(this.name !== null) this.$.socket.on(name, this.handler);
+        if(name !== null) this.$.socket.on(name, this.handler);
       },
       removeListeners: function(name) {
-        if(this.name !== null) this.$.socket.removeListener(name, this.handler);
+        if(name !== null) this.$.socket.removeListener(name, this.handler);
       },
       nameChanged: function(oldName, newName) {
         console.log("NAME CHANGED: ", oldName, newName, this.name);

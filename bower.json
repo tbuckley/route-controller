@@ -8,6 +8,7 @@
     "polymer-page": "Polymer/polymer-page#master",
     "polymer-signals": "Polymer/polymer-signals#master",
     "polymer-ui-pages": "Polymer/polymer-ui-pages#master",
-    "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master"
+    "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master",
+    "skycons": "darkskyapp/skycons#master"
   }
 }

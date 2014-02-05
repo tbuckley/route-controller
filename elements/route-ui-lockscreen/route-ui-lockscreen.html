@@ -14,10 +14,14 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-socket/route-socket.html">
 
 <polymer-element name="route-ui-lockscreen" attributes="">
   <template>
     <link rel="stylesheet" href="route-ui-lockscreen.css">
+
+    <route-state name="Forecast" on-state-change="{{forecastChanged}}"></route-state>
+    <route-state name="SunEvent" on-state-change="{{sunChanged}}"></route-state>
 
     <polymer-flex-layout vertical></polymer-flex-layout>
     <div flex></div>
@@ -25,14 +29,68 @@
       <span class="hours">{{hours}}</span><span class="minutes">{{minutes}}</span>
     </div>
     <div flex></div>
+    <div id="extras">
+      <polymer-flex-layout></polymer-flex-layout>
+      <div flex></div>
+      <canvas id="skycon" width="64" height="64"></canvas>
+      <div id="temp">{{temperature}}&deg;</div>
+      <div flex></div>
+    </div>
   </template>
+  <script src="../../components/skycons/skycons.js"></script>
   <script>
     Polymer('route-ui-lockscreen', {
       hours: "12",
       minutes: "00",
+      temperature: "?",
       attached: function() {
         this.setTime();
         this.resize();
+
+        var skycons = this.skycons = new Skycons({"color": "#FFF"});
+        this.skyconsMap = {
+          "clear-day": Skycons.CLEAR_DAY,
+          "clear-night": Skycons.CLEAR_NIGHT,
+          "rain": Skycons.RAIN,
+          "snow": Skycons.SNOW,
+          "sleet": Skycons.SLEET,
+          "wind": Skycons.WIND,
+          "fog": Skycons.FOG,
+          "cloudy": Skycons.CLOUDY,
+          "partly-cloudy-day": Skycons.PARTLY_CLOUDY_DAY,
+          "partly-cloudy-night": Skycons.PARTLY_CLOUDY_NIGHT,
+        };
+        skycons.add(this.$.skycon, this.skyconsMap["fog"]);
+        skycons.play();
+      },
+      forecastChanged: function(event, details, sender) {
+        console.log(details, details.currently.icon);
+        this.temperature = Math.round(details.currently.apparentTemperature);
+        this.skycons.set("skycon", this.skyconsMap[details.currently.icon]);
+      },
+      sunChanged: function(event, details, sender) {
+        switch(details) {
+          case "SunsetStart":
+          case "Sunset":
+          case "Dusk":
+          case "NauticalDusk":
+          case "Night":
+          case "Nadir":
+          case "NightEnd":
+          case "NauticalDawn":
+          case "Dawn":
+            console.log("Night!");
+            this.classList.add("night");
+            break;
+          case "Sunrise":
+          case "SunriseEnd":
+          case "GoldenHourEnd":
+          case "SolarNoon":
+          case "GoldenHour":
+            console.log("Not night!");
+            this.classList.remove("night");
+            break;
+        }
       },
       resize: function() {
         var screenAmount = 0.75;
