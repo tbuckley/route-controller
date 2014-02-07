@@ -1,9 +1,9 @@
 <link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../components/polymer-google-jsapi/polymer-google-jsapi.html">
+<link rel="import" href="../polymer-google-jsapi/polymer-google-jsapi.html">
 
 <polymer-element name="polymer-image-search" attributes="query">
   <template>
-    <polymer-google-jsapi id="jsapi"></polymer-google-jsapi>
+    <polymer-google-jsapi id="jsapi" on-polymer-google-jsapi-loaded="{{googleLoaded}}"></polymer-google-jsapi>
   </template>
   <script>
     (function() {
@@ -43,7 +43,7 @@
         this.callback(this.img);
       };
 
-      function Searcher() {
+      function Searcher(google) {
         this.search = new google.search.ImageSearch();
       }
       Searcher.prototype.execute = function(query, cb) {
@@ -57,19 +57,13 @@
 
       Polymer("polymer-image-search", {
         loaded: false,
-        ready: function() {},
-        enteredView: function() {
-          if(this.$.jsapi.google) {
-            this.$.jsapi.google.setOnLoadCallback(this.searchLoaded.bind(this));
-            this.$.jsapi.google.load("search", "1");
-          } else {
-            this.$.jsapi.addEventListener('polymer-google-jsapi-loaded', function() {
-              google.setOnLoadCallback(this.searchLoaded.bind(this));
-              google.load("search", "1");
-            }.bind(this));
-          }
+        googleLoaded: function() {
+          console.log("GOOGLE LOADED");
+          this.$.jsapi.google.setOnLoadCallback(this.searchLoaded.bind(this));
+          this.$.jsapi.google.load("search", "1");
         },
         searchLoaded: function() {
+          console.log("SEARCH LOADED");
           this.loaded = true;
           if(this.query != null && this.query != "") {
             this.queryChanged(this.query, this.query);
@@ -77,7 +71,7 @@
         },
         queryChanged: function(oldQuery, newQuery) {
           if(this.loaded) {
-            var searcher = new Searcher();
+            var searcher = new Searcher(this.$.jsapi.google);
             searcher.execute(newQuery, function(img) {
               this.fire("load", img);
             }.bind(this));

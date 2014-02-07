@@ -96,12 +96,6 @@
       update: function() {
         var msg = "SetLights?bulbName="+this.lights+"&bri="+(this.brightness / 100)+"&state="+this.state+"&duration=0.5";
         this.messenger.send(msg);
-        // this.messenger.emit("SetLights", {
-        //   bulbName: this.lights,
-        //   bri: this.brightness / 100,
-        //   state: this.state,
-        //   duration: 0.5,
-        // });
       },
       centerHandler: function(event, detail, sender) {
         this.state = !this.state;
