@@ -40,13 +40,13 @@
         this.query = details.artist + " " + details.album + " album art";
       },
       playPause: function() {
-        this.messenger.emit("DeviceEvent", "PlayPause", {});
+        this.messenger.send("PlayPause");
       },
       nextTrack: function() {
-        this.messenger.emit("DeviceEvent", "NextTrack", {});
+        this.messenger.send("NextTrack");
       },
       prevTrack: function() {
-        this.messenger.emit("DeviceEvent", "PrevTrack", {});
+        this.messenger.send("PrevTrack");
       },
       loadHandler: function(error, img, sender) {
         while(this.$.artwork.hasChildNodes()) {

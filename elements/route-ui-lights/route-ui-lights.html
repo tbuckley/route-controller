@@ -76,30 +76,32 @@
       state: false,
 
       attached: function() {
-        this.messenger.on("Hue.LightInfo", function(data) {
-          for(key in data) {
-            if(data.hasOwnProperty(key) && key != "stateUpdatedTime") {
-              var light = data[key];
-              if(light.name.match(this.lights)) {
-                var brightness = Math.floor(light.state.bri * 20 / 255) * 5,
-                    state = light.state.on;
-                this.brightness = Math.max(this.brightness, brightness);
-                this.state = this.state || state;
-              }
-            }
-          }
-          // this.update();
-        }.bind(this));
+        // this.messenger.on("Hue.LightInfo", function(data) {
+        //   for(key in data) {
+        //     if(data.hasOwnProperty(key) && key != "stateUpdatedTime") {
+        //       var light = data[key];
+        //       if(light.name.match(this.lights)) {
+        //         var brightness = Math.floor(light.state.bri * 20 / 255) * 5,
+        //             state = light.state.on;
+        //         this.brightness = Math.max(this.brightness, brightness);
+        //         this.state = this.state || state;
+        //       }
+        //     }
+        //   }
+        //   // this.update();
+        // }.bind(this));
 
-        this.messenger.emit("getState", "Hue.LightInfo");
+        // this.messenger.emit("getState", "Hue.LightInfo");
       },
       update: function() {
-        this.messenger.emit("DeviceEvent", "SetLights", {
-          bulbName: this.lights,
-          bri: this.brightness / 100,
-          state: this.state,
-          duration: 0.5,
-        });
+        var msg = "SetLights?bulbName="+this.lights+"&bri="+(this.brightness / 100)+"&state="+this.state+"&duration=0.5";
+        this.messenger.send(msg);
+        // this.messenger.emit("SetLights", {
+        //   bulbName: this.lights,
+        //   bri: this.brightness / 100,
+        //   state: this.state,
+        //   duration: 0.5,
+        // });
       },
       centerHandler: function(event, detail, sender) {
         this.state = !this.state;
