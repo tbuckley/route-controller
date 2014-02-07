@@ -25,24 +25,24 @@
       value: null,
       attached: function() {
         this.handler = this.stateHandler.bind(this);
+        this.$.socket.on('state', this.handler);
       },
       detached: function() {
-        this.removeListeners(this.name);
-      },
-      addListeners: function(name) {
-        if(name !== null) this.$.socket.on(name, this.handler);
-      },
-      removeListeners: function(name) {
-        if(name !== null) this.$.socket.removeListener(name, this.handler);
+        this.$.socket.removeListener('state', this.handler);
       },
       nameChanged: function(oldName, newName) {
         console.log("NAME CHANGED: ", oldName, newName, this.name);
-        this.removeListeners(oldName);
-        this.addListeners(newName);
-        this.$.socket.emit("getState", newName);
       },
       stateHandler: function(data) {
-        console.log("HANDLED: ", data);
+        console.log("STATE: ", data);
+        var parts = this.name.split('.');
+        for(var i = 0; i < parts.length; i++) {
+          if(parts[i] in data) {
+            data = data[parts[i]];
+          } else {
+            return;
+          }
+        }
         this.value = data;
         this.fire("state-change", data);
       },
