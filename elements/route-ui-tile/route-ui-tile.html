@@ -220,7 +220,6 @@
       keepFiring: function() {
         this.fired = true;
         this.fire("route-ui-tile-" + this.zone, this.latest);
-        console.log(this.autofireInterval);
         this.keepFiringTimer = setTimeout(this.keepFiring.bind(this), this.autofireInterval);
       },
     });
