@@ -139,7 +139,6 @@
           this.editing = null;
           this.send();
         }
-        console.log(this.editing);
       },
       rightHandler: function(event, detail, sender) {
         this.stopEditing();
@@ -158,10 +157,8 @@
         clearTimeout(this.timer);
         this.timer = null;
         if(this.editing == "hours") {
-          console.log("hours");
           style = this.$.hours.style;
         } else if(this.editing == "minutes") {
-          console.log("minutes");
           style = this.$.minutes.style;
         } else {
           return
@@ -176,19 +173,14 @@
         if(this.timer) {
           clearTimeout(this.timer);
         }
-        console.log("style", this.editing);
         var style;
         if(this.editing == "hours") {
-          console.log("hours");
           style = this.$.hours.style;
         } else if(this.editing == "minutes") {
-          console.log("minutes");
           style = this.$.minutes.style;
         } else {
-          console.log("nothing");
           return
         }
-        console.log(style);
         if(style.visibility) {
           style.visibility = (style.visibility == "visible") ? "hidden" : "visible";
         } else {

@@ -34,7 +34,6 @@
         console.log("NAME CHANGED: ", oldName, newName, this.name);
       },
       stateHandler: function(data) {
-        console.log("STATE: ", data);
         var parts = this.name.split('.');
         for(var i = 0; i < parts.length; i++) {
           if(parts[i] in data) {

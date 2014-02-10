@@ -34,7 +34,6 @@
   <script>
     Polymer('route-ui-media', {
       trackChanged: function(event, details, sender) {
-        console.log("TRACK CHANGED: ", details);
         this.name = details.name;
         this.query = details.artist + " " + details.album + " album art";
       },
