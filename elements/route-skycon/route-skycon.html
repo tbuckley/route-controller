@@ -19,6 +19,7 @@
         attached: function() {
           this.skycons = new Skycons({"color": "#FFF"});
           this.skycons.add(this.$.canvas, icon2drawing(this.icon));
+          this.skycons.play();
         },
         detached: function() {
 

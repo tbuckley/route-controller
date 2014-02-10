@@ -1,0 +1,26 @@
+@host {
+  :scope {
+    background-color: #000;
+    color: #FFF;
+    font-family: "Roboto", Helvetica, sans-serif;
+    font-weight: 100;
+    font-size: 32px;
+  }
+}
+
+#room {
+  text-transform: uppercase;
+}
+#content {
+  position: relative;
+  -webkit-transform-origin: 0% 0%;
+  -webkit-transform: rotate(90deg);
+  transform-origin: 0% 0%;
+  transform: rotate(90deg);
+}
+.spacer {
+  width: 16px;
+}
+#time, #room, #weather {
+  padding: 18px 0;
+}

@@ -12,6 +12,7 @@
 <link rel="import" href="../route-ui-power/route-ui-power.html">
 <link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
 <link rel="import" href="../route-ui-speech/route-ui-speech.html">
+<link rel="import" href="../route-ui-bar/route-ui-bar.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
@@ -42,7 +43,7 @@
           </section>
         </div>
 
-        <section id="bar"></section>
+        <route-ui-bar id="bar"></route-ui-bar>
       </div>
 
       <route-ui-lockscreen id="clock"></route-ui-lockscreen>
@@ -72,6 +73,7 @@
         },
         resize: function(e) {
           this.$.tileLayout.invalidate();
+          this.$.bar.invalidate();
         },
       });
     })();

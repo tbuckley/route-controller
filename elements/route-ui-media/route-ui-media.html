@@ -21,7 +21,7 @@
   <template>
     <link rel="stylesheet" href="route-ui-media.css">
 
-    <route-state name="Sonos" on-state-change="{{trackChanged}}"></route-state>
+    <route-state name="Sonos.Main.trackInfo" on-state-change="{{trackChanged}}"></route-state>
     <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search>
 
     <route-ui-tile id="tile" on-route-ui-tile-left="{{nextTrack}}" on-route-ui-tile-right="{{prevTrack}}"
@@ -35,7 +35,6 @@
     Polymer('route-ui-media', {
       trackChanged: function(event, details, sender) {
         console.log("TRACK CHANGED: ", details);
-        details = details.Main.trackInfo;
         this.name = details.name;
         this.query = details.artist + " " + details.album + " album art";
       },

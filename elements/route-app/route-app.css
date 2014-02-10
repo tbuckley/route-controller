@@ -47,6 +47,5 @@ polymer-ui-pages {
 }
 
 #bar {
-  width: 128px;
-  background-color: #111;
+  width: 80px;
 }
