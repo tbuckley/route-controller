@@ -22,12 +22,14 @@
     <link rel="stylesheet" href="route-ui-media.css">
 
     <route-state name="Sonos.Main.trackInfo" on-state-change="{{trackChanged}}"></route-state>
-    <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search>
+    <!-- <polymer-image-search id="imageSearch" query="{{query}}" on-load="{{loadHandler}}"></polymer-image-search> -->
 
     <route-ui-tile id="tile" on-route-ui-tile-left="{{nextTrack}}" on-route-ui-tile-right="{{prevTrack}}"
         on-route-ui-tile-center="{{playPause}}">
       <div class="album-name">{{name}}</div>
       <div id="artwork">
+        <img id="albumart" on-load="{{imgLoaded}}" />
+      </div>
     </route-ui-tile>
 
   </template>
@@ -35,7 +37,9 @@
     Polymer('route-ui-media', {
       trackChanged: function(event, details, sender) {
         this.name = details.name;
-        this.query = details.artist + " " + details.album + " album art";
+        // this.query = details.artist + " " + details.album + " album art";
+        console.log("TRACKINFO", details);
+        this.$.albumart.src = details.artwork;
       },
       playPause: function() {
         this.messenger.send("PlayPause");
@@ -45,6 +49,29 @@
       },
       prevTrack: function() {
         this.messenger.send("PrevTrack");
+      },
+      imgLoaded: function() {
+        var img = this.$.albumart;
+        img.style.height = "auto";
+        img.style.width = "auto";
+        var dim = this.offsetWidth - 8;
+        if(img.width > img.height) {
+          var width = (dim * img.width / img.height),
+              offset = -Math.floor((width - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.height = dim + "px";
+          img.style.width = "auto";
+          img.style.left = offset + "px";
+        } else {
+          var height = (dim * img.height / img.width),
+              offset = -Math.floor((height - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.width = dim + "px";
+          img.style.height = "auto";
+          img.style.top = offset + "px";
+        }
       },
       loadHandler: function(error, img, sender) {
         while(this.$.artwork.hasChildNodes()) {

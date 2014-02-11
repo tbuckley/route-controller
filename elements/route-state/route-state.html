@@ -34,16 +34,23 @@
         console.log("NAME CHANGED: ", oldName, newName, this.name);
       },
       stateHandler: function(data) {
-        var parts = this.name.split('.');
-        for(var i = 0; i < parts.length; i++) {
-          if(parts[i] in data) {
-            data = data[parts[i]];
-          } else {
-            return;
+        console.log("STATE", data);
+        if(this.name in data) {
+          console.log(this.name, "IN", data);
+          this.value = data[this.name];
+          this.fire("state-change", data[this.name]);
+        } else {
+          var parts = this.name.split('.');
+          for(var i = 0; i < parts.length; i++) {
+            if(parts[i] in data) {
+              data = data[parts[i]];
+            } else {
+              return;
+            }
           }
+          this.value = data;
+          this.fire("state-change", data);
         }
-        this.value = data;
-        this.fire("state-change", data);
       },
     });
   </script>
