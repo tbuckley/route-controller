@@ -1,7 +1,5 @@
-@host {
-  :scope {
-    background-color: #000;
-  }
+:host {
+  background-color: #000;
 }
 
 #time {

@@ -1,31 +1,29 @@
-@host {
-  :scope {
-    position: relative;
+:host {
+  position: relative;
 
-    -webkit-perspective: 600px;
-    perspective: 600px;
-    -webkit-perspective-origin: 50% 50%;
-    perspective-origin: 50% 50%;
-  }
+  -webkit-perspective: 600px;
+  perspective: 600px;
+  -webkit-perspective-origin: 50% 50%;
+  perspective-origin: 50% 50%;
 }
 
 
 #tile {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    right: 4px;
-    bottom: 4px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
 
 
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 
-    -webkit-transition: all 0.30s ease-out;
-    transition: all 0.30s ease-out;
+  -webkit-transition: all 0.30s ease-out;
+  transition: all 0.30s ease-out;
 
-    overflow: hidden;
-    background-color: rgba(255,255,255,0.5);
+  overflow: hidden;
+  background-color: rgba(255,255,255,0.5);
 }
 #tile.dragging {
   -webkit-transition: none;

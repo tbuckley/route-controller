@@ -27,7 +27,7 @@
     <route-socket id="socket"></route-socket>
     <route-state name="sonosArtwork" value="{{artwork}}"></route-state>
 
-    <img id="background" />
+    <!-- <img id="background" /> -->
 
     <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
 
@@ -69,7 +69,7 @@
           window.addEventListener("resize", this.resize.bind(this));
         },
         artworkChanged: function(oldArtwork, newArtwork) {
-          this.$.background.src = newArtwork + "?" + (new Date()).getTime();
+          // this.$.background.src = newArtwork + "?" + (new Date()).getTime();
         },
         wake: function() {
           this.page = "panel";

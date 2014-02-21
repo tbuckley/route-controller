@@ -1,7 +1,5 @@
-@host {
-  :scope {
-    position: relative;
-  }
+:host {
+  position: relative;
 }
 
 route-ui-tile {
