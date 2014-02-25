@@ -2185,12 +2185,9 @@ Hammer.gestures.Transform = {
       var events, state;
 
       events = [
-        "mousedown",
-        "mousemove",
-        "mouseup",
-        "touchstart",
-        "touchmove",
-        "touchend",
+        "pointerstart",
+        "pointerend",
+        "pointermove",
       ];
       state = "awake";
 
