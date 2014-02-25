@@ -15,22 +15,17 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../route-ui-tile/route-ui-tile.html">
-<link rel="import" href="../route-ui-message/route-ui-message.html">
+<link rel="import" href="../route-state/route-state.html">
 
 <polymer-element name="route-ui-lights" attributes="messenger lights name">
   <template>
     <link rel="stylesheet" href="route-ui-lights.css">
 
-    <route-ui-message id="message">
-      <polymer-flex-layout vertical></polymer-flex-layout>
-      <div flex></div>
-      <div>{{brightness}}</div>
-      <div flex></div>
-    </route-ui-message>
+    <route-state name="hueLights" on-state-change="{{lightsChanged}}"></route-state>
 
-    <route-ui-tile id="tile" autofire autofireInterval="300"
-        on-route-ui-tile-top="{{topHandler}}" on-route-ui-tile-bottom="{{bottomHandler}}"
-        on-route-ui-tile-center="{{centerHandler}}" on-route-ui-tile-release="{{update}}">
+    <route-ui-tile id="tile" on-route-ui-tile-tap="{{tap}}"
+        on-route-ui-tile-swipedown="{{swipedown}}"
+        on-route-ui-tile-swipeup="{{swipeup}}">
 
       <div style="height: 100%">
         <polymer-flex-layout vertical></polymer-flex-layout>
@@ -44,7 +39,7 @@
           <div class="icon">
             <polymer-flex-layout vertical></polymer-flex-layout>
             <div flex></div>
-            <div class="name">{{name}}</div>
+            <div class="name">{{name}}<br/>{{mode}}</div>
             <div flex></div>
           </div>
         </div>
@@ -74,39 +69,59 @@
 
       brightness: 100,
       state: false,
+      mode: "Off",
 
-      attached: function() {
-        // this.messenger.on("Hue.LightInfo", function(data) {
-        //   for(key in data) {
-        //     if(data.hasOwnProperty(key) && key != "stateUpdatedTime") {
-        //       var light = data[key];
-        //       if(light.name.match(this.lights)) {
-        //         var brightness = Math.floor(light.state.bri * 20 / 255) * 5,
-        //             state = light.state.on;
-        //         this.brightness = Math.max(this.brightness, brightness);
-        //         this.state = this.state || state;
-        //       }
-        //     }
-        //   }
-        //   // this.update();
-        // }.bind(this));
-
-        // this.messenger.emit("getState", "Hue.LightInfo");
+      lightsChanged: function(e, lights, sender) {
+        var brightness = 0;
+        var state = false;
+        for(var key in lights) {
+          if(key.match(this.lights) && lights[key].state) {
+            state = state || lights[key].state.on;
+            brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
+          }
+        }
+        this.state = state;
+        this.brightness = brightness;
       },
       update: function() {
-        var msg = "SetLights?bulbName="+this.lights+"&bri="+(this.brightness / 100)+"&state="+this.state+"&duration=0.5";
+        var msg = "SetLights?bulbName="+this.lights+"&state="+this.state+"&duration=0.5";
+        if(this.state) {
+          msg += "&bri="+(this.brightness / 100);
+        }
         this.messenger.send(msg);
       },
-      centerHandler: function(event, detail, sender) {
+      stateChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      brightnessChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      tap: function(event, detail, sender) {
+        console.log("TAP");
         this.state = !this.state;
+        this.update();
       },
-      topHandler: function(event, detail, sender) {
-        this.brightness = Math.min(100, this.brightness + 5);
-        this.$.message.show();
+      swipeup: function(event, detail, sender) {
+        console.log("SWIPEUP");
+        if(this.brightness != 100) {
+          this.brightness = 100;
+          this.update();
+        }
       },
-      bottomHandler: function(event, detail, sender) {
-        this.brightness = Math.max(0, this.brightness - 5);
-        this.$.message.show();
+      swipedown: function(event, detail, sender) {
+        console.log("SWIPEDOWN");
+        if(this.brightness != 30) {
+          this.brightness = 30;
+          this.update();
+        }
       },
     });
   </script>

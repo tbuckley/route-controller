@@ -30,8 +30,9 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
+<script type="text/javascript" src="../../components/hammerjs/hammer.js"></script>
 
-<polymer-element name="route-ui-tile" attributes="maxRotation autofireDelay autofireInterval autofire">
+<polymer-element name="route-ui-tile" attributes="maxRotation" touch-action="none">
   <template>
     <link rel="stylesheet" href="route-ui-tile.css">
     <div id="tile">
@@ -49,47 +50,25 @@
        */
       maxRotation: 15,
 
-      /**
-       * Whether or not the tile should auto-fire zone events
-       *
-       * @attribute autofire
-       * @type bool
-       * @default false
-       */
-      autofire: false,
-
-      /**
-       * Amount of time to wait before automatically firing the first event, in milliseconds
-       *
-       * @attribute autofireDelay
-       * @type int
-       * @default 1000
-       */
-      autofireDelay: 1000,
-
-      /**
-       * Amount of time to wait between automatically firing events, in milliseconds
-       *
-       * @attribute autofireInterval
-       * @type int
-       * @default 100
-       */
-      autofireInterval: 100,
-
       ready: function() {
-        this.pointerStartListener = this.pointerStart.bind(this);
-        this.pointerMoveListener = this.pointerMove.bind(this);
-        this.pointerEndListener = this.pointerEnd.bind(this);
-
-        var hasTouch = ("ontouchstart" in document.documentElement);
-        this.startEvent = hasTouch ? "touchstart" : "mousedown";
-        this.moveEvent = hasTouch ? "touchmove" : "mousemove";
-        this.endEvent = hasTouch ? "touchend" : "mouseup";
-
-        this.addEventListener(this.startEvent, this.pointerStartListener);
+        this.hammer = Hammer(this, {
+          hold: false,
+          transform: false,
+          tap: false,
+          tap_always: false,
+        });
+        this.hammer.on("touch", this.touch.bind(this));
+        this.hammer.on("drag", this.drag.bind(this));
+        this.hammer.on("release", this.release.bind(this));
+        this.hammer.on("tap", this.tap.bind(this));
+        this.hammer.on("swipe", this.swipe.bind(this));
       },
-      leftView: function() {
-        this.removeEventListener(this.startEvent, this.pointerStartListener);
+      tap: function(e) {
+        console.log("TILE.TAP");
+        this.fire("route-ui-tile-tap");
+      },
+      swipe: function(e) {
+        this.fire("route-ui-tile-swipe"+e.gesture.direction);
       },
       animate: function(percentX, percentY, raised) {
         var bound = function(value, min, max) {
@@ -110,7 +89,6 @@
       },
       updateDimensions: function() {
         this.dimensions = {};
-
         var x = 0, y = 0;
         for(var el = this; el != null; x += el.offsetLeft, y += el.offsetTop, el = el.offsetParent);
         this.dimensions.left = x;
@@ -140,87 +118,36 @@
           distance: Math.sqrt(distX*distX + distY*distY),
         };
       },
-      updateZone: function() {
-        var x = this.latest.percent.x,
-            y = this.latest.percent.y;
+      touch: function(event, details, sender) {
+        event.preventDefault();
 
-        if(Math.sqrt(x*x + y*y) < .5) {
-          this.zone = "center";
-        } else if(this.latest.percent.x > this.latest.percent.y) {
-          this.zone = (this.latest.percent.x > -this.latest.percent.y) ? "right" : "bottom";
-        } else {
-          this.zone = (this.latest.percent.x > -this.latest.percent.y) ? "top" : "left";
-        }
-      },
-      pointerStart: function(e) {
-        e.preventDefault();
         this.fire("route-activity");
+        var clientX = event.gesture.center.pageX;
+        var clientY = event.gesture.center.pageY;
 
-        document.addEventListener(this.moveEvent, this.pointerMoveListener);
-        document.addEventListener(this.endEvent, this.pointerEndListener);
-
-        var clientX = e.clientX || e.touches[0].clientX,
-            clientY = e.clientY || e.touches[0].clientY;
-
-        this.fired = false;
         this.updateDimensions();
         this.updateStartingPosition(clientX, clientY);
         this.updateLatestPosition(clientX, clientY);
-        this.updateZone();
         this.animate(0, 0, true);
-
         this.$.tile.classList.add('dragging');
-
-        this.positionUpdated();
-
-        this.fire("route-ui-tile-press");
       },
-      pointerMove: function(e) {
-        e.preventDefault();
+      drag: function(event, details, sender) {
+        event.preventDefault();
+
         this.fire("route-activity");
-
-        var clientX = e.clientX || e.touches[0].clientX,
-            clientY = e.clientY || e.touches[0].clientY;
-
+        console.log("DRAG");
+        var clientX = event.gesture.center.pageX;
+        var clientY = event.gesture.center.pageY;
         this.updateLatestPosition(clientX, clientY);
-        this.updateZone();
         this.animate(this.latest.percent.x, this.latest.percent.y, true);
-
-        this.positionUpdated();
       },
-      pointerEnd: function(e) {
-        e.preventDefault();
-        this.fire("route-activity");
-
-        document.removeEventListener(this.moveEvent, this.pointerMoveListener);
-        document.removeEventListener(this.endEvent, this.pointerEndListener);
-
-        this.$.tile.classList.remove('dragging');
-        this.animate(0, 0, false);
-
-        this.clearTimers();
-        this.lastZone = null;
-
-        if(!this.fired) {
-          this.fire("route-ui-tile-" + this.zone, this.latest);
+      release: function(event, details, sender) {
+        event.preventDefault();
+        if("gesture" in event) {
+          this.fire("route-activity");
+          this.$.tile.classList.remove('dragging');
+          this.animate(0, 0, false);
         }
-        this.fire("route-ui-tile-release");
-      },
-      clearTimers: function() {
-        if(this.fireTimer) clearTimeout(this.fireTimer);
-        if(this.keepFiringTimer) clearTimeout(this.keepFiringTimer);
-      },
-      positionUpdated: function() {
-        if(this.autofire && (!this.lastZone || this.lastZone != this.zone)) {
-          this.lastZone = this.zone;
-          this.clearTimers();
-          this.fireTimer = setTimeout(this.keepFiring.bind(this), this.autofireDelay);
-        }
-      },
-      keepFiring: function() {
-        this.fired = true;
-        this.fire("route-ui-tile-" + this.zone, this.latest);
-        this.keepFiringTimer = setTimeout(this.keepFiring.bind(this), this.autofireInterval);
       },
     });
   </script>
