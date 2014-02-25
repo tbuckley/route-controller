@@ -9,7 +9,7 @@ module.exports = function(grunt) {
           csp: true,
         },
         src: 'src/index.html',
-        dest: 'build/route.html',
+        dest: 'build/index.html',
       },
     },
     replace: {
@@ -17,13 +17,13 @@ module.exports = function(grunt) {
         options: {
           patterns: [
             {
-              match: /route\.js/g,
-              replacement: 'route.min.js',
+              match: /index\.js/g,
+              replacement: 'index.min.js',
             }
           ]
         },
-        src: 'build/route.html',
-        dest: 'build/route.min.html',
+        src: 'build/index.html',
+        dest: 'build/index.min.html',
       }
     },
     uglify: {
@@ -33,8 +33,8 @@ module.exports = function(grunt) {
           sourceMap: true,
           preserveComments: false,
         },
-        src: 'build/route.js',
-        dest: 'build/route.min.js',
+        src: 'build/index.js',
+        dest: 'build/index.min.js',
       }
     },
     htmlmin: {
@@ -43,8 +43,8 @@ module.exports = function(grunt) {
           removeComments: true,
           collapseWhitespace: true,
         },
-        src: 'build/route.min.html',
-        dest: 'build/route.min.html',
+        src: 'build/index.min.html',
+        dest: 'build/index.min.html',
       }
     },
     compress: {
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
         },
         expand: true,
         cwd: 'build/',
-        src: ['route.html', 'route.min.html', 'route.js', 'route.min.js'],
+        src: ['index.html', 'index.min.html', 'index.js', 'index.min.js'],
         dest: 'build/',
       },
     },
