@@ -64,7 +64,6 @@
         this.hammer.on("swipe", this.swipe.bind(this));
       },
       tap: function(e) {
-        console.log("TILE.TAP");
         this.fire("route-ui-tile-tap");
       },
       swipe: function(e) {
@@ -135,7 +134,6 @@
         event.preventDefault();
 
         this.fire("route-activity");
-        console.log("DRAG");
         var clientX = event.gesture.center.pageX;
         var clientY = event.gesture.center.pageY;
         this.updateLatestPosition(clientX, clientY);

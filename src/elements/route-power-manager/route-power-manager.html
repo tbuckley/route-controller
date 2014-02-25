@@ -85,13 +85,11 @@
           }
         },
         wake: function() {
-          console.log("WAKE");
           state = "awake";
           this.setBrightness(100);
           this.fire("polymer-signal", {name: "wake"});
         },
         sleep: function() {
-          console.log("SLEEP");
           if(this.timer) {
             clearTimeout(this.timer);
           }
@@ -105,11 +103,9 @@
           }
         },
         fireWake: function() {
-          console.log("fireWake");
           this.fire("route-wake");
         },
         fireSleep: function() {
-          console.log("fireSleep");
           this.fire("route-sleep");
         },
       });

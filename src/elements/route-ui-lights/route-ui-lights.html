@@ -105,19 +105,16 @@
         }
       },
       tap: function(event, detail, sender) {
-        console.log("TAP");
         this.state = !this.state;
         this.update();
       },
       swipeup: function(event, detail, sender) {
-        console.log("SWIPEUP");
         if(this.brightness != 100) {
           this.brightness = 100;
           this.update();
         }
       },
       swipedown: function(event, detail, sender) {
-        console.log("SWIPEDOWN");
         if(this.brightness != 30) {
           this.brightness = 30;
           this.update();

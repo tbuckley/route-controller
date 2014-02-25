@@ -30,13 +30,8 @@
       detached: function() {
         this.$.socket.removeListener('state', this.handler);
       },
-      nameChanged: function(oldName, newName) {
-        console.log("NAME CHANGED: ", oldName, newName, this.name);
-      },
       stateHandler: function(data) {
-        console.log("STATE", data);
         if(this.name in data) {
-          console.log(this.name, "IN", data);
           this.value = data[this.name];
           this.fire("state-change", data[this.name]);
         } else {
