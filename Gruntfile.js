@@ -70,5 +70,6 @@ module.exports = function(grunt) {
   grunt.file.mkdir("build");
 
   // Default task(s).
+  grunt.registerTask('build', ['vulcanize', 'compress']);
   grunt.registerTask('default', ['vulcanize', 'replace', 'uglify', 'htmlmin', 'compress']);
 };
