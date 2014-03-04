@@ -3132,6 +3132,8 @@ Hammer.gestures.Transform = {
        */
       lights: null,
 
+      tmpBrightness: 100,
+      tmpState: false,
       brightness: 100,
       state: false,
       mode: "Off",
@@ -3145,15 +3147,13 @@ Hammer.gestures.Transform = {
             brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
           }
         }
-        this.state = state;
-        this.brightness = brightness;
-      },
-      update: function() {
-        var msg = "SetLights?bulbName="+this.lights+"&state="+this.state+"&duration=0.5";
-        if(this.state) {
-          msg += "&bri="+(this.brightness / 100);
-        }
-        this.messenger.send(msg);
+        this.tmpState = state;
+        this.tmpBrightness = brightness;
+        if(this.timer) {clearTimeout(this.timer);}
+        this.timer = setTimeout(function() {
+          this.state = this.tmpState;
+          this.brightness = this.tmpBrightness;
+        }.bind(this), 500);
       },
       stateChanged: function() {
         if(this.state) {
@@ -3171,19 +3171,19 @@ Hammer.gestures.Transform = {
       },
       tap: function(event, detail, sender) {
         this.state = !this.state;
-        this.update();
+        if(this.state) {
+          this.messenger.send("TomBedroom.LightsOn");
+        } else {
+          this.messenger.send("TomBedroom.LightsOff");
+        }
       },
       swipeup: function(event, detail, sender) {
-        if(this.brightness != 100) {
-          this.brightness = 100;
-          this.update();
-        }
+        this.brightness = 100;
+        this.messenger.send("TomBedroom.LightsBright");
       },
       swipedown: function(event, detail, sender) {
-        if(this.brightness != 30) {
-          this.brightness = 30;
-          this.update();
-        }
+        this.brightness = 30;
+        this.messenger.send("TomBedroom.LightsDim");
       },
     });
   ;
@@ -3326,13 +3326,13 @@ Hammer.gestures.Transform = {
         this.$.albumart.src = details.artwork;
       },
       playPause: function() {
-        this.messenger.send("PlayPause");
+        this.messenger.send("TomBedroom.PlayPause");
       },
       nextTrack: function() {
-        this.messenger.send("NextTrack");
+        this.messenger.send("TomBedroom.NextTrack");
       },
       prevTrack: function() {
-        this.messenger.send("PrevTrack");
+        this.messenger.send("TomBedroom.PrevTrack");
       },
       imgLoaded: function() {
         var img = this.$.albumart;
@@ -3609,9 +3609,6 @@ Hammer.gestures.Transform = {
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
-        },
-        artworkChanged: function(oldArtwork, newArtwork) {
-          // this.$.background.src = newArtwork + "?" + (new Date()).getTime();
         },
         wake: function() {
           this.page = "panel";

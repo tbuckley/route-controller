@@ -6,7 +6,7 @@
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
 
   <link href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,700|Roboto+Condensed:400,300" rel="stylesheet" type="text/css">
 
@@ -801,11 +801,11 @@ license that can be found in the LICENSE file.
 </polymer-element>
 
 
+
 <polymer-element name="route-socket" assetpath="../src/elements/route-socket/">
   <template>
 
   </template>
-  
   
 </polymer-element>
 <!--
@@ -880,7 +880,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-ui-lockscreen" attributes="" assetpath="../src/elements/route-ui-lockscreen/">
+<polymer-element name="route-ui-lockscreen" attributes="" touch-action="none" assetpath="../src/elements/route-ui-lockscreen/">
   <template>
     <style>:host {
   background-color: #000;
@@ -1170,7 +1170,7 @@ route-ui-tile {
   z-index: 10;
 }</style>
 
-    <route-state name="Sonos.Main.trackInfo" on-state-change="{{trackChanged}}"></route-state>
+    <route-state name="Sonos.TomBedroom.trackInfo" on-state-change="{{trackChanged}}"></route-state>
 
     <route-ui-tile id="tile" on-route-ui-tile-swipeleft="{{nextTrack}}" on-route-ui-tile-swiperight="{{prevTrack}}" on-route-ui-tile-tap="{{playPause}}">
       <div class="album-name">{{name}}</div>
@@ -1586,9 +1586,6 @@ polymer-ui-pages {
     </route-power-manager>
 
     <route-socket id="socket"></route-socket>
-    <route-state name="sonosArtwork" value="{{artwork}}"></route-state>
-
-    <!-- <img id="background" /> -->
 
     <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
 

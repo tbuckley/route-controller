@@ -67,6 +67,8 @@
        */
       lights: null,
 
+      tmpBrightness: 100,
+      tmpState: false,
       brightness: 100,
       state: false,
       mode: "Off",
@@ -80,15 +82,13 @@
             brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
           }
         }
-        this.state = state;
-        this.brightness = brightness;
-      },
-      update: function() {
-        var msg = "SetLights?bulbName="+this.lights+"&state="+this.state+"&duration=0.5";
-        if(this.state) {
-          msg += "&bri="+(this.brightness / 100);
-        }
-        this.messenger.send(msg);
+        this.tmpState = state;
+        this.tmpBrightness = brightness;
+        if(this.timer) {clearTimeout(this.timer);}
+        this.timer = setTimeout(function() {
+          this.state = this.tmpState;
+          this.brightness = this.tmpBrightness;
+        }.bind(this), 500);
       },
       stateChanged: function() {
         if(this.state) {
@@ -106,19 +106,19 @@
       },
       tap: function(event, detail, sender) {
         this.state = !this.state;
-        this.update();
+        if(this.state) {
+          this.messenger.send("TomBedroom.LightsOn");
+        } else {
+          this.messenger.send("TomBedroom.LightsOff");
+        }
       },
       swipeup: function(event, detail, sender) {
-        if(this.brightness != 100) {
-          this.brightness = 100;
-          this.update();
-        }
+        this.brightness = 100;
+        this.messenger.send("TomBedroom.LightsBright");
       },
       swipedown: function(event, detail, sender) {
-        if(this.brightness != 30) {
-          this.brightness = 30;
-          this.update();
-        }
+        this.brightness = 30;
+        this.messenger.send("TomBedroom.LightsDim");
       },
     });
   </script>

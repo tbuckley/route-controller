@@ -21,7 +21,7 @@
   <template>
     <link rel="stylesheet" href="route-ui-media.css">
 
-    <route-state name="Sonos.Main.trackInfo" on-state-change="{{trackChanged}}"></route-state>
+    <route-state name="Sonos.TomBedroom.trackInfo" on-state-change="{{trackChanged}}"></route-state>
 
     <route-ui-tile id="tile" on-route-ui-tile-swipeleft="{{nextTrack}}" on-route-ui-tile-swiperight="{{prevTrack}}"
         on-route-ui-tile-tap="{{playPause}}">
@@ -39,13 +39,13 @@
         this.$.albumart.src = details.artwork;
       },
       playPause: function() {
-        this.messenger.send("PlayPause");
+        this.messenger.send("TomBedroom.PlayPause");
       },
       nextTrack: function() {
-        this.messenger.send("NextTrack");
+        this.messenger.send("TomBedroom.NextTrack");
       },
       prevTrack: function() {
-        this.messenger.send("PrevTrack");
+        this.messenger.send("TomBedroom.PrevTrack");
       },
       imgLoaded: function() {
         var img = this.$.albumart;
