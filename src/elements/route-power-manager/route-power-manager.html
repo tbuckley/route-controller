@@ -83,7 +83,7 @@
         },
         wake: function() {
           state = "awake";
-          this.setBrightness(100);
+          this.setBrightness(1);
           this.fire("polymer-signal", {name: "wake"});
         },
         sleep: function() {
@@ -91,12 +91,16 @@
             clearTimeout(this.timer);
           }
           state = "asleep";
-          this.setBrightness(1);
+          this.setBrightness(0);
           this.fire("polymer-signal", {name: "sleep"});
         },
         setBrightness: function(brightness) {
-          if(window.Android) {
-            Android.setBrightness(brightness);
+          if(window.brightness) {
+            window.brightness.setBrightness(brightness, function(status) {
+              console.log("setBrightness success: ", status);
+            }, function(status) {
+              console.log("setBrightness failure: ", status);
+            });
           }
         },
         fireWake: function() {

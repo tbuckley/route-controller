@@ -18,6 +18,22 @@
   <template>
     <link rel="stylesheet" href="route-app.css">
 
+    <template id="tile-lights">
+      <route-ui-lights messenger="{{$.socket}}" name="{{control.name}}"></route-ui-lights>
+    </template>
+    <template id="tile-media">
+      <route-ui-media messenger="{{$.socket}}"></route-ui-media>
+    </template>
+    <template id="tile-power">
+      <route-ui-power></route-ui-power>
+    </template>
+    <template id="tile-voice">
+      <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+    </template>
+    <template id="tile-blank">
+      <route-ui-tile></route-ui-tile>
+    </template>
+
     <polymer-page></polymer-page>
 
     <route-power-manager id="powerManager" auto
@@ -32,18 +48,15 @@
         <polymer-flex-layout></polymer-flex-layout>
 
         <div style="position: relative" flex>
-          <section id="tiles">
-            <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
-            <route-ui-lights messenger="{{$.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
-            <route-ui-lights messenger="{{$.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
-            <route-ui-media messenger="{{$.socket}}"></route-ui-media>
-            <route-ui-power></route-ui-power>
-            <route-ui-tile></route-ui-tile>
-            <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+          <section id="tiles" on-route-ui-tile-attached="{{tileAttached}}">
+            <route-tile-layout id="tileLayout" layout="{{curLayout}}" auto></route-tile-layout>
+            <template repeat="{{control in curRoom.controls}}">
+              <template ref="{{control.type}}" bind></template>
+            </template>
           </section>
         </div>
 
-        <route-ui-bar id="bar"></route-ui-bar>
+        <route-ui-bar id="bar">{{curRoom.shortName}}</route-ui-bar>
       </div>
 
       <route-ui-lockscreen id="clock"></route-ui-lockscreen>
@@ -53,17 +66,83 @@
   </template>
   <script>
     (function() {
+      function transpose(arr) {
+        var trans = [];
+
+        var rows = arr.length,
+            cols = arr[0].length;
+        for(var y = 0; y < cols; y++) {
+          var row = [];
+          trans.push(row);
+          for(var x = 0; x < arr.length; x++) {
+            row.push(arr[x][y]);
+          }
+        }
+      }
+
       Polymer("route-app", {
-        layout: [
-          [1, 2, 3],
-          [4, 5, 6],
-        ],
+        rooms: {
+          "Kitchen": {
+            longName: "Kitchen",
+            shortName: "Kitchen",
+            controls: [
+              {type: "tile-media"},
+              {type: "tile-voice"},
+              {type: "tile-power"},
+            ]
+          },
+          "TomBedroom": {
+            longName: "Tom's Bedroom",
+            shortName: "Bedroom",
+            controls: [
+              {type: "tile-lights", name: "Lights"},
+              {type: "tile-lights", name: "Lamp"},
+              {type: "tile-media"},
+              {type: "tile-power"},
+              {type: "tile-blank"},
+              {type: "tile-voice"},
+            ]
+          },
+        },
+
+        layouts: {
+          1: [[1]],
+          2: [[1,2]],
+          3: [[1,1,2],
+              [1,1,3]],
+          4: [[1,2],
+              [3,4]],
+          5: [[1,1,2,3],
+              [1,1,4,5]],
+          6: [[1,2,3],
+              [4,5,6]]
+        },
 
         page: "panel",
-        time: "",
+        room: "TomBedroom",
+
+        curRoom: {longName: "N/A", shortName: "N/A", controls: []},
+        curLayout: [[]],
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
+          if("cordova" in window) {
+            window.brightness = cordova.require("cordova.plugin.Brightness.Brightness");
+            window.brightness.setKeepScreenOn(true);
+          }
+
+          this.room = "TomBedroom";
+          this.curRoom = this.rooms[this.room];
+          this.curLayout = this.layouts[this.curRoom.controls.length];
+          this.$.tileLayout.invalidate();
+
+          setTimeout(function() {
+            this.room = "Kitchen";
+          }.bind(this), 10 * 1000);
+        },
+        roomChanged: function(oldValue, newValue) {
+          this.curRoom = this.rooms[this.room];
+          this.curLayout = this.layouts[this.curRoom.controls.length];
         },
         wake: function() {
           this.page = "panel";
@@ -71,7 +150,7 @@
         sleep: function() {
           this.page = "clock";
         },
-        resize: function(e) {
+        resize: function() {
           this.$.tileLayout.invalidate();
           this.$.bar.invalidate();
         },

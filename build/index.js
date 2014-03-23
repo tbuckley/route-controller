@@ -520,15 +520,17 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
           this.layout = [];
         },
         nodesChanged: function() {
+          this._nodes = this.nodes;
           this.invalidate();
         },
         layoutChanged: function() {
           this.invalidate();
         },
         autoNodes: function() {
-          this.nodes = this.parentNode.children.array().filter(function(node) {
+          this._nodes = this.parentNode.children.array().filter(function(node) {
             switch(node.localName) {
               case "route-tile-layout":
+              case "template":
               case "style":
                 return false
             }
@@ -546,10 +548,10 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
         },
         // Note: don't call directly, use invalidate() instead
         relayout: function() {
-          if(!this.nodes || this.auto) {
+          if(!this._nodes || this.auto) {
             this.autoNodes();
           }
-          layout(this.layout, this.nodes, this.parentNode);
+          layout(this.layout, this._nodes, this.parentNode);
           this.asyncFire("route-tile-layout");
         }
       });
@@ -2120,7 +2122,7 @@ Hammer.gestures.Transform = {
 
       function init() {
         if(!socket) {
-          socket = io.connect('http://' + location.host);
+          socket = io.connect('http://'+location.host);
         }
       }
 
@@ -2232,7 +2234,7 @@ Hammer.gestures.Transform = {
         },
         wake: function() {
           state = "awake";
-          this.setBrightness(100);
+          this.setBrightness(1);
           this.fire("polymer-signal", {name: "wake"});
         },
         sleep: function() {
@@ -2240,12 +2242,16 @@ Hammer.gestures.Transform = {
             clearTimeout(this.timer);
           }
           state = "asleep";
-          this.setBrightness(1);
+          this.setBrightness(0);
           this.fire("polymer-signal", {name: "sleep"});
         },
         setBrightness: function(brightness) {
-          if(window.Android) {
-            Android.setBrightness(brightness);
+          if(window.brightness) {
+            window.brightness.setBrightness(brightness, function(status) {
+              console.log("setBrightness success: ", status);
+            }, function(status) {
+              console.log("setBrightness failure: ", status);
+            });
           }
         },
         fireWake: function() {
@@ -3519,31 +3525,29 @@ Hammer.gestures.Transform = {
 
     Polymer('route-ui-speech', {
       ready: function() {
-        if(!('webkitSpeechRecognition' in window)) {
+        if(!window.plugins || !window.plugins.speechrecognizer) {
           this.$.tile.classList.add("disabled");
-        } else {
-          var recognition = this.recognition = new webkitSpeechRecognition();
-          recognition.continuous = false;
-          recognition.interimResults = false;
-          recognition.lang = "en-US";
-          recognition.onresult = this.resultHandler.bind(this);
-          recognition.onend = this.endHandler.bind(this);
         }
       },
       centerHandler: function() {
-        if(this.recognition) {
+        if(window.plugins && window.plugins.speechrecognizer) {
           this.$.tile.classList.add("active");
-          this.recognition.start();
+
+          var maxMatches = 1;
+          var promptString = "What can I do for you?"; // optional
+          var language = "en-US";         // optional
+          window.plugins.speechrecognizer.startRecognize(this.resultHandler.bind(this),
+            this.errorHandler.bind(this), maxMatches, promptString, language);
         }
       },
-      resultHandler: function(e) {
-        for (var i = e.resultIndex; i < e.results.length; i++) {
-          if(e.results[i].isFinal) {
-            console.log(e.results[i][0].transcript);
-          }
-        }
+      resultHandler: function(result) {
+        this.$.tile.classList.remove("active");
+        this.messenger.send("Voice", {
+          result: result,
+        });
       },
-      endHandler: function(e) {
+      errorHandler: function(e) {
+        console.log(error);
         this.$.tile.classList.remove("active");
       },
     });
@@ -3598,17 +3602,83 @@ Hammer.gestures.Transform = {
   ;
 
     (function() {
+      function transpose(arr) {
+        var trans = [];
+
+        var rows = arr.length,
+            cols = arr[0].length;
+        for(var y = 0; y < cols; y++) {
+          var row = [];
+          trans.push(row);
+          for(var x = 0; x < arr.length; x++) {
+            row.push(arr[x][y]);
+          }
+        }
+      }
+
       Polymer("route-app", {
-        layout: [
-          [1, 2, 3],
-          [4, 5, 6],
-        ],
+        rooms: {
+          "Kitchen": {
+            longName: "Kitchen",
+            shortName: "Kitchen",
+            controls: [
+              {type: "tile-media"},
+              {type: "tile-voice"},
+              {type: "tile-power"},
+            ]
+          },
+          "TomBedroom": {
+            longName: "Tom's Bedroom",
+            shortName: "Bedroom",
+            controls: [
+              {type: "tile-lights", name: "Lights"},
+              {type: "tile-lights", name: "Lamp"},
+              {type: "tile-media"},
+              {type: "tile-power"},
+              {type: "tile-blank"},
+              {type: "tile-voice"},
+            ]
+          },
+        },
+
+        layouts: {
+          1: [[1]],
+          2: [[1,2]],
+          3: [[1,1,2],
+              [1,1,3]],
+          4: [[1,2],
+              [3,4]],
+          5: [[1,1,2,3],
+              [1,1,4,5]],
+          6: [[1,2,3],
+              [4,5,6]]
+        },
 
         page: "panel",
-        time: "",
+        room: "TomBedroom",
+
+        curRoom: {longName: "N/A", shortName: "N/A", controls: []},
+        curLayout: [[]],
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
+          if("cordova" in window) {
+            window.brightness = cordova.require("cordova.plugin.Brightness.Brightness");
+            window.brightness.setKeepScreenOn(true);
+          }
+
+          this.room = "TomBedroom";
+          this.curRoom = this.rooms[this.room];
+          this.curLayout = this.layouts[this.curRoom.controls.length];
+          this.$.tileLayout.invalidate();
+
+          setTimeout(function() {
+            this.room = "Kitchen";
+          }.bind(this), 10 * 1000);
+        },
+        roomChanged: function(oldValue, newValue) {
+          this.curRoom = this.rooms[this.room];
+          this.curLayout = this.layouts[this.curRoom.controls.length];
         },
         wake: function() {
           this.page = "panel";
@@ -3616,7 +3686,7 @@ Hammer.gestures.Transform = {
         sleep: function() {
           this.page = "clock";
         },
-        resize: function(e) {
+        resize: function() {
           this.$.tileLayout.invalidate();
           this.$.bar.invalidate();
         },

@@ -12,6 +12,7 @@
 
   
   
+  
 
 </head>
 
@@ -1402,7 +1403,7 @@ route-ui-tile {
 
 
 
-<polymer-element name="route-ui-speech" attributes="" assetpath="../src/elements/route-ui-speech/">
+<polymer-element name="route-ui-speech" attributes="messenger" assetpath="../src/elements/route-ui-speech/">
   <template>
     <style>:host {
   position: relative;
@@ -1502,7 +1503,7 @@ route-ui-tile.disabled {
       <div class="spacer"></div>
       <div id="time">{{hours}}:{{minutes}}</div>
       <div flex=""></div>
-      <div id="room">Bedroom</div>
+      <div id="room"><content></content></div>
       <div flex=""></div>
       <div id="weather">{{temperatureString}}&deg;</div>
       <div class="spacer"></div>
@@ -1580,6 +1581,22 @@ polymer-ui-pages {
   width: 80px;
 }</style>
 
+    <template id="tile-lights">
+      <route-ui-lights messenger="{{$.socket}}" name="{{control.name}}"></route-ui-lights>
+    </template>
+    <template id="tile-media">
+      <route-ui-media messenger="{{$.socket}}"></route-ui-media>
+    </template>
+    <template id="tile-power">
+      <route-ui-power></route-ui-power>
+    </template>
+    <template id="tile-voice">
+      <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+    </template>
+    <template id="tile-blank">
+      <route-ui-tile></route-ui-tile>
+    </template>
+
     <polymer-page></polymer-page>
 
     <route-power-manager id="powerManager" auto="" on-route-sleep="{{sleep}}" on-route-wake="{{wake}}">
@@ -1593,18 +1610,15 @@ polymer-ui-pages {
         <polymer-flex-layout></polymer-flex-layout>
 
         <div style="position: relative" flex="">
-          <section id="tiles">
-            <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
-            <route-ui-lights messenger="{{$.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
-            <route-ui-lights messenger="{{$.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
-            <route-ui-media messenger="{{$.socket}}"></route-ui-media>
-            <route-ui-power></route-ui-power>
-            <route-ui-tile></route-ui-tile>
-            <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+          <section id="tiles" on-route-ui-tile-attached="{{tileAttached}}">
+            <route-tile-layout id="tileLayout" layout="{{curLayout}}" auto=""></route-tile-layout>
+            <template repeat="{{control in curRoom.controls}}">
+              <template ref="{{control.type}}" bind=""></template>
+            </template>
           </section>
         </div>
 
-        <route-ui-bar id="bar"></route-ui-bar>
+        <route-ui-bar id="bar">{{curRoom.shortName}}</route-ui-bar>
       </div>
 
       <route-ui-lockscreen id="clock"></route-ui-lockscreen>
@@ -1618,6 +1632,7 @@ polymer-ui-pages {
 
   
 
+<script type="text/javascript" src="../src/cordova.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script src="index.js"></script>
 </body>

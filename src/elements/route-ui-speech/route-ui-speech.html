@@ -16,7 +16,7 @@
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../route-ui-tile/route-ui-tile.html">
 
-<polymer-element name="route-ui-speech" attributes="">
+<polymer-element name="route-ui-speech" attributes="messenger">
   <template>
     <link rel="stylesheet" href="route-ui-speech.css">
 
@@ -43,31 +43,29 @@
   <script>
     Polymer('route-ui-speech', {
       ready: function() {
-        if(!('webkitSpeechRecognition' in window)) {
+        if(!window.plugins || !window.plugins.speechrecognizer) {
           this.$.tile.classList.add("disabled");
-        } else {
-          var recognition = this.recognition = new webkitSpeechRecognition();
-          recognition.continuous = false;
-          recognition.interimResults = false;
-          recognition.lang = "en-US";
-          recognition.onresult = this.resultHandler.bind(this);
-          recognition.onend = this.endHandler.bind(this);
         }
       },
       centerHandler: function() {
-        if(this.recognition) {
+        if(window.plugins && window.plugins.speechrecognizer) {
           this.$.tile.classList.add("active");
-          this.recognition.start();
+
+          var maxMatches = 1;
+          var promptString = "What can I do for you?"; // optional
+          var language = "en-US";         // optional
+          window.plugins.speechrecognizer.startRecognize(this.resultHandler.bind(this),
+            this.errorHandler.bind(this), maxMatches, promptString, language);
         }
       },
-      resultHandler: function(e) {
-        for (var i = e.resultIndex; i < e.results.length; i++) {
-          if(e.results[i].isFinal) {
-            console.log(e.results[i][0].transcript);
-          }
-        }
+      resultHandler: function(result) {
+        this.$.tile.classList.remove("active");
+        this.messenger.send("Voice", {
+          result: result,
+        });
       },
-      endHandler: function(e) {
+      errorHandler: function(e) {
+        console.log(error);
         this.$.tile.classList.remove("active");
       },
     });
