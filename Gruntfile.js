@@ -58,6 +58,14 @@ module.exports = function(grunt) {
         dest: 'build/',
       },
     },
+    copy: {
+      main: {
+        files: [
+          {expand: true, cwd: "src/", src: ["cordova_plugins.js"], dest: "build/"},
+          {expand: true, cwd: "src/plugins", src: ["**"], dest: "build/plugins"},
+        ]
+      }
+    }
   });
 
   // Load plugins
@@ -66,10 +74,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-vulcanize');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.file.mkdir("build");
 
   // Default task(s).
-  grunt.registerTask('build', ['vulcanize', 'compress']);
+  grunt.registerTask('build', ['vulcanize', 'compress', 'copy']);
   grunt.registerTask('default', ['vulcanize', 'replace', 'uglify', 'htmlmin', 'compress']);
 };
