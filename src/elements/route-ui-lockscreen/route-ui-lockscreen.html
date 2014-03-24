@@ -21,9 +21,9 @@
   <template>
     <link rel="stylesheet" href="route-ui-lockscreen.css">
 
-    <route-state name="Forecast.currently.apparentTemperature" value="{{temperature}}"></route-state>
-    <route-state name="Forecast.currently.icon" value="{{forecastIcon}}"></route-state>
-    <route-state name="SunEvent" on-state-change="{{sunChanged}}"></route-state>
+    <route-state-value name="Forecast.currently.apparentTemperature" value="{{temperature}}"></route-state-value>
+    <route-state-value name="Forecast.currently.icon" value="{{forecastIcon}}"></route-state-value>
+    <route-state-value name="SunEvent" on-state-change="{{sunChanged}}"></route-state-value>
 
     <polymer-flex-layout vertical></polymer-flex-layout>
     <div flex></div>

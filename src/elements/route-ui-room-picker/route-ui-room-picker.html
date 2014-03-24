@@ -1,0 +1,33 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-ui-room-picker" attributes="rooms">
+  <template>
+    <link rel="stylesheet" href="route-ui-room-picker.css">
+    <h1>Pick a room:</h1>
+    <ul>
+      <template repeat="{{names}}">
+        <li on-tap="{{select}}">{{name}}</li>
+      </template>
+    </ul>
+  </template>
+  <script>
+    Polymer("route-ui-room-picker", {
+      rooms: null,
+      names: null,
+      roomsChanged: function() {
+        this.names = [];
+        for(var key in this.rooms) {
+          this.names.push({
+            key: key,
+            name: this.rooms[key].longName,
+          });
+        }
+      },
+      select: function(e, details, sender) {
+        this.fire("route-room-selected", {
+          room: sender.templateInstance.model.key
+        });
+      },
+    });
+  </script>
+</polymer-element>

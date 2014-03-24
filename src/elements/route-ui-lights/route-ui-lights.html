@@ -15,13 +15,13 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../route-ui-tile/route-ui-tile.html">
-<link rel="import" href="../route-state/route-state.html">
+<link rel="import" href="../route-state-value/route-state-value.html">
 
-<polymer-element name="route-ui-lights" attributes="messenger lights name">
+<polymer-element name="route-ui-lights" attributes="messenger room lights name key">
   <template>
     <link rel="stylesheet" href="route-ui-lights.css">
 
-    <route-state name="hueLights" on-state-change="{{lightsChanged}}"></route-state>
+    <route-state-value name="hueLights" on-state-change="{{lightsChanged}}"></route-state-value>
 
     <route-ui-tile id="tile" on-route-ui-tile-tap="{{tap}}"
         on-route-ui-tile-swipedown="{{swipedown}}"
@@ -77,9 +77,10 @@
         var brightness = 0;
         var state = false;
         for(var key in lights) {
-          if(key.match(this.lights) && lights[key].state) {
-            state = state || lights[key].state.on;
-            brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
+          var light = lights[key];
+          if(light.name.match(this.key) && light.state) {
+            state = state || light.state.on;
+            brightness = Math.ceil(Math.max(light.state.bri * 100 / 255, brightness));
           }
         }
         this.tmpState = state;
@@ -107,18 +108,18 @@
       tap: function(event, detail, sender) {
         this.state = !this.state;
         if(this.state) {
-          this.messenger.send("TomBedroom.LightsOn");
+          this.messenger.send(this.room+"."+this.name+"On");
         } else {
-          this.messenger.send("TomBedroom.LightsOff");
+          this.messenger.send(this.room+"."+this.name+"Off");
         }
       },
       swipeup: function(event, detail, sender) {
         this.brightness = 100;
-        this.messenger.send("TomBedroom.LightsBright");
+        this.messenger.send(this.room+"."+this.name+"Bright");
       },
       swipedown: function(event, detail, sender) {
         this.brightness = 30;
-        this.messenger.send("TomBedroom.LightsDim");
+        this.messenger.send(this.room+"."+this.name+"Dim");
       },
     });
   </script>

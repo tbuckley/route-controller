@@ -1,0 +1,87 @@
+<!--
+/**
+ * @module Route Elements
+ */
+/**
+ * route-state
+ *
+ * Example:
+ *
+ *     <route-state name="Sonos.CurrentTrack" value="{{current}}"></route-state>
+ *
+ * @class route-state
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-state-value" attributes="name value">
+  <template></template>
+  <script>
+    (function() {
+      var state = {};
+
+      function setValue(name, value) {
+        var snaker = state;
+        var parts = name.split(".");
+        var last = parts.pop();
+        parts.forEach(function(p) {
+          snaker = snaker[p];
+        });
+        snaker[last] = value;
+      }
+      function getValue(name) {
+        var snaker = state;
+        var parts = name.split(".");
+        for(var i = 0; i < parts.length; i++) {
+          var p = parts[i];
+          if(p in snaker) {
+            snaker = snaker[p];
+          } else {
+            return null;
+          }
+        }
+        return snaker;
+      }
+
+      document.addEventListener("route-state-change", function(e) {
+        var values = e.detail.data;
+        for(key in values) {
+          setValue(key, values[key]);
+        }
+        notify();
+      });
+
+      var listeners = [];
+
+      function notify() {
+        listeners.forEach(function(l) {
+          l.notify();
+        });
+      }
+
+      Polymer('route-state-value', {
+        name: null,
+        value: null,
+        attached: function() {
+          listeners.push(this);
+        },
+        detached: function() {
+          var i = listeners.indexOf(this);
+          if (i >= 0) {
+            listeners.splice(i, 1);
+          }
+        },
+        nameChanged: function() {
+          this.value = getValue(this.name);
+          this.fire("state-change", this.value);
+          console.log("nameChanged", this.name, this.value, state);
+        },
+        notify: function() {
+          this.value = getValue(this.name);
+          this.fire("state-change", this.value);
+          console.log("notify", this.name, this.value, state);
+        },
+      });
+    })();
+  </script>
+</polymer-element>

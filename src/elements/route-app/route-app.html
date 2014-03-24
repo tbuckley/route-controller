@@ -1,34 +1,37 @@
 <link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../components/polymer-page/polymer-page.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../../components/polymer-page/polymer-page.html">
 <link rel="import" href="../../components/polymer-ui-pages/polymer-ui-pages.html">
-<link rel="import" href="../route-tile-layout/route-tile-layout.html">
-<link rel="import" href="../route-ui-tile/route-ui-tile.html">
-<link rel="import" href="../route-socket/route-socket.html">
+<link rel="import" href="../../components/polymer-ui-overlay/polymer-ui-overlay.html">
 <link rel="import" href="../route-power-manager/route-power-manager.html">
-<link rel="import" href="../route-ui-lockscreen/route-ui-lockscreen.html">
+<link rel="import" href="../route-socket/route-socket.html">
+<link rel="import" href="../route-state/route-state.html">
+<link rel="import" href="../route-tile-layout/route-tile-layout.html">
+<link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
+<link rel="import" href="../route-ui-bar/route-ui-bar.html">
 <link rel="import" href="../route-ui-lights/route-ui-lights.html">
+<link rel="import" href="../route-ui-lockscreen/route-ui-lockscreen.html">
 <link rel="import" href="../route-ui-media/route-ui-media.html">
 <link rel="import" href="../route-ui-power/route-ui-power.html">
-<link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
+<link rel="import" href="../route-ui-room-picker/route-ui-room-picker.html">
 <link rel="import" href="../route-ui-speech/route-ui-speech.html">
-<link rel="import" href="../route-ui-bar/route-ui-bar.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
     <link rel="stylesheet" href="route-app.css">
 
     <template id="tile-lights">
-      <route-ui-lights messenger="{{$.socket}}" name="{{control.name}}"></route-ui-lights>
+      <route-ui-lights messenger="{{$.socket}}" room="{{room}}" name="{{control.name}}" key="{{control.key}}"></route-ui-lights>
     </template>
     <template id="tile-media">
-      <route-ui-media messenger="{{$.socket}}"></route-ui-media>
+      <route-ui-media messenger="{{$.socket}}" room="{{room}}"></route-ui-media>
     </template>
     <template id="tile-power">
       <route-ui-power></route-ui-power>
     </template>
     <template id="tile-voice">
-      <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+      <route-ui-speech messenger="{{$.socket}}" room="{{room}}"></route-ui-speech>
     </template>
     <template id="tile-blank">
       <route-ui-tile></route-ui-tile>
@@ -41,6 +44,11 @@
     </route-power-manager>
 
     <route-socket id="socket"></route-socket>
+    <route-state id="state"></route-state>
+
+    <polymer-ui-overlay active="{{roomPickerActive}}" backdrop="true" modal="false">
+      <route-ui-room-picker rooms="{{rooms}}" on-route-room-selected="{{ roomSelected }}"></route-ui-room-picker>
+    </polymer-ui-overlay>
 
     <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
 
@@ -56,7 +64,7 @@
           </section>
         </div>
 
-        <route-ui-bar id="bar">{{curRoom.shortName}}</route-ui-bar>
+        <route-ui-bar id="bar" on-tap="{{toggleRoomPicker}}">{{curRoom.shortName}}</route-ui-bar>
       </div>
 
       <route-ui-lockscreen id="clock"></route-ui-lockscreen>
@@ -95,8 +103,8 @@
             longName: "Tom's Bedroom",
             shortName: "Bedroom",
             controls: [
-              {type: "tile-lights", name: "Lights"},
-              {type: "tile-lights", name: "Lamp"},
+              {type: "tile-lights", name: "Lights", key: "TomBedroom"},
+              {type: "tile-lights", name: "Lamp", key: "TomLamp"},
               {type: "tile-media"},
               {type: "tile-power"},
               {type: "tile-blank"},
@@ -123,6 +131,7 @@
 
         curRoom: {longName: "N/A", shortName: "N/A", controls: []},
         curLayout: [[]],
+        roomPickerActive: false,
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
@@ -135,14 +144,17 @@
           this.curRoom = this.rooms[this.room];
           this.curLayout = this.layouts[this.curRoom.controls.length];
           this.$.tileLayout.invalidate();
-
-          setTimeout(function() {
-            this.room = "Kitchen";
-          }.bind(this), 10 * 1000);
         },
         roomChanged: function(oldValue, newValue) {
           this.curRoom = this.rooms[this.room];
           this.curLayout = this.layouts[this.curRoom.controls.length];
+        },
+        roomSelected: function(e, details, sender) {
+          this.room = details.room;
+          this.toggleRoomPicker();
+        },
+        toggleRoomPicker: function() {
+          this.roomPickerActive = !this.roomPickerActive;
         },
         wake: function() {
           this.page = "panel";

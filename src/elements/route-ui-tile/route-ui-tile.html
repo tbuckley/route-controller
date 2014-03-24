@@ -32,7 +32,7 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <script type="text/javascript" src="../../components/hammerjs/hammer.js"></script>
 
-<polymer-element name="route-ui-tile" attributes="maxRotation" touch-action="none">
+<polymer-element name="route-ui-tile" attributes="maxRotation" touch-action="none" on-tap="{{tap}}">
   <template>
     <link rel="stylesheet" href="route-ui-tile.css">
     <div id="tile">
@@ -57,11 +57,11 @@
           tap: false,
           tap_always: false,
         });
-        this.hammer.on("touch", this.touch.bind(this));
-        this.hammer.on("drag", this.drag.bind(this));
-        this.hammer.on("release", this.release.bind(this));
-        this.hammer.on("tap", this.tap.bind(this));
-        this.hammer.on("swipe", this.swipe.bind(this));
+        // this.hammer.on("touch", this.touch.bind(this));
+        // this.hammer.on("drag", this.drag.bind(this));
+        // this.hammer.on("release", this.release.bind(this));
+        // this.hammer.on("tap", this.tap.bind(this));
+        // this.hammer.on("swipe", this.swipe.bind(this));
       },
       tap: function(e) {
         this.fire("route-ui-tile-tap");

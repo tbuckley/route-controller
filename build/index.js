@@ -98,16 +98,6 @@ i(a,s,function(a){f(a),c.updateDependentAttributes(a.getAttribute("select"));for
 Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function b(a,b){return a&&b&&Object.getOwnPropertyNames(b).forEach(function(c){var d=Object.getOwnPropertyDescriptor(b,c);d&&(Object.defineProperty(a,c,d),"function"==typeof d.value&&(d.value.nom=c))}),a}a.extend=b}(Polymer),function(a){function b(a,b,d){return a?a.stop():a=new c(this),a.go(b,d),a}var c=function(a){this.context=a,this.boundComplete=this.complete.bind(this)};c.prototype={go:function(a,b){this.callback=a;var c;b?(c=setTimeout(this.boundComplete,b),this.handle=function(){clearTimeout(c)}):(c=requestAnimationFrame(this.boundComplete),this.handle=function(){cancelAnimationFrame(c)})},stop:function(){this.handle&&(this.handle(),this.handle=null)},complete:function(){this.handle&&(this.stop(),this.callback.call(this.context))}},a.job=b}(Polymer),function(){var a={};HTMLElement.register=function(b,c){a[b]=c},HTMLElement.getPrototypeForTag=function(b){var c=b?a[b]:HTMLElement.prototype;return c||Object.getPrototypeOf(document.createElement(b))};var b=Event.prototype.stopPropagation;Event.prototype.stopPropagation=function(){this.cancelBubble=!0,b.apply(this,arguments)}}(Polymer),function(a){function b(a){var c=b.caller,g=c.nom,h=c._super;if(h||(g||(g=c.nom=e.call(this,c)),g||console.warn("called super() on a method not installed declaratively (has no .nom property)"),h=d(c,g,f(this))),h){var i=h[g];return i._super||d(i,g,h),i.apply(this,a||[])}}function c(a,b,c){for(;a;){if(a[b]!==c&&a[b])return a;a=f(a)}}function d(a,b,d){return a._super=c(d,b,a),a._super&&(a._super[b].nom=b),a._super}function e(a){for(var b=this.__proto__;b&&b!==HTMLElement.prototype;){for(var c,d=Object.getOwnPropertyNames(b),e=0,f=d.length;f>e&&(c=d[e]);e++){var g=Object.getOwnPropertyDescriptor(b,c);if("function"==typeof g.value&&g.value===a)return c}b=b.__proto__}}function f(a){return a.__proto__}a.super=b}(Polymer),function(a){function b(a,b){var d=typeof b;return b instanceof Date&&(d="date"),c[d](a,b)}var c={string:function(a){return a},date:function(a){return new Date(Date.parse(a)||Date.now())},"boolean":function(a){return""===a?!0:"false"===a?!1:!!a},number:function(a){var b=parseFloat(a);return 0===b&&(b=parseInt(a)),isNaN(b)?a:b},object:function(a,b){if(null===b)return a;try{return JSON.parse(a.replace(/'/g,'"'))}catch(c){return a}},"function":function(a,b){return b}};a.deserializeValue=b}(Polymer),function(a){var b=a.extend,c={};c.declaration={},c.instance={},c.publish=function(a,c){for(var d in a)b(c,a[d])},a.api=c}(Polymer),function(a){var b={async:function(a,b,c){Platform.flush(),b=b&&b.length?b:[b];var d=function(){(this[a]||a).apply(this,b)}.bind(this),e=c?setTimeout(d,c):requestAnimationFrame(d);return c?e:1/e},cancelAsync:function(a){1>a?cancelAnimationFrame(Math.round(1/a)):clearTimeout(a)},fire:function(a,b,c,d,e){var f=c||this,b=b||{},g=new CustomEvent(a,{bubbles:void 0!==d?d:!0,cancelable:void 0!==e?e:!0,detail:b});return f.dispatchEvent(g),g},asyncFire:function(){this.async("fire",arguments)},classFollows:function(a,b,c){b&&b.classList.remove(c),a&&a.classList.add(c)}},c=function(){},d={};b.asyncMethod=b.async,a.api.instance.utils=b,a.nop=c,a.nob=d}(Polymer),function(a){var b=window.logFlags||{},c="on-",d={EVENT_PREFIX:c,addHostListeners:function(){var a=this.eventDelegates;b.events&&Object.keys(a).length>0&&console.log("[%s] addHostListeners:",this.localName,a);var d,e,f=this;for(var g in a)e=c+g,(d=PolymerExpressions.prepareEventBinding(Path.get(a[g]),e,{resolveEventHandler:function(a,b){var c=b.getValueFrom(f);return c?c.bind(f):void 0}}))(this,this,!1)},dispatchMethod:function(a,c,d){if(a){b.events&&console.group("[%s] dispatch [%s]",a.localName,c);var e="function"==typeof c?c:a[c];e&&e[d?"apply":"call"](a,d),b.events&&console.groupEnd(),Platform.flush()}}};a.api.instance.events=d}(Polymer),function(a){var b={copyInstanceAttributes:function(){var a=this._instanceAttributes;for(var b in a)this.hasAttribute(b)||this.setAttribute(b,a[b])},takeAttributes:function(){if(this._publishLC)for(var a,b=0,c=this.attributes,d=c.length;(a=c[b])&&d>b;b++)this.attributeToProperty(a.name,a.value)},attributeToProperty:function(b,c){var b=this.propertyForAttribute(b);if(b){if(c&&c.search(a.bindPattern)>=0)return;var d=this[b],c=this.deserializeValue(c,d);c!==d&&(this[b]=c)}},propertyForAttribute:function(a){var b=this._publishLC&&this._publishLC[a];return b},deserializeValue:function(b,c){return a.deserializeValue(b,c)},serializeValue:function(a,b){return"boolean"===b?a?"":void 0:"object"!==b&&"function"!==b&&void 0!==a?a:void 0},reflectPropertyToAttribute:function(a){var b=typeof this[a],c=this.serializeValue(this[a],b);void 0!==c?this.setAttribute(a,c):"boolean"===b&&this.removeAttribute(a)}};a.api.instance.attributes=b}(Polymer),function(a){function b(a,b,d){c.bind&&console.log(e,inB.localName||"object",inPath,a.localName,b);var f=d.discardChanges();return(null===f||void 0===f)&&d.setValue(a[b]),Observer.defineComputedProperty(a,b,d)}var c=window.logFlags||{},d={observeProperties:function(){var a=this._observeNames,b=this._publishNames;if(a&&a.length||b&&b.length){for(var c,d=this._propertyObserver=new CompoundObserver,e=0,f=a.length;f>e&&(c=a[e]);e++){d.addPath(this,c);var g=Object.getOwnPropertyDescriptor(this.__proto__,c);g&&g.value&&this.observeArrayValue(c,g.value,null)}for(var c,e=0,f=b.length;f>e&&(c=b[e]);e++)this.observe&&void 0!==this.observe[c]||d.addPath(this,c);d.open(this.notifyPropertyChanges,this)}},notifyPropertyChanges:function(a,b,c){var d,e,f={};for(var g in b)d=c[2*g+1],void 0!==this.publish[d]&&this.reflectPropertyToAttribute(d),e=this.observe[d],e&&(this.observeArrayValue(d,a[g],b[g]),f[e]||(f[e]=!0,this.invokeMethod(e,[b[g],a[g],arguments])))},observeArrayValue:function(a,b,d){var e=this.observe[a];if(e&&(Array.isArray(d)&&(c.observe&&console.log("[%s] observeArrayValue: unregister observer [%s]",this.localName,a),this.unregisterObserver(a+"__array")),Array.isArray(b))){c.observe&&console.log("[%s] observeArrayValue: register observer [%s]",this.localName,a,b);var f=new ArrayObserver(b);f.open(function(a,b){this.invokeMethod(e,[b])},this),this.registerObserver(a+"__array",f)}},bindProperty:function(a,c){return b(this,a,c)},unbindAllProperties:function(){this._propertyObserver&&this._propertyObserver.close(),this.unregisterObservers()},unbindProperty:function(a){return this.unregisterObserver(a)},invokeMethod:function(a,b){var c=this[a]||a;"function"==typeof c&&c.apply(this,b)},registerObserver:function(a,b){var c=this._observers||(this._observers={});c[a]=b},unregisterObserver:function(a){var b=this._observers;return b&&b[a]?(b[a].close(),b[a]=null,!0):void 0},unregisterObservers:function(){if(this._observers){for(var a,b,c=Object.keys(this._observers),d=0,e=c.length;e>d&&(a=c[d]);d++)b=this._observers[a],b.close();this._observers={}}}},e="[%s]: bindProperties: [%s] to [%s].[%s]";a.api.instance.properties=d}(Polymer),function(a){function b(a){for(;a.parentNode;){if(a.lightDomController)return a;a=a.parentNode}return a.host}function c(a){e(a,d)}function d(a){a.unbindAll()}function e(a,b){if(a){b(a);for(var c=a.firstChild;c;c=c.nextSibling)e(c,b)}}var f=window.logFlags||0,g=(a.api.instance.events,new PolymerExpressions);g.resolveEventHandler=function(a,c,d){var e=b(d);if(e){var f=c.getValueFrom(e);if(f)return f.bind(e)}};var h={syntax:g,instanceTemplate:function(a){return a.createInstance(this,this.syntax)},bind:function(a,b){this._elementPrepared||this.prepareElement();var c=this.propertyForAttribute(a);if(c){this.unbind(a);var d=this.bindProperty(c,b);return d.path=b.path_,this.reflectPropertyToAttribute(c),this.bindings[a]=d}return this.mixinSuper(arguments)},asyncUnbindAll:function(){this._unbound||(f.unbind&&console.log("[%s] asyncUnbindAll",this.localName),this._unbindAllJob=this.job(this._unbindAllJob,this.unbindAll,0))},unbindAll:function(){if(!this._unbound){this.unbindAllProperties(),this.super();for(var a=this.shadowRoot;a;)c(a),a=a.olderShadowRoot;this._unbound=!0}},cancelUnbindAll:function(a){return this._unbound?void(f.unbind&&console.warn("[%s] already unbound, cannot cancel unbindAll",this.localName)):(f.unbind&&console.log("[%s] cancelUnbindAll",this.localName),this._unbindAllJob&&(this._unbindAllJob=this._unbindAllJob.stop()),void(a||e(this.shadowRoot,function(a){a.cancelUnbindAll&&a.cancelUnbindAll()})))}},i=/\{\{([^{}]*)}}/;a.bindPattern=i,a.api.instance.mdv=h}(Polymer),function(a){function b(a){return a.hasOwnProperty("PolymerBase")}function c(){}var d=0,e={PolymerBase:!0,job:Polymer.job,"super":Polymer.super,created:function(){},ready:function(){},createdCallback:function(){this.created(),(this.ownerDocument.defaultView||this.alwaysPrepare||d>0)&&this.prepareElement()},prepareElement:function(){this._elementPrepared=!0,this.shadowRoots={},this.observeProperties(),this.copyInstanceAttributes(),this.takeAttributes(),this.addHostListeners(),d++,this.parseDeclarations(this.__proto__),d--,this.removeAttribute("unresolved"),this.ready()},attachedCallback:function(){this._elementPrepared||this.prepareElement(),this.cancelUnbindAll(!0),this.attached&&this.attached(),this.enteredView&&this.enteredView()},detachedCallback:function(){this.preventDispose||this.asyncUnbindAll(),this.detached&&this.detached(),this.leftView&&this.leftView()},enteredViewCallback:function(){this.attachedCallback()},leftViewCallback:function(){this.detachedCallback()},enteredDocumentCallback:function(){this.attachedCallback()},leftDocumentCallback:function(){this.detachedCallback()},parseDeclarations:function(a){a&&a.element&&(this.parseDeclarations(a.__proto__),a.parseDeclaration.call(this,a.element))},parseDeclaration:function(a){var b=this.fetchTemplate(a);if(b){var c=this.shadowFromTemplate(b);this.shadowRoots[a.name]=c}},fetchTemplate:function(a){return a.querySelector("template")},shadowFromTemplate:function(a){if(a){var b=this.createShadowRoot();b.resetStyleInheritance=this.resetStyleInheritance;var c=this.instanceTemplate(a);return b.appendChild(c),this.shadowRootReady(b,a),b}},lightFromTemplate:function(a){if(a){this.lightDomController=!0;var b=this.instanceTemplate(a);return this.appendChild(b),this.shadowRootReady(this,a),b}},shadowRootReady:function(a){this.marshalNodeReferences(a),PointerGestures.register(a)},marshalNodeReferences:function(a){var b=this.$=this.$||{};if(a)for(var c,d=a.querySelectorAll("[id]"),e=0,f=d.length;f>e&&(c=d[e]);e++)b[c.id]=c},attributeChangedCallback:function(a){"class"!==a&&"style"!==a&&this.attributeToProperty(a,this.getAttribute(a)),this.attributeChanged&&this.attributeChanged.apply(this,arguments)},onMutation:function(a,b){var c=new MutationObserver(function(a){b.call(this,c,a),c.disconnect()}.bind(this));c.observe(a,{childList:!0,subtree:!0})}};c.prototype=e,e.constructor=c,a.Base=c,a.isBase=b,a.api.instance.base=e}(Polymer),function(a){function b(a){return a.__proto__}var c=(window.logFlags||{},"element"),d="controller",e={STYLE_SCOPE_ATTRIBUTE:c,installControllerStyles:function(){var a=this.findStyleController();if(a&&!this.scopeHasElementStyle(a,d)){for(var c=b(this),e="";c&&c.element;)e+=c.element.cssTextForScope(d),c=b(c);if(e){var f=this.element.cssTextToScopeStyle(e,d);Polymer.applyStyleToScope(f,a)}}},findStyleController:function(){if(window.ShadowDOMPolyfill)return wrap(document.head);for(var a=this;a.parentNode;)a=a.parentNode;return a===document?document.head:a},scopeHasElementStyle:function(a,b){var d=c+"="+this.localName+"-"+b;return a.querySelector("style["+d+"]")}};a.api.instance.styles=e}(Polymer),function(a){function b(a,b){if(f[a])throw"Already registered (Polymer) prototype for element "+a;e(a,b),d(a)}function c(a,b){h[a]=b}function d(a){h[a]&&(h[a].registerWhenReady(),delete h[a])}function e(a,b){return i[a]=b||{}}function f(a){return i[a]}var g=a.extend,h=(a.api,{}),i={};a.getRegisteredPrototype=f,a.waitingForPrototype=c,window.Polymer=b,g(Polymer,a);var j=Platform.deliverDeclarations();if(j)for(var k,l=0,m=j.length;m>l&&(k=j[l]);l++)b.apply(null,k)}(Polymer),function(a){var b={resolveElementPaths:function(a){Platform.urlResolver.resolveDom(a)},addResolvePathApi:function(){var a=this.getAttribute("assetpath")||"",b=new URL(a,this.ownerDocument.baseURI);this.prototype.resolvePath=function(a,c){var d=new URL(a,c||b);return d.href}}};a.api.declaration.path=b}(Polymer),function(a){function b(a,b){var c=new URL(a.getAttribute("href"),b).href;return"@import '"+c+"';"}function c(a,b){if(a){var c=d(a.textContent),e=a.getAttribute(h);e&&c.setAttribute(h,e),b.appendChild(c)}}function d(a,b){b=b||document,b=b.createElement?b:b.ownerDocument;var c=b.createElement("style");return c.textContent=a,c}function e(a){return a&&a.__resource||""}function f(a,b){return p?p.call(a,b):void 0}var g=(window.logFlags||{},a.api.instance.styles),h=g.STYLE_SCOPE_ATTRIBUTE,i="style",j="@import",k="link[rel=stylesheet]",l="global",m="polymer-scope",n={loadStyles:function(a){var b=this.templateContent();b&&this.convertSheetsToStyles(b);var c=this.findLoadableStyles(b);c.length?Platform.styleResolver.loadStyles(c,a):a&&a()},convertSheetsToStyles:function(a){for(var c,e,f=a.querySelectorAll(k),g=0,h=f.length;h>g&&(c=f[g]);g++){e=d(b(c,this.ownerDocument.baseURI),this.ownerDocument);var i=c.getAttribute(m);i&&e.setAttribute(m,i),c.parentNode.replaceChild(e,c)}},findLoadableStyles:function(a){var b=[];if(a)for(var c,d=a.querySelectorAll(i),e=0,f=d.length;f>e&&(c=d[e]);e++)c.textContent.match(j)&&b.push(c);return b},installSheets:function(){this.cacheSheets(),this.cacheStyles(),this.installLocalSheets(),this.installGlobalStyles()},cacheSheets:function(){this.sheets=this.findNodes(k),this.sheets.forEach(function(a){a.parentNode&&a.parentNode.removeChild(a)})},cacheStyles:function(){this.styles=this.findNodes(i+"["+m+"]"),this.styles.forEach(function(a){a.parentNode&&a.parentNode.removeChild(a)})},installLocalSheets:function(){var a=this.sheets.filter(function(a){return!a.hasAttribute(m)}),b=this.templateContent();if(b){var c="";if(a.forEach(function(a){c+=e(a)+"\n"}),c){var f=d(c,this.ownerDocument);b.insertBefore(f,b.firstChild)}}},findNodes:function(a,b){var c=this.querySelectorAll(a).array(),d=this.templateContent();if(d){var e=d.querySelectorAll(a).array();c=c.concat(e)}return b?c.filter(b):c},templateContent:function(){var a=this.querySelector("template");return a&&templateContent(a)},installGlobalStyles:function(){var a=this.styleForScope(l);c(a,document.head)},cssTextForScope:function(a){var b="",c="["+m+"="+a+"]",d=function(a){return f(a,c)},g=this.sheets.filter(d);g.forEach(function(a){b+=e(a)+"\n\n"});var h=this.styles.filter(d);return h.forEach(function(a){b+=a.textContent+"\n\n"}),b},styleForScope:function(a){var b=this.cssTextForScope(a);return this.cssTextToScopeStyle(b,a)},cssTextToScopeStyle:function(a,b){if(a){var c=d(a);return c.setAttribute(h,this.getAttribute("name")+"-"+b),c}}},o=HTMLElement.prototype,p=o.matches||o.matchesSelector||o.webkitMatchesSelector||o.mozMatchesSelector;a.api.declaration.styles=n,a.applyStyleToScope=c}(Polymer),function(a){var b=(window.logFlags||{},a.api.instance.events),c=b.EVENT_PREFIX,d={parseHostEvents:function(){var a=this.prototype.eventDelegates;this.addAttributeDelegates(a)},addAttributeDelegates:function(a){for(var b,c=0;b=this.attributes[c];c++)this.hasEventPrefix(b.name)&&(a[this.removeEventPrefix(b.name)]=b.value.replace("{{","").replace("}}","").trim())},hasEventPrefix:function(a){return a&&"o"===a[0]&&"n"===a[1]&&"-"===a[2]},removeEventPrefix:function(a){return a.slice(e)}},e=c.length;a.api.declaration.events=d}(Polymer),function(a){var b={inferObservers:function(a){var b,c=a.observe;for(var d in a)"Changed"===d.slice(-7)&&(c||(c=a.observe={}),b=d.slice(0,-7),c[b]=c[b]||d)},explodeObservers:function(a){var b=a.observe;if(b){var c={};for(var d in b)for(var e,f=d.split(" "),g=0;e=f[g];g++)c[e]=b[d];a.observe=c}},optimizePropertyMaps:function(a){if(a.observe){var b=a._observeNames=[];for(var c in a.observe)for(var d,e=c.split(" "),f=0;d=e[f];f++)b.push(d)}if(a.publish){var b=a._publishNames=[];for(var c in a.publish)b.push(c)}},publishProperties:function(a,b){var c=a.publish;c&&(this.requireProperties(c,a,b),a._publishLC=this.lowerCaseMap(c))},requireProperties:function(a,b,c){for(var d in a)void 0===b[d]&&void 0===c[d]&&(b[d]=a[d])},lowerCaseMap:function(a){var b={};for(var c in a)b[c.toLowerCase()]=c;return b}};a.api.declaration.properties=b}(Polymer),function(a){var b="attributes",c=/\s|,/,d={inheritAttributesObjects:function(a){this.inheritObject(a,"publishLC"),this.inheritObject(a,"_instanceAttributes")},publishAttributes:function(a,d){var e=this.getAttribute(b);if(e)for(var f,g=a.publish||(a.publish={}),h=e.split(c),i=0,j=h.length;j>i;i++)f=h[i].trim(),f&&void 0===g[f]&&void 0===d[f]&&(g[f]=null)},accumulateInstanceAttributes:function(){for(var a,b=this.prototype._instanceAttributes,c=this.attributes,d=0,e=c.length;e>d&&(a=c[d]);d++)this.isInstanceAttribute(a.name)&&(b[a.name]=a.value)},isInstanceAttribute:function(a){return!this.blackList[a]&&"on-"!==a.slice(0,3)},blackList:{name:1,"extends":1,constructor:1,noscript:1,assetpath:1,"cache-csstext":1}};d.blackList[b]=1,a.api.declaration.attributes=d}(Polymer),function(a){function b(a){if(!Object.__proto__){var b=Object.getPrototypeOf(a);a.__proto__=b,d(b)&&(b.__proto__=Object.getPrototypeOf(b))}}var c=a.api,d=a.isBase,e=a.extend,f={register:function(a,b){this.buildPrototype(a,b),this.registerPrototype(a,b),this.publishConstructor()},buildPrototype:function(b,c){var d=a.getRegisteredPrototype(b),e=this.generateBasePrototype(c);this.desugarBeforeChaining(d,e),this.prototype=this.chainPrototypes(d,e),this.desugarAfterChaining(b,c)},desugarBeforeChaining:function(a,b){a.element=this,this.publishAttributes(a,b),this.publishProperties(a,b),this.inferObservers(a),this.explodeObservers(a)},chainPrototypes:function(a,c){this.inheritMetaData(a,c);var d=this.chainObject(a,c);return b(d),d},inheritMetaData:function(a,b){this.inheritObject("observe",a,b),this.inheritObject("publish",a,b),this.inheritObject("_publishLC",a,b),this.inheritObject("_instanceAttributes",a,b),this.inheritObject("eventDelegates",a,b)},desugarAfterChaining:function(a,b){this.optimizePropertyMaps(this.prototype),this.installSheets(),this.resolveElementPaths(this),this.accumulateInstanceAttributes(),this.parseHostEvents(),this.addResolvePathApi(),window.ShadowDOMPolyfill&&Platform.ShadowCSS.shimStyling(this.templateContent(),a,b),this.prototype.registerCallback&&this.prototype.registerCallback(this)},publishConstructor:function(){var a=this.getAttribute("constructor");a&&(window[a]=this.ctor)},generateBasePrototype:function(a){var b=this.findBasePrototype(a);if(!b){var b=HTMLElement.getPrototypeForTag(a);b=this.ensureBaseApi(b),g[a]=b}return b},findBasePrototype:function(a){return g[a]},ensureBaseApi:function(a){if(a.PolymerBase)return a;var b=Object.create(a);return c.publish(c.instance,b),this.mixinMethod(b,a,c.instance.mdv,"bind"),b},mixinMethod:function(a,b,c,d){var e=function(a){return b[d].apply(this,a)};a[d]=function(){return this.mixinSuper=e,c[d].apply(this,arguments)}},inheritObject:function(a,b,c){var d=b[a]||{};b[a]=this.chainObject(d,c[a])},registerPrototype:function(a,b){var c={prototype:this.prototype},d=this.findTypeExtension(b);d&&(c.extends=d),HTMLElement.register(a,this.prototype),this.ctor=document.registerElement(a,c),this.prototype.constructor=this.ctor},findTypeExtension:function(a){if(a&&a.indexOf("-")<0)return a;var b=this.findBasePrototype(a);return b.element?this.findTypeExtension(b.element.extends):void 0}},g={};f.chainObject=Object.__proto__?function(a,b){return a&&b&&a!==b&&(a.__proto__=b),a}:function(a,b){if(a&&b&&a!==b){var c=Object.create(b);a=e(c,a)}return a},c.declaration.prototype=f}(Polymer),function(a){function b(a){return document.contains(a)?g:f}function c(){return f.length?f[0]:g[0]}function d(a){e.waitToFlush=!0,HTMLImports.whenImportsReady(function(){e.addReadyCallback(a),e.waitToFlush=!1,e.check()})}var e={wait:function(a){return-1===this.indexOf(a)&&-1===h.indexOf(a)&&this.add(a),0!==this.indexOf(a)},add:function(a){b(a).push(a)},indexOf:function(a){var c=b(a).indexOf(a);return c>=0&&document.contains(a)&&(c+=HTMLImports.useNative||HTMLImports.ready?f.length:1e9),c},register:function(a){var b=this.remove(a);b&&(h.push(b),this.check())},remove:function(a){var c=this.indexOf(a);if(0===c)return b(a).shift()},check:function(){var a=this.nextElement();return a&&a.registerWhenReady(),this.canFlush()?(this.flush(),!0):void 0},nextElement:function(){return c()},canFlush:function(){return!this.waitToFlush&&this.isEmpty()},isEmpty:function(){return!f.length&&!g.length},flush:function(){CustomElements.ready=!1;for(var a;h.length;)a=h.shift(),a._register();CustomElements.upgradeDocumentTree(document),CustomElements.ready=!0,this.flushReadyCallbacks()},flushReadyCallbacks:function(){if(i)for(var a;i.length;)(a=i.shift())()},addReadyCallback:function(a){a&&i.push(a)},waitToFlush:!0},f=[],g=[],h=[],i=[];a.queue=e,a.whenPolymerReady=d}(Polymer),function(a){function b(a,b){a?(document.head.appendChild(a),d(b)):b&&b()}function c(a,c){if(a&&a.length){for(var d,e,f=document.createDocumentFragment(),g=0,h=a.length;h>g&&(d=a[g]);g++)e=document.createElement("link"),e.rel="import",e.href=d,f.appendChild(e);b(f,c)}else c&&c()}var d=a.whenPolymerReady;a.import=c,a.importElements=b}(Polymer),function(a){function b(a){return Boolean(HTMLElement.getPrototypeForTag(a))}function c(a){return a&&a.indexOf("-")>=0}var d=a.extend,e=a.api,f=a.queue,g=a.whenPolymerReady,h=a.getRegisteredPrototype,i=a.waitingForPrototype,j=d(Object.create(HTMLElement.prototype),{createdCallback:function(){this.getAttribute("name")&&this.init()},init:function(){this.name=this.getAttribute("name"),this.extends=this.getAttribute("extends"),this.loadResources(),this.registerWhenReady()},registerWhenReady:function(){this.registered||this.waitingForPrototype(this.name)||this.waitingForQueue()||this.waitingForResources()||f.register(this)},_register:function(){c(this.extends)&&!b(this.extends)&&console.warn("%s is attempting to extend %s, an unregistered element or one that was not registered with Polymer.",this.name,this.extends),this.register(this.name,this.extends),this.registered=!0},waitingForPrototype:function(a){return h(a)?void 0:(i(a,this),this.handleNoScript(a),!0)},handleNoScript:function(a){if(this.hasAttribute("noscript")&&!this.noscript)if(this.noscript=!0,window.CustomElements&&!CustomElements.useNative)Polymer(a);else{var b=document.createElement("script");b.textContent="Polymer('"+a+"');",this.appendChild(b)}},waitingForResources:function(){return this._needsResources},waitingForQueue:function(){return f.wait(this)},loadResources:function(){this._needsResources=!0,this.loadStyles(function(){this._needsResources=!1,this.registerWhenReady()}.bind(this))}});e.publish(e.declaration,j),a.getRegisteredPrototype=h,g(function(){document.body.removeAttribute("unresolved"),document.dispatchEvent(new CustomEvent("polymer-ready",{bubbles:!0}))}),document.registerElement("polymer-element",{prototype:j})}(Polymer);
 //# sourceMappingURL=polymer.js.map;
 
-    Polymer('polymer-page', {
-      fullbleed: true,
-      enteredView: function() {
-        document.head.style.cssText += 'height: 100%; overflow: hidden; margin: 0;';
-        document.body.style.cssText += 'position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; margin: 0;';
-        document.body.style.transition = 'all 0.3s';
-      }
-    });
-  ;
-
     Polymer('polymer-flex-layout', {
       vertical: false,
       isContainer: false,
@@ -148,6 +138,16 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
       },
       justifyChanged: function(old) {
         this.switchContainerClass('justify-', old, this.justify);
+      }
+    });
+  ;
+
+    Polymer('polymer-page', {
+      fullbleed: true,
+      enteredView: function() {
+        document.head.style.cssText += 'height: 100%; overflow: hidden; margin: 0;';
+        document.body.style.cssText += 'position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; margin: 0;';
+        document.body.style.transition = 'all 0.3s';
       }
     });
   ;
@@ -510,6 +510,475 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
     });
   ;
 
+		Polymer('polymer-key-helper', {
+			ENTER_KEY: 13,
+			ESCAPE_KEY: 27
+		});
+	;
+
+    (function() {
+      // track overlays for z-index and focus managemant
+      var overlays = [];
+      var trackOverlays = function(inOverlay) {
+        if (inOverlay.opened) {
+          //var overlayZ = window.getComputedStyle(inOverlay.target).zIndex;
+          //var z0 = Math.max(currentOverlayZ(), overlayZ);
+          var z0 = currentOverlayZ();
+          overlays.push(inOverlay);
+          var z1 = currentOverlayZ();
+          if (z1 <= z0) {
+            applyOverlayZ(inOverlay, z0);
+          } 
+        } else {
+          var i = overlays.indexOf(inOverlay);
+          if (i >= 0) {
+            overlays.splice(i, 1);
+            setZ(inOverlay, null);
+          }
+        }
+      }
+      
+      var applyOverlayZ = function(inOverlay, inAboveZ) {
+        setZ(inOverlay.target, inAboveZ + 2);
+      }
+      
+      var setZ = function(inNode, inZ) {
+        inNode.style.zIndex = inZ;
+      }
+    
+      var currentOverlay = function() {
+        return overlays[overlays.length-1];
+      }
+      
+      var DEFAULT_Z = 10;
+      
+      var currentOverlayZ = function() {
+        var z;
+        var current = currentOverlay();
+        if (current) {
+          var z1 = window.getComputedStyle(current.target).zIndex;
+          if (!isNaN(z1)) {
+            z = Number(z1);
+          }
+        }
+        return z || DEFAULT_Z;
+      }
+      
+      var focusOverlay = function() {
+        var current = currentOverlay();
+        if (current) {
+          current.applyFocus();
+        }
+      }
+    
+      Polymer('polymer-overlay', {
+        /**
+         * The target element.
+         *
+         * @attribute target
+         * @type Object
+         */
+        target: null,
+        /**
+         * Set opened to true to show an overlay and to false to hide it.
+         * A polymer-overlay may be made intially opened by setting its
+         * opened attribute.
+         * @attribute opened
+         * @type boolean
+         * @default false
+         */
+        opened: false,
+        /**
+         * By default an overlay will close automatically if the user
+         * taps outside it or presses the escape key. Disable this
+         * behavior by setting the autoCloseDisabled property to true.
+         * @attribute autoCloseDisabled
+         * @type boolean
+         * @default false
+         */
+        autoCloseDisabled: false,
+        /**
+         * This property specifies the animation to play when the overlay is
+         * opened/closed. It can be an array of two animations
+         * [opening, closing], a single animation, an array of two strings, or
+         * a string. The strings should the tag names of custom elements
+         * descending from a polymer-animation. In the case of a single
+         * animation the closing animation is the opening animation played
+         * backwards.
+         * @attribute transitions
+         * @type polymer-animation
+         * @type Array<polymer-animation>
+         * @type string
+         * @type Array<string>
+         */
+        transitions: null,
+        timeout: 1000,
+        captureEventType: 'tap',
+        ready: function() {
+          if (this.tabIndex === undefined) {
+            this.tabIndex = -1;
+          }
+          this.setAttribute('touch-action', 'none');
+        },
+        enteredView: function() {
+          this.installControllerStyles();
+        },
+        /** 
+         * Toggle the opened state of the overlay.
+         * @method toggle
+         */
+        toggle: function() {
+          this.opened = !this.opened;
+        },
+        targetChanged: function(old) {
+          if (this.target) {
+            if (this.target.tabIndex === undefined) {
+              this.target.tabIndex = -1;
+            }
+            this.target.classList.add('polymer-overlay');
+            this.addListeners(this.target);
+          }
+          if (old) {
+            old.classList.remove('polymer-overlay');
+            this.removeListeners(old);
+          }
+        },
+        listeners: {
+          'tap': 'tapHandler',
+          'keydown': 'keydownHandler'
+        },
+        addListeners: function(node) {
+          for (e in this.listeners) {
+            node.addEventListener(e, this[this.listeners[e]].bind(this));
+          }
+        },
+        removeListeners: function(node) {
+          for (e in this.listeners) {
+            node.removeEventListener(e, this[this.listeners[e]].bind(this));
+          }
+        },
+        openedChanged: function() {
+          this.renderOpened();
+          trackOverlays(this);
+          this.async(function() {
+            if (!this.autoCloseDisabled) {
+              this.enableCaptureHandler(this.opened);
+            }
+          });
+          this.enableResizeHandler(this.opened);
+          this.fire('polymer-overlay-open', this.opened);
+        },
+        enableHandler: function(inEnable, inMethodName, inNode, inEventName, inCapture) {
+          var m = 'bound' + inMethodName;
+          this[m] = this[m] || this[inMethodName].bind(this);
+          
+          inNode[inEnable ? 'addEventListener' : 'removeEventListener'](
+            inEventName, this[m], inCapture);
+        },
+        enableResizeHandler: function(inEnable) {
+          this.enableHandler(inEnable, 'resizeHandler', window, 
+            'resize');
+        },
+        enableCaptureHandler: function(inEnable) {
+          this.enableHandler(inEnable, 'captureHandler', document, 
+            this.captureEventType, true);
+        },
+        getFocusNode: function() {
+          return this.target.querySelector('[autofocus]') || this.target;
+        },
+        // TODO(sorvell): nodes stay focused when they become un-focusable
+        // due to an ancestory becoming display: none; file bug.
+        applyFocus: function() {
+          var focusNode = this.getFocusNode();
+          if (this.opened) {
+            focusNode.focus();
+          } else {
+            focusNode.blur();
+            focusOverlay();
+          }
+        },
+        positionTarget: function() {
+          if (this.opened) {
+            // vertically and horizontally center if not positioned
+            var computedStyle = getComputedStyle(this.target);
+            if (computedStyle.top === 'auto' && computedStyle.bottom === 'auto') {
+              this.target.style.top = ((window.innerHeight - this.target.getBoundingClientRect().height) / 2) + 'px';
+            }
+            if (computedStyle.left === 'auto' && computedStyle.right === 'auto') {
+              this.target.style.left = ((window.innerWidth - this.target.getBoundingClientRect().width) / 2) + 'px';
+            }
+          }
+        },
+        resetTargetPosition: function() {
+          this.target.style.top = this.target.style.left = null;
+        },
+        get transition() {
+          return (!Array.isArray(this.transitions) && this.transitions
+              || this.opened && this.transitions && this.transitions[0]
+              || !this.opened && this.transitions && this.transitions[1]);
+        },
+        applyTransition: function() {
+          var animation = typeof this.transition === 'string' ?
+              document.createElement(this.transition) : this.transition;
+          // FIXME: Apply a default duration.
+          if ((!animation.duration || animation.duration === 'auto') && !animation.type) {
+            animation.duration = 0.3;
+          }
+          if (!animation.hasTarget()) {
+            animation.target = this.target;
+          }
+          // Make the overlay visible while the animation is running.
+          var transition = new ParGroup([
+            animation.apply(),
+            new Animation(this.target, [{'visibility': 'visible', 'display':'block'}])
+          ], {fill: 'none'});
+          transition.onend = this.completeOpening.bind(this);
+          this.target.classList.add('animating');
+          document.timeline.play(transition);
+        },
+        renderOpened: function() {
+          this.target.classList.add('revealed');
+          // continue styling after delay so display state can change
+          // without aborting transitions
+          this.async('continueRenderOpened');
+        },
+        continueRenderOpened: function() {
+          this.positionTarget();
+          if (this.transition) {
+            this.applyTransition();
+            // FIXME: Apply the class after the animation starts playing to
+            // prevent a flicker at the end of the animation. Should be handled
+            // in polymer-animation-start event but not working in polyfill
+            this.async(function() {
+              this.target.classList.toggle('opened', this.opened);
+            }, null, 100);
+          } else {
+            this.target.classList.toggle('opened', this.opened);
+            this.async('completeOpening');
+          }
+        },
+        completeOpening: function() {
+          this.target.classList.remove('animating');
+          this.target.classList.toggle('revealed', this.opened);
+          if (!this.opened) {
+            this.resetTargetPosition();
+          }
+          this.applyFocus();
+        },
+        tapHandler: function(e) {
+          if (e.target && e.target.hasAttribute('overlay-toggle')) {
+            this.toggle();
+          } else {
+            if (this.autoCloseJob) {
+              this.autoCloseJob.stop();
+              this.autoCloseJob = null;
+            }
+          }
+        },
+        // TODO(sorvell): This approach will not work with modal. For
+        // this we need a scrim.
+        captureHandler: function(e) {
+          if (!this.autoCloseDisabled && (currentOverlay() == this) && (this 
+              != e.target) && !(this.contains(e.target))) {
+            this.autoCloseJob = this.job(this.autoCloseJob, function() {
+              this.opened = false;
+            });
+          }
+        },
+        keydownHandler: function(e) {
+          if (!this.autoCloseDisabled && (e.keyCode == this.$.keyHelper.ESCAPE_KEY)) {
+            this.opened = false;
+            e.stopPropagation();
+            e.cancelBubble = true;
+          }
+        },
+        /**
+         * Extensions of polymer-overlay should implement the resizeHandler
+         * method to adjust the size and position of the overlay when the 
+         * browser window resizes.
+         * @method resizeHandler
+         */
+        resizeHandler: function() {
+        }
+      });
+    })();
+  ;
+
+    Polymer('polymer-ui-overlay', {
+      active: false,
+      modal: false,
+      backdrop: false,
+      ready: function() {
+        this.$.overlay.target = this;
+      },
+      toggle: function() {
+        this.active = !this.active;
+      }
+    });
+  ;
+
+    (function(){
+      Polymer('polymer-signals', {
+        enteredView: function() {
+          signals.push(this);
+        },
+        removed: function() {
+          var i = signals.indexOf(this);
+          if (i >= 0) {
+            signals.splice(i, 1);
+          }
+        }
+      });
+      // private shared database
+      var signals = [];
+      // signal dispatcher
+      function notify(name, data) {
+        // convert generic-signal event to named-signal event
+        var signal = new CustomEvent('polymer-signal-' + name, {
+          bubbles: true,
+          detail: data
+        });
+        // dispatch named-signal to all 'signals' instances,
+        // only interested listeners will react
+        signals.forEach(function(s) {
+          s.dispatchEvent(signal);
+        });
+      }
+      // signal listener at document
+      document.addEventListener('polymer-signal', function(e) {
+        notify(e.detail.name, e.detail.data);
+      });
+    })();
+  ;
+
+    (function() {
+      var events, state;
+
+      events = [
+        "pointerdown",
+        "pointerup",
+        "pointermove",
+      ];
+      state = "awake";
+
+      Polymer("route-power-manager", {
+        /**
+         * The amount of time to wait before dimming the screen, in milliseconds
+         *
+         * @attribute sleepDelay
+         * @type int
+         * @default 60000
+         */
+        sleepDelay: 60 * 1000,
+
+        /**
+         * Whether this power manager should automaticallly dim the screen
+         *
+         * @attribute auto
+         * @type bool
+         * @default false
+         */
+        auto: false,
+
+        enteredView: function() {
+          if(this.auto) {
+            var parent = this.parentNode;
+            for(var i = 0; i < events.length; i++) {
+              parent.addEventListener(events[i], this.activity.bind(this));
+            }
+          }
+          this.activity();
+        },
+        activity: function() {
+          if(state != "awake") {
+            this.wake();
+          }
+          if(this.auto) {
+            if(this.timer) {
+              clearTimeout(this.timer);
+            }
+            this.timer = setTimeout(this.sleep.bind(this), this.sleepDelay);
+          }
+        },
+        wake: function() {
+          state = "awake";
+          this.setBrightness(1);
+          this.fire("polymer-signal", {name: "wake"});
+        },
+        sleep: function() {
+          if(this.timer) {
+            clearTimeout(this.timer);
+          }
+          state = "asleep";
+          this.setBrightness(0);
+          this.fire("polymer-signal", {name: "sleep"});
+        },
+        setBrightness: function(brightness) {
+          if(window.brightness) {
+            window.brightness.setBrightness(brightness, function(status) {
+              console.log("setBrightness success: ", status);
+            }, function(status) {
+              console.log("setBrightness failure: ", status);
+            });
+          }
+        },
+        fireWake: function() {
+          this.fire("route-wake");
+        },
+        fireSleep: function() {
+          this.fire("route-sleep");
+        },
+      });
+    })();
+  ;
+
+    (function() {
+      var socket;
+
+      function init() {
+        if(!socket) {
+          socket = io.connect('http://'+location.host);
+        }
+      }
+
+      Polymer("route-socket", {
+        ready: function() {
+          init();
+        },
+        on: function() {
+          socket.on.apply(socket, arguments);
+        },
+        send: function() {
+          socket.send.apply(socket, arguments);
+        },
+        emit: function() {
+          socket.emit.apply(socket, arguments);
+        },
+        removeListener: function() {
+          socket.removeListener.apply(socket, arguments);
+        },
+        get socket() {
+          return socket;
+        },
+      })
+    })();
+  ;
+
+    (function() {
+      Polymer('route-state', {
+        attached: function() {
+          this.handler = this.stateHandler.bind(this);
+          this.$.socket.on('state', this.handler);
+        },
+        stateHandler: function(values) {
+          this.fire("route-state-change", {
+            data: values,
+          });
+        },
+      });
+    })();
+  ;
+
     (function() {
       // Heavily based on polymer-grid-layout
       Polymer("route-tile-layout", {
@@ -628,7 +1097,7 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
 
     })();
   ;
-/*! Hammer.JS - v1.0.6 - 2014-01-02
+/*! Hammer.JS - v1.0.9 - 2014-03-18
  * http://eightmedia.github.com/hammer.js
  *
  * Copyright (c) 2014 Jorik Tangelder <j.tangelder@gmail.com>;
@@ -648,6 +1117,8 @@ Polymer={},"function"==typeof window.Polymer&&(Polymer={}),function(a){function 
 var Hammer = function(element, options) {
   return new Hammer.Instance(element, options || {});
 };
+
+Hammer.VERSION = '1.0.9';
 
 // default settings
 Hammer.defaults = {
@@ -672,6 +1143,7 @@ Hammer.defaults = {
   //
 };
 
+
 // detect touchevents
 Hammer.HAS_POINTEREVENTS = window.navigator.pointerEnabled || window.navigator.msPointerEnabled;
 Hammer.HAS_TOUCHEVENTS = ('ontouchstart' in window);
@@ -681,31 +1153,37 @@ Hammer.MOBILE_REGEX = /mobile|tablet|ip(ad|hone|od)|android|silk/i;
 Hammer.NO_MOUSEEVENTS = Hammer.HAS_TOUCHEVENTS && window.navigator.userAgent.match(Hammer.MOBILE_REGEX);
 
 // eventtypes per touchevent (start, move, end)
-// are filled by Hammer.event.determineEventTypes on setup
+// are filled by Event.determineEventTypes on setup
 Hammer.EVENT_TYPES = {};
 
-// direction defines
-Hammer.DIRECTION_DOWN = 'down';
-Hammer.DIRECTION_LEFT = 'left';
-Hammer.DIRECTION_UP = 'up';
-Hammer.DIRECTION_RIGHT = 'right';
-
-// pointer type
-Hammer.POINTER_MOUSE = 'mouse';
-Hammer.POINTER_TOUCH = 'touch';
-Hammer.POINTER_PEN = 'pen';
-
-// touch event defines
-Hammer.EVENT_START = 'start';
-Hammer.EVENT_MOVE = 'move';
-Hammer.EVENT_END = 'end';
+// interval in which Hammer recalculates current velocity in ms
+Hammer.UPDATE_VELOCITY_INTERVAL = 16;
 
 // hammer document where the base events are added at
 Hammer.DOCUMENT = window.document;
 
+// define these also as vars, for internal usage.
+// direction defines
+var DIRECTION_DOWN = Hammer.DIRECTION_DOWN = 'down';
+var DIRECTION_LEFT = Hammer.DIRECTION_LEFT = 'left';
+var DIRECTION_UP = Hammer.DIRECTION_UP = 'up';
+var DIRECTION_RIGHT = Hammer.DIRECTION_RIGHT = 'right';
+
+// pointer type
+var POINTER_MOUSE = Hammer.POINTER_MOUSE = 'mouse';
+var POINTER_TOUCH = Hammer.POINTER_TOUCH = 'touch';
+var POINTER_PEN = Hammer.POINTER_PEN = 'pen';
+
+// touch event defines
+var EVENT_START = Hammer.EVENT_START = 'start';
+var EVENT_MOVE = Hammer.EVENT_MOVE = 'move';
+var EVENT_END = Hammer.EVENT_END = 'end';
+
+
 // plugins and gestures namespaces
 Hammer.plugins = Hammer.plugins || {};
 Hammer.gestures = Hammer.gestures || {};
+
 
 // if the window events are set...
 Hammer.READY = false;
@@ -719,22 +1197,22 @@ function setup() {
   }
 
   // find what eventtypes we add listeners to
-  Hammer.event.determineEventTypes();
+  Event.determineEventTypes();
 
   // Register all gestures inside Hammer.gestures
-  Hammer.utils.each(Hammer.gestures, function(gesture){
-    Hammer.detection.register(gesture);
+  Utils.each(Hammer.gestures, function(gesture){
+    Detection.register(gesture);
   });
 
   // Add touch events on the document
-  Hammer.event.onTouch(Hammer.DOCUMENT, Hammer.EVENT_MOVE, Hammer.detection.detect);
-  Hammer.event.onTouch(Hammer.DOCUMENT, Hammer.EVENT_END, Hammer.detection.detect);
+  Event.onTouch(Hammer.DOCUMENT, EVENT_MOVE, Detection.detect);
+  Event.onTouch(Hammer.DOCUMENT, EVENT_END, Detection.detect);
 
   // Hammer is ready...!
   Hammer.READY = true;
 }
 
-Hammer.utils = {
+var Utils = Hammer.utils = {
   /**
    * extend method,
    * also used for cloning when dest is an empty object
@@ -760,23 +1238,24 @@ Hammer.utils = {
    * @param iterator
    */
   each: function(obj, iterator, context) {
-    var i, length;
+    var i, o;
     // native forEach on arrays
     if ('forEach' in obj) {
       obj.forEach(iterator, context);
     }
     // arrays
     else if(obj.length !== undefined) {
-      for (i = 0, length = obj.length; i < length; i++) {
-        if (iterator.call(context, obj[i], i, obj) === false) {
+      for(i=-1; (o=obj[++i]);) {
+        if (iterator.call(context, o, i, obj) === false) {
           return;
         }
       }
     }
     // objects
     else {
-      for (i in obj) {
-        if (obj.hasOwnProperty(i) && iterator.call(context, obj[i], i, obj) === false) {
+      for(i in obj) {
+        if(obj.hasOwnProperty(i) &&
+            iterator.call(context, obj[i], i, obj) === false) {
           return;
         }
       }
@@ -809,15 +1288,15 @@ Hammer.utils = {
   getCenter: function getCenter(touches) {
     var valuesX = [], valuesY = [];
 
-    Hammer.utils.each(touches, function(touch) {
+    Utils.each(touches, function(touch) {
       // I prefer clientX because it ignore the scrolling position
-      valuesX.push(typeof touch.clientX !== 'undefined' ? touch.clientX : touch.pageX );
-      valuesY.push(typeof touch.clientY !== 'undefined' ? touch.clientY : touch.pageY );
+      valuesX.push(typeof touch.clientX !== 'undefined' ? touch.clientX : touch.pageX);
+      valuesY.push(typeof touch.clientY !== 'undefined' ? touch.clientY : touch.pageY);
     });
 
     return {
-      pageX: ((Math.min.apply(Math, valuesX) + Math.max.apply(Math, valuesX)) / 2),
-      pageY: ((Math.min.apply(Math, valuesY) + Math.max.apply(Math, valuesY)) / 2)
+      pageX: (Math.min.apply(Math, valuesX) + Math.max.apply(Math, valuesX)) / 2,
+      pageY: (Math.min.apply(Math, valuesY) + Math.max.apply(Math, valuesY)) / 2
     };
   },
 
@@ -844,8 +1323,8 @@ Hammer.utils = {
    * @returns {Number}    angle
    */
   getAngle: function getAngle(touch1, touch2) {
-    var y = touch2.pageY - touch1.pageY,
-      x = touch2.pageX - touch1.pageX;
+    var y = touch2.pageY - touch1.pageY
+      , x = touch2.pageX - touch1.pageX;
     return Math.atan2(y, x) * 180 / Math.PI;
   },
 
@@ -854,18 +1333,15 @@ Hammer.utils = {
    * angle to direction define
    * @param   {Touch}     touch1
    * @param   {Touch}     touch2
-   * @returns {String}    direction constant, like Hammer.DIRECTION_LEFT
+   * @returns {String}    direction constant, like DIRECTION_LEFT
    */
   getDirection: function getDirection(touch1, touch2) {
-    var x = Math.abs(touch1.pageX - touch2.pageX),
-      y = Math.abs(touch1.pageY - touch2.pageY);
-
+    var x = Math.abs(touch1.pageX - touch2.pageX)
+      , y = Math.abs(touch1.pageY - touch2.pageY);
     if(x >= y) {
-      return touch1.pageX - touch2.pageX > 0 ? Hammer.DIRECTION_LEFT : Hammer.DIRECTION_RIGHT;
+      return touch1.pageX - touch2.pageX > 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
     }
-    else {
-      return touch1.pageY - touch2.pageY > 0 ? Hammer.DIRECTION_UP : Hammer.DIRECTION_DOWN;
-    }
+    return touch1.pageY - touch2.pageY > 0 ? DIRECTION_UP : DIRECTION_DOWN;
   },
 
 
@@ -876,8 +1352,8 @@ Hammer.utils = {
    * @returns {Number}    distance
    */
   getDistance: function getDistance(touch1, touch2) {
-    var x = touch2.pageX - touch1.pageX,
-      y = touch2.pageY - touch1.pageY;
+    var x = touch2.pageX - touch1.pageX
+      , y = touch2.pageY - touch1.pageY;
     return Math.sqrt((x * x) + (y * y));
   },
 
@@ -892,8 +1368,7 @@ Hammer.utils = {
   getScale: function getScale(start, end) {
     // need two fingers...
     if(start.length >= 2 && end.length >= 2) {
-      return this.getDistance(end[0], end[1]) /
-        this.getDistance(start[0], start[1]);
+      return this.getDistance(end[0], end[1]) / this.getDistance(start[0], start[1]);
     }
     return 1;
   },
@@ -908,8 +1383,7 @@ Hammer.utils = {
   getRotation: function getRotation(start, end) {
     // need two fingers
     if(start.length >= 2 && end.length >= 2) {
-      return this.getAngle(end[1], end[0]) -
-        this.getAngle(start[1], start[0]);
+      return this.getAngle(end[1], end[0]) - this.getAngle(start[1], start[0]);
     }
     return 0;
   },
@@ -921,46 +1395,44 @@ Hammer.utils = {
    * @returns  {Boolean}   is_vertical
    */
   isVertical: function isVertical(direction) {
-    return (direction == Hammer.DIRECTION_UP || direction == Hammer.DIRECTION_DOWN);
+    return direction == DIRECTION_UP || direction == DIRECTION_DOWN;
   },
 
 
   /**
-   * stop browser default behavior with css props
+   * toggle browser default behavior with css props
    * @param   {HtmlElement}   element
    * @param   {Object}        css_props
+   * @param   {Boolean}       toggle
    */
-  stopDefaultBrowserBehavior: function stopDefaultBrowserBehavior(element, css_props) {
+  toggleDefaultBehavior: function toggleDefaultBehavior(element, css_props, toggle) {
     if(!css_props || !element || !element.style) {
       return;
     }
 
     // with css properties for modern browsers
-    Hammer.utils.each(['webkit', 'khtml', 'moz', 'Moz', 'ms', 'o', ''], function(vendor) {
-      Hammer.utils.each(css_props, function(prop) {
+    Utils.each(['webkit', 'moz', 'Moz', 'ms', 'o', ''], function(vendor) {
+      Utils.each(css_props, function(value, prop) {
           // vender prefix at the property
           if(vendor) {
             prop = vendor + prop.substring(0, 1).toUpperCase() + prop.substring(1);
           }
           // set the style
           if(prop in element.style) {
-            element.style[prop] = prop;
+            element.style[prop] = !toggle && value;
           }
       });
     });
 
+    var false_fn = function(){ return false; };
+
     // also the disable onselectstart
     if(css_props.userSelect == 'none') {
-      element.onselectstart = function() {
-        return false;
-      };
+      element.onselectstart = !toggle && false_fn;
     }
-
     // and disable ondragstart
     if(css_props.userDrag == 'none') {
-      element.ondragstart = function() {
-        return false;
-      };
+      element.ondragstart = !toggle && false_fn;
     }
   }
 };
@@ -987,21 +1459,24 @@ Hammer.Instance = function(element, options) {
   this.enabled = true;
 
   // merge options
-  this.options = Hammer.utils.extend(
-    Hammer.utils.extend({}, Hammer.defaults),
+  this.options = Utils.extend(
+    Utils.extend({}, Hammer.defaults),
     options || {});
 
   // add some css to the element to prevent the browser from doing its native behavoir
   if(this.options.stop_browser_behavior) {
-    Hammer.utils.stopDefaultBrowserBehavior(this.element, this.options.stop_browser_behavior);
+    Utils.toggleDefaultBehavior(this.element, this.options.stop_browser_behavior, false);
   }
 
   // start detection on touchstart
-  Hammer.event.onTouch(element, Hammer.EVENT_START, function(ev) {
+  this.eventStartHandler = Event.onTouch(element, EVENT_START, function(ev) {
     if(self.enabled) {
-      Hammer.detection.startDetect(self, ev);
+      Detection.startDetect(self, ev);
     }
   });
+
+  // keep a list of user event handlers which needs to be removed when calling 'dispose'
+  this.eventHandlers = [];
 
   // return instance
   return this;
@@ -1017,8 +1492,9 @@ Hammer.Instance.prototype = {
    */
   on: function onEvent(gesture, handler) {
     var gestures = gesture.split(' ');
-    Hammer.utils.each(gestures, function(gesture) {
+    Utils.each(gestures, function(gesture) {
       this.element.addEventListener(gesture, handler, false);
+      this.eventHandlers.push({ gesture: gesture, handler: handler });
     }, this);
     return this;
   },
@@ -1031,9 +1507,17 @@ Hammer.Instance.prototype = {
    * @returns {Hammer.Instance}
    */
   off: function offEvent(gesture, handler) {
-    var gestures = gesture.split(' ');
-    Hammer.utils.each(gestures, function(gesture) {
+    var gestures = gesture.split(' ')
+      , i, eh;
+    Utils.each(gestures, function(gesture) {
       this.element.removeEventListener(gesture, handler, false);
+
+      // remove the event handler from the internal list
+      for(i=-1; (eh=this.eventHandlers[++i]);) {
+        if(eh.gesture === gesture && eh.handler === handler) {
+          this.eventHandlers.splice(i, 1);
+        }
+      }
     }, this);
     return this;
   },
@@ -1059,7 +1543,7 @@ Hammer.Instance.prototype = {
     // trigger on the target if it is in the instance element,
     // this is for event delegation tricks
     var element = this.element;
-    if(Hammer.utils.hasParent(eventData.target, element)) {
+    if(Utils.hasParent(eventData.target, element)) {
       element = eventData.target;
     }
 
@@ -1076,6 +1560,31 @@ Hammer.Instance.prototype = {
   enable: function enable(state) {
     this.enabled = state;
     return this;
+  },
+
+
+  /**
+   * dispose this hammer instance
+   * @returns {Hammer.Instance}
+   */
+  dispose: function dispose() {
+    var i, eh;
+
+    // undo all changes made by stop_browser_behavior
+    if(this.options.stop_browser_behavior) {
+      Utils.toggleDefaultBehavior(this.element, this.options.stop_browser_behavior, true);
+    }
+
+    // unbind all custom event handlers
+    for(i=-1; (eh=this.eventHandlers[++i]);) {
+      this.element.removeEventListener(eh.gesture, eh.handler, false);
+    }
+    this.eventHandlers = [];
+
+    // unbind the start event listener
+    Event.unbindDom(this.element, Hammer.EVENT_TYPES[EVENT_START], this.eventStartHandler);
+
+    return null;
   }
 };
 
@@ -1088,13 +1597,11 @@ Hammer.Instance.prototype = {
  */
 var last_move_event = null;
 
-
 /**
  * when the mouse is hold down, this is true
  * @type {Boolean}
  */
 var enable_detect = false;
-
 
 /**
  * when touch events have been fired, this is true
@@ -1102,8 +1609,7 @@ var enable_detect = false;
  */
 var touch_triggered = false;
 
-
-Hammer.event = {
+var Event = Hammer.event = {
   /**
    * simple addEventListener
    * @param   {HTMLElement}   element
@@ -1112,8 +1618,22 @@ Hammer.event = {
    */
   bindDom: function(element, type, handler) {
     var types = type.split(' ');
-    Hammer.utils.each(types, function(type){
+    Utils.each(types, function(type){
       element.addEventListener(type, handler, false);
+    });
+  },
+
+
+  /**
+   * simple removeEventListener
+   * @param   {HTMLElement}   element
+   * @param   {String}        type
+   * @param   {Function}      handler
+   */
+  unbindDom: function(element, type, handler) {
+    var types = type.split(' ');
+    Utils.each(types, function(type){
+      element.removeEventListener(type, handler, false);
     });
   },
 
@@ -1121,38 +1641,38 @@ Hammer.event = {
   /**
    * touch events with mouse fallback
    * @param   {HTMLElement}   element
-   * @param   {String}        eventType        like Hammer.EVENT_MOVE
+   * @param   {String}        eventType        like EVENT_MOVE
    * @param   {Function}      handler
    */
   onTouch: function onTouch(element, eventType, handler) {
     var self = this;
 
-    this.bindDom(element, Hammer.EVENT_TYPES[eventType], function bindDomOnTouch(ev) {
-      var sourceEventType = ev.type.toLowerCase();
+    var bindDomOnTouch = function(ev) {
+      var srcEventType = ev.type.toLowerCase();
 
       // onmouseup, but when touchend has been fired we do nothing.
       // this is for touchdevices which also fire a mouseup on touchend
-      if(sourceEventType.match(/mouse/) && touch_triggered) {
+      if(srcEventType.match(/mouse/) && touch_triggered) {
         return;
       }
 
       // mousebutton must be down or a touch event
-      else if(sourceEventType.match(/touch/) ||   // touch events are always on screen
-        sourceEventType.match(/pointerdown/) || // pointerevents touch
-        (sourceEventType.match(/mouse/) && ev.which === 1)   // mouse is pressed
+      else if(srcEventType.match(/touch/) ||   // touch events are always on screen
+        srcEventType.match(/pointerdown/) || // pointerevents touch
+        (srcEventType.match(/mouse/) && ev.which === 1)   // mouse is pressed
         ) {
         enable_detect = true;
       }
 
       // mouse isn't pressed
-      else if(sourceEventType.match(/mouse/) && !ev.which) {
+      else if(srcEventType.match(/mouse/) && !ev.which) {
         enable_detect = false;
       }
 
 
       // we are in a touch event, set the touch triggered bool to true,
       // this for the conflicts that may occur on ios and android
-      if(sourceEventType.match(/touch|pointer/)) {
+      if(srcEventType.match(/touch|pointer/)) {
         touch_triggered = true;
       }
 
@@ -1163,26 +1683,26 @@ Hammer.event = {
       // and we are now handling a mouse event, we stop that to prevent conflicts
       if(enable_detect) {
         // update pointerevent
-        if(Hammer.HAS_POINTEREVENTS && eventType != Hammer.EVENT_END) {
-          count_touches = Hammer.PointerEvent.updatePointer(eventType, ev);
+        if(Hammer.HAS_POINTEREVENTS && eventType != EVENT_END) {
+          count_touches = PointerEvent.updatePointer(eventType, ev);
         }
         // touch
-        else if(sourceEventType.match(/touch/)) {
+        else if(srcEventType.match(/touch/)) {
           count_touches = ev.touches.length;
         }
         // mouse
         else if(!touch_triggered) {
-          count_touches = sourceEventType.match(/up/) ? 0 : 1;
+          count_touches = srcEventType.match(/up/) ? 0 : 1;
         }
 
         // if we are in a end event, but when we remove one touch and
         // we still have enough, set eventType to move
-        if(count_touches > 0 && eventType == Hammer.EVENT_END) {
-          eventType = Hammer.EVENT_MOVE;
+        if(count_touches > 0 && eventType == EVENT_END) {
+          eventType = EVENT_MOVE;
         }
         // no touches, force the end event
         else if(!count_touches) {
-          eventType = Hammer.EVENT_END;
+          eventType = EVENT_END;
         }
 
         // store the last move event
@@ -1191,11 +1711,13 @@ Hammer.event = {
         }
 
         // trigger the handler
-        handler.call(Hammer.detection, self.collectEventData(element, eventType, self.getTouchList(last_move_event, eventType), ev));
+        handler.call(Detection, self.collectEventData(element, eventType,
+                                         self.getTouchList(last_move_event, eventType),
+                                         ev));
 
         // remove pointerevent from list
-        if(Hammer.HAS_POINTEREVENTS && eventType == Hammer.EVENT_END) {
-          count_touches = Hammer.PointerEvent.updatePointer(eventType, ev);
+        if(Hammer.HAS_POINTEREVENTS && eventType == EVENT_END) {
+          count_touches = PointerEvent.updatePointer(eventType, ev);
         }
       }
 
@@ -1204,9 +1726,14 @@ Hammer.event = {
         last_move_event = null;
         enable_detect = false;
         touch_triggered = false;
-        Hammer.PointerEvent.reset();
+        PointerEvent.reset();
       }
-    });
+    };
+
+    this.bindDom(element, Hammer.EVENT_TYPES[eventType], bindDomOnTouch);
+
+    // return the bound function to be able to unbind it later
+    return bindDomOnTouch;
   },
 
 
@@ -1220,7 +1747,7 @@ Hammer.event = {
 
     // pointerEvents magic
     if(Hammer.HAS_POINTEREVENTS) {
-      types = Hammer.PointerEvent.getEvents();
+      types = PointerEvent.getEvents();
     }
     // on Android, iOS, blackberry, windows mobile we dont want any mouseevents
     else if(Hammer.NO_MOUSEEVENTS) {
@@ -1238,9 +1765,9 @@ Hammer.event = {
         'touchend touchcancel mouseup'];
     }
 
-    Hammer.EVENT_TYPES[Hammer.EVENT_START] = types[0];
-    Hammer.EVENT_TYPES[Hammer.EVENT_MOVE] = types[1];
-    Hammer.EVENT_TYPES[Hammer.EVENT_END] = types[2];
+    Hammer.EVENT_TYPES[EVENT_START] = types[0];
+    Hammer.EVENT_TYPES[EVENT_MOVE] = types[1];
+    Hammer.EVENT_TYPES[EVENT_END] = types[2];
   },
 
 
@@ -1252,35 +1779,35 @@ Hammer.event = {
   getTouchList: function getTouchList(ev/*, eventType*/) {
     // get the fake pointerEvent touchlist
     if(Hammer.HAS_POINTEREVENTS) {
-      return Hammer.PointerEvent.getTouchList();
+      return PointerEvent.getTouchList();
     }
+
     // get the touchlist
-    else if(ev.touches) {
+    if(ev.touches) {
       return ev.touches;
     }
+
     // make fake touchlist from mouse position
-    else {
-      ev.identifier = 1;
-      return [ev];
-    }
+    ev.identifier = 1;
+    return [ev];
   },
 
 
   /**
    * collect event data for Hammer js
    * @param   {HTMLElement}   element
-   * @param   {String}        eventType        like Hammer.EVENT_MOVE
+   * @param   {String}        eventType        like EVENT_MOVE
    * @param   {Object}        eventData
    */
   collectEventData: function collectEventData(element, eventType, touches, ev) {
     // find out pointerType
-    var pointerType = Hammer.POINTER_TOUCH;
-    if(ev.type.match(/mouse/) || Hammer.PointerEvent.matchType(Hammer.POINTER_MOUSE, ev)) {
-      pointerType = Hammer.POINTER_MOUSE;
+    var pointerType = POINTER_TOUCH;
+    if(ev.type.match(/mouse/) || PointerEvent.matchType(POINTER_MOUSE, ev)) {
+      pointerType = POINTER_MOUSE;
     }
 
     return {
-      center     : Hammer.utils.getCenter(touches),
+      center     : Utils.getCenter(touches),
       timeStamp  : new Date().getTime(),
       target     : ev.target,
       touches    : touches,
@@ -1315,13 +1842,13 @@ Hammer.event = {
        * @return {*}
        */
       stopDetect: function() {
-        return Hammer.detection.stopDetect();
+        return Detection.stopDetect();
       }
     };
   }
 };
 
-Hammer.PointerEvent = {
+var PointerEvent = Hammer.PointerEvent = {
   /**
    * holds all pointers
    * @type {Object}
@@ -1333,11 +1860,9 @@ Hammer.PointerEvent = {
    * @returns {Array}     touchlist
    */
   getTouchList: function() {
-    var self = this;
     var touchlist = [];
-
     // we can use forEach since pointerEvents only is in IE10
-    Hammer.utils.each(self.pointers, function(pointer){
+    Utils.each(this.pointers, function(pointer){
       touchlist.push(pointer);
     });
 
@@ -1346,24 +1871,25 @@ Hammer.PointerEvent = {
 
   /**
    * update the position of a pointer
-   * @param   {String}   type             Hammer.EVENT_END
+   * @param   {String}   type             EVENT_END
    * @param   {Object}   pointerEvent
    */
   updatePointer: function(type, pointerEvent) {
-    if(type == Hammer.EVENT_END) {
-      this.pointers = {};
+    if(type == EVENT_END) {
+      delete this.pointers[pointerEvent.pointerId];
     }
     else {
       pointerEvent.identifier = pointerEvent.pointerId;
       this.pointers[pointerEvent.pointerId] = pointerEvent;
     }
 
+    // it's save to use Object.keys, since pointerEvents are only in newer browsers
     return Object.keys(this.pointers).length;
   },
 
   /**
    * check if ev matches pointertype
-   * @param   {String}        pointerType     Hammer.POINTER_MOUSE
+   * @param   {String}        pointerType     POINTER_MOUSE
    * @param   {PointerEvent}  ev
    */
   matchType: function(pointerType, ev) {
@@ -1371,11 +1897,12 @@ Hammer.PointerEvent = {
       return false;
     }
 
-    var pt = ev.pointerType,
-      types = {};
-    types[Hammer.POINTER_MOUSE] = (pt === ev.MSPOINTER_TYPE_MOUSE || pt === Hammer.POINTER_MOUSE);
-    types[Hammer.POINTER_TOUCH] = (pt === ev.MSPOINTER_TYPE_TOUCH || pt === Hammer.POINTER_TOUCH);
-    types[Hammer.POINTER_PEN] = (pt === ev.MSPOINTER_TYPE_PEN || pt === Hammer.POINTER_PEN);
+    var pt = ev.pointerType
+      , types = {};
+
+    types[POINTER_MOUSE] = (pt === POINTER_MOUSE);
+    types[POINTER_TOUCH] = (pt === POINTER_TOUCH);
+    types[POINTER_PEN] = (pt === POINTER_PEN);
     return types[pointerType];
   },
 
@@ -1400,7 +1927,7 @@ Hammer.PointerEvent = {
 };
 
 
-Hammer.detection = {
+var Detection = Hammer.detection = {
   // contains all registred Hammer.gestures in the correct order
   gestures: [],
 
@@ -1429,10 +1956,12 @@ Hammer.detection = {
     this.stopped = false;
 
     this.current = {
-      inst      : inst, // reference to HammerInstance we're working for
-      startEvent: Hammer.utils.extend({}, eventData), // start eventData for distances, timing etc
-      lastEvent : false, // last eventData
-      name      : '' // current gesture we're in/detected, can be 'tap', 'hold' etc
+      inst              : inst, // reference to HammerInstance we're working for
+      startEvent        : Utils.extend({}, eventData), // start eventData for distances, timing etc
+      lastEvent         : false, // last eventData
+      lastVelocityEvent : false, // last eventData for velocity.
+      velocity          : false, // current velocity
+      name              : '' // current gesture we're in/detected, can be 'tap', 'hold' etc
     };
 
     this.detect(eventData);
@@ -1455,7 +1984,7 @@ Hammer.detection = {
     var inst_options = this.current.inst.options;
 
     // call Hammer.gesture handlers
-    Hammer.utils.each(this.gestures, function(gesture) {
+    Utils.each(this.gestures, function(gesture) {
       // only when the instance options have enabled this gesture
       if(!this.stopped && inst_options[gesture.name] !== false) {
         // if a handler returns false, we stop with the detection
@@ -1472,7 +2001,7 @@ Hammer.detection = {
     }
 
     // endevent, but not the last touch, so dont stop
-    if(eventData.eventType == Hammer.EVENT_END && !eventData.touches.length - 1) {
+    if(eventData.eventType == EVENT_END && !eventData.touches.length - 1) {
       this.stopDetect();
     }
 
@@ -1488,7 +2017,7 @@ Hammer.detection = {
   stopDetect: function stopDetect() {
     // clone current data to the store as the previous gesture
     // used for the double tap gesture, since this is an other gesture detect session
-    this.previous = Hammer.utils.extend({}, this.current);
+    this.previous = Utils.extend({}, this.current);
 
     // reset the current
     this.current = null;
@@ -1504,41 +2033,61 @@ Hammer.detection = {
    * @returns {Object}   ev
    */
   extendEventData: function extendEventData(ev) {
-    var startEv = this.current.startEvent;
+    var cur = this.current
+      , startEv = cur.startEvent;
 
     // if the touches change, set the new touches over the startEvent touches
     // this because touchevents don't have all the touches on touchstart, or the
     // user must place his fingers at the EXACT same time on the screen, which is not realistic
     // but, sometimes it happens that both fingers are touching at the EXACT same time
-    if(startEv && (ev.touches.length != startEv.touches.length || ev.touches === startEv.touches)) {
+    if(ev.touches.length != startEv.touches.length || ev.touches === startEv.touches) {
       // extend 1 level deep to get the touchlist with the touch objects
       startEv.touches = [];
-      Hammer.utils.each(ev.touches, function(touch) {
-        startEv.touches.push(Hammer.utils.extend({}, touch));
+      Utils.each(ev.touches, function(touch) {
+        startEv.touches.push(Utils.extend({}, touch));
       });
     }
 
     var delta_time = ev.timeStamp - startEv.timeStamp
       , delta_x = ev.center.pageX - startEv.center.pageX
       , delta_y = ev.center.pageY - startEv.center.pageY
-      , velocity = Hammer.utils.getVelocity(delta_time, delta_x, delta_y)
       , interimAngle
-      , interimDirection;
+      , interimDirection
+      , velocityEv = cur.lastVelocityEvent
+      , velocity = cur.velocity;
+
+    // calculate velocity every x ms
+    if (velocityEv && ev.timeStamp - velocityEv.timeStamp > Hammer.UPDATE_VELOCITY_INTERVAL) {
+        velocity = Utils.getVelocity(ev.timeStamp - velocityEv.timeStamp,
+                                            ev.center.pageX - velocityEv.center.pageX,
+                                            ev.center.pageY - velocityEv.center.pageY);
+
+        cur.lastVelocityEvent = ev;
+        cur.velocity = velocity;
+    }
+    else if(!cur.velocity) {
+        velocity = Utils.getVelocity(delta_time, delta_x, delta_y);
+
+        cur.lastVelocityEvent = ev;
+        cur.velocity = velocity;
+    }
 
     // end events (e.g. dragend) don't have useful values for interimDirection & interimAngle
     // because the previous event has exactly the same coordinates
     // so for end events, take the previous values of interimDirection & interimAngle
     // instead of recalculating them and getting a spurious '0'
-    if(ev.eventType === 'end') {
-      interimAngle = this.current.lastEvent && this.current.lastEvent.interimAngle;
-      interimDirection = this.current.lastEvent && this.current.lastEvent.interimDirection;
+    if(ev.eventType == EVENT_END) {
+      interimAngle = cur.lastEvent && cur.lastEvent.interimAngle;
+      interimDirection = cur.lastEvent && cur.lastEvent.interimDirection;
     }
     else {
-      interimAngle = this.current.lastEvent && Hammer.utils.getAngle(this.current.lastEvent.center, ev.center);
-      interimDirection = this.current.lastEvent && Hammer.utils.getDirection(this.current.lastEvent.center, ev.center);
+      interimAngle = cur.lastEvent &&
+        Utils.getAngle(cur.lastEvent.center, ev.center);
+      interimDirection = cur.lastEvent &&
+        Utils.getDirection(cur.lastEvent.center, ev.center);
     }
 
-    Hammer.utils.extend(ev, {
+    Utils.extend(ev, {
       deltaTime: delta_time,
 
       deltaX: delta_x,
@@ -1547,16 +2096,16 @@ Hammer.detection = {
       velocityX: velocity.x,
       velocityY: velocity.y,
 
-      distance: Hammer.utils.getDistance(startEv.center, ev.center),
+      distance: Utils.getDistance(startEv.center, ev.center),
 
-      angle: Hammer.utils.getAngle(startEv.center, ev.center),
+      angle: Utils.getAngle(startEv.center, ev.center),
       interimAngle: interimAngle,
 
-      direction: Hammer.utils.getDirection(startEv.center, ev.center),
+      direction: Utils.getDirection(startEv.center, ev.center),
       interimDirection: interimDirection,
 
-      scale: Hammer.utils.getScale(startEv.touches, ev.touches),
-      rotation: Hammer.utils.getRotation(startEv.touches, ev.touches),
+      scale: Utils.getScale(startEv.touches, ev.touches),
+      rotation: Utils.getRotation(startEv.touches, ev.touches),
 
       startEvent: startEv
     });
@@ -1578,7 +2127,7 @@ Hammer.detection = {
     }
 
     // extend Hammer default options with the Hammer.gesture options
-    Hammer.utils.extend(Hammer.defaults, options, true);
+    Utils.extend(Hammer.defaults, options, true);
 
     // set its index
     gesture.index = gesture.index || 1000;
@@ -1639,7 +2188,7 @@ Hammer.gestures.Drag = {
   handler  : function dragGesture(ev, inst) {
     // current gesture isnt drag, but dragged is true
     // this means an other gesture is busy. now call dragend
-    if(Hammer.detection.current.name != this.name && this.triggered) {
+    if(Detection.current.name != this.name && this.triggered) {
       inst.trigger(this.name + 'end', ev);
       this.triggered = false;
       return;
@@ -1652,46 +2201,49 @@ Hammer.gestures.Drag = {
     }
 
     switch(ev.eventType) {
-      case Hammer.EVENT_START:
+      case EVENT_START:
         this.triggered = false;
         break;
 
-      case Hammer.EVENT_MOVE:
+      case EVENT_MOVE:
         // when the distance we moved is too small we skip this gesture
         // or we can be already in dragging
         if(ev.distance < inst.options.drag_min_distance &&
-          Hammer.detection.current.name != this.name) {
+          Detection.current.name != this.name) {
           return;
         }
 
         // we are dragging!
-        if(Hammer.detection.current.name != this.name) {
-          Hammer.detection.current.name = this.name;
+        if(Detection.current.name != this.name) {
+          Detection.current.name = this.name;
           if(inst.options.correct_for_drag_min_distance && ev.distance > 0) {
             // When a drag is triggered, set the event center to drag_min_distance pixels from the original event center.
             // Without this correction, the dragged distance would jumpstart at drag_min_distance pixels instead of at 0.
             // It might be useful to save the original start point somewhere
             var factor = Math.abs(inst.options.drag_min_distance / ev.distance);
-            Hammer.detection.current.startEvent.center.pageX += ev.deltaX * factor;
-            Hammer.detection.current.startEvent.center.pageY += ev.deltaY * factor;
+            Detection.current.startEvent.center.pageX += ev.deltaX * factor;
+            Detection.current.startEvent.center.pageY += ev.deltaY * factor;
 
             // recalculate event data using new start point
-            ev = Hammer.detection.extendEventData(ev);
+            ev = Detection.extendEventData(ev);
           }
         }
 
         // lock drag to axis?
-        if(Hammer.detection.current.lastEvent.drag_locked_to_axis || (inst.options.drag_lock_to_axis && inst.options.drag_lock_min_distance <= ev.distance)) {
+        if(Detection.current.lastEvent.drag_locked_to_axis ||
+            ( inst.options.drag_lock_to_axis &&
+              inst.options.drag_lock_min_distance <= ev.distance
+            )) {
           ev.drag_locked_to_axis = true;
         }
-        var last_direction = Hammer.detection.current.lastEvent.direction;
+        var last_direction = Detection.current.lastEvent.direction;
         if(ev.drag_locked_to_axis && last_direction !== ev.direction) {
           // keep direction on the axis that the drag gesture started on
-          if(Hammer.utils.isVertical(last_direction)) {
-            ev.direction = (ev.deltaY < 0) ? Hammer.DIRECTION_UP : Hammer.DIRECTION_DOWN;
+          if(Utils.isVertical(last_direction)) {
+            ev.direction = (ev.deltaY < 0) ? DIRECTION_UP : DIRECTION_DOWN;
           }
           else {
-            ev.direction = (ev.deltaX < 0) ? Hammer.DIRECTION_LEFT : Hammer.DIRECTION_RIGHT;
+            ev.direction = (ev.deltaX < 0) ? DIRECTION_LEFT : DIRECTION_RIGHT;
           }
         }
 
@@ -1701,20 +2253,20 @@ Hammer.gestures.Drag = {
           this.triggered = true;
         }
 
-        // trigger normal event
+        // trigger events
         inst.trigger(this.name, ev);
-
-        // direction event, like dragdown
         inst.trigger(this.name + ev.direction, ev);
 
+        var is_vertical = Utils.isVertical(ev.direction);
+
         // block the browser events
-        if((inst.options.drag_block_vertical && Hammer.utils.isVertical(ev.direction)) ||
-          (inst.options.drag_block_horizontal && !Hammer.utils.isVertical(ev.direction))) {
+        if((inst.options.drag_block_vertical && is_vertical) ||
+          (inst.options.drag_block_horizontal && !is_vertical)) {
           ev.preventDefault();
         }
         break;
 
-      case Hammer.EVENT_END:
+      case EVENT_END:
         // trigger dragend
         if(this.triggered) {
           inst.trigger(this.name + 'end', ev);
@@ -1739,32 +2291,33 @@ Hammer.gestures.Hold = {
     hold_threshold: 1
   },
   timer   : null,
+
   handler : function holdGesture(ev, inst) {
     switch(ev.eventType) {
-      case Hammer.EVENT_START:
+      case EVENT_START:
         // clear any running timers
         clearTimeout(this.timer);
 
         // set the gesture so we can check in the timeout if it still is
-        Hammer.detection.current.name = this.name;
+        Detection.current.name = this.name;
 
         // set timer and if after the timeout it still is hold,
         // we trigger the hold event
         this.timer = setTimeout(function() {
-          if(Hammer.detection.current.name == 'hold') {
+          if(Detection.current.name == 'hold') {
             inst.trigger('hold', ev);
           }
         }, inst.options.hold_timeout);
         break;
 
       // when you move or end we clear the timer
-      case Hammer.EVENT_MOVE:
+      case EVENT_MOVE:
         if(ev.distance > inst.options.hold_threshold) {
           clearTimeout(this.timer);
         }
         break;
 
-      case Hammer.EVENT_END:
+      case EVENT_END:
         clearTimeout(this.timer);
         break;
     }
@@ -1780,7 +2333,7 @@ Hammer.gestures.Release = {
   name   : 'release',
   index  : Infinity,
   handler: function releaseGesture(ev, inst) {
-    if(ev.eventType == Hammer.EVENT_END) {
+    if(ev.eventType == EVENT_END) {
       inst.trigger(this.name, ev);
     }
   }
@@ -1789,22 +2342,21 @@ Hammer.gestures.Release = {
 /**
  * Swipe
  * triggers swipe events when the end velocity is above the threshold
+ * for best usage, set prevent_default (on the drag gesture) to true
  * @events  swipe, swipeleft, swiperight, swipeup, swipedown
  */
 Hammer.gestures.Swipe = {
   name    : 'swipe',
   index   : 40,
   defaults: {
-    // set 0 for unlimited, but this can conflict with transform
     swipe_min_touches: 1,
     swipe_max_touches: 1,
     swipe_velocity   : 0.7
   },
   handler : function swipeGesture(ev, inst) {
-    if(ev.eventType == Hammer.EVENT_END) {
+    if(ev.eventType == EVENT_END) {
       // max touches
-      if(inst.options.swipe_max_touches > 0 &&
-        ev.touches.length < inst.options.swipe_min_touches &&
+      if(ev.touches.length < inst.options.swipe_min_touches ||
         ev.touches.length > inst.options.swipe_max_touches) {
         return;
       }
@@ -1836,31 +2388,43 @@ Hammer.gestures.Tap = {
     doubletap_distance: 20,
     doubletap_interval: 300
   },
-  handler : function tapGesture(ev, inst) {
-    if(ev.eventType == Hammer.EVENT_END && ev.srcEvent.type != 'touchcancel') {
-      // previous gesture, for the double tap since these are two different gesture detections
-      var prev = Hammer.detection.previous,
-        did_doubletap = false;
 
-      // when the touchtime is higher then the max touch time
-      // or when the moving distance is too much
-      if(ev.deltaTime > inst.options.tap_max_touchtime ||
-        ev.distance > inst.options.tap_max_distance) {
-        return;
-      }
+  has_moved: false,
+
+  handler : function tapGesture(ev, inst) {
+    var prev, since_prev, did_doubletap;
+
+    // reset moved state
+    if(ev.eventType == EVENT_START) {
+      this.has_moved = false;
+    }
+
+    // Track the distance we've moved. If it's above the max ONCE, remember that (fixes #406).
+    else if(ev.eventType == EVENT_MOVE && !this.moved) {
+      this.has_moved = (ev.distance > inst.options.tap_max_distance);
+    }
+
+    else if(ev.eventType == EVENT_END &&
+        ev.srcEvent.type != 'touchcancel' &&
+        ev.deltaTime < inst.options.tap_max_touchtime && !this.has_moved) {
+
+      // previous gesture, for the double tap since these are two different gesture detections
+      prev = Detection.previous;
+      since_prev = prev && prev.lastEvent && ev.timeStamp - prev.lastEvent.timeStamp;
+      did_doubletap = false;
 
       // check if double tap
       if(prev && prev.name == 'tap' &&
-        (ev.timeStamp - prev.lastEvent.timeStamp) < inst.options.doubletap_interval &&
-        ev.distance < inst.options.doubletap_distance) {
+          (since_prev && since_prev < inst.options.doubletap_interval) &&
+          ev.distance < inst.options.doubletap_distance) {
         inst.trigger('doubletap', ev);
         did_doubletap = true;
       }
 
       // do a single tap
       if(!did_doubletap || inst.options.tap_always) {
-        Hammer.detection.current.name = 'tap';
-        inst.trigger(Hammer.detection.current.name, ev);
+        Detection.current.name = 'tap';
+        inst.trigger(Detection.current.name, ev);
       }
     }
   }
@@ -1886,7 +2450,8 @@ Hammer.gestures.Touch = {
     prevent_mouseevents: false
   },
   handler : function touchGesture(ev, inst) {
-    if(inst.options.prevent_mouseevents && ev.pointerType == Hammer.POINTER_MOUSE) {
+    if(inst.options.prevent_mouseevents &&
+        ev.pointerType == POINTER_MOUSE) {
       ev.stopDetect();
       return;
     }
@@ -1895,11 +2460,12 @@ Hammer.gestures.Touch = {
       ev.preventDefault();
     }
 
-    if(ev.eventType == Hammer.EVENT_START) {
+    if(ev.eventType == EVENT_START) {
       inst.trigger(this.name, ev);
     }
   }
 };
+
 
 /**
  * Transform
@@ -1911,25 +2477,29 @@ Hammer.gestures.Transform = {
   index    : 45,
   defaults : {
     // factor, no scale is 1, zoomin is to 0 and zoomout until higher then 1
-    transform_min_scale   : 0.01,
+    transform_min_scale      : 0.01,
     // rotation in degrees
-    transform_min_rotation: 1,
+    transform_min_rotation   : 1,
     // prevent default browser behavior when two touches are on the screen
     // but it makes the element a blocking element
     // when you are using the transform gesture, it is a good practice to set this true
-    transform_always_block: false
+    transform_always_block   : false,
+    // ensures that all touches occurred within the instance element
+    transform_within_instance: false
   },
+
   triggered: false,
+
   handler  : function transformGesture(ev, inst) {
     // current gesture isnt drag, but dragged is true
     // this means an other gesture is busy. now call dragend
-    if(Hammer.detection.current.name != this.name && this.triggered) {
+    if(Detection.current.name != this.name && this.triggered) {
       inst.trigger(this.name + 'end', ev);
       this.triggered = false;
       return;
     }
 
-    // atleast multitouch
+    // at least multitouch
     if(ev.touches.length < 2) {
       return;
     }
@@ -1939,12 +2509,21 @@ Hammer.gestures.Transform = {
       ev.preventDefault();
     }
 
+    // check if all touches occurred within the instance element
+    if(inst.options.transform_within_instance) {
+      for(var i=-1; ev.touches[++i];) {
+        if(!Utils.hasParent(ev.touches[i].target, inst.element)) {
+          return;
+        }
+      }
+    }
+
     switch(ev.eventType) {
-      case Hammer.EVENT_START:
+      case EVENT_START:
         this.triggered = false;
         break;
 
-      case Hammer.EVENT_MOVE:
+      case EVENT_MOVE:
         var scale_threshold = Math.abs(1 - ev.scale);
         var rotation_threshold = Math.abs(ev.rotation);
 
@@ -1956,7 +2535,7 @@ Hammer.gestures.Transform = {
         }
 
         // we are transforming!
-        Hammer.detection.current.name = this.name;
+        Detection.current.name = this.name;
 
         // first time, trigger dragstart event
         if(!this.triggered) {
@@ -1974,11 +2553,11 @@ Hammer.gestures.Transform = {
         // trigger pinch event
         if(scale_threshold > inst.options.transform_min_scale) {
           inst.trigger('pinch', ev);
-          inst.trigger('pinch' + ((ev.scale < 1) ? 'in' : 'out'), ev);
+          inst.trigger('pinch' + (ev.scale<1 ? 'in' : 'out'), ev);
         }
         break;
 
-      case Hammer.EVENT_END:
+      case EVENT_END:
         // trigger dragend
         if(this.triggered) {
           inst.trigger(this.name + 'end', ev);
@@ -1990,22 +2569,22 @@ Hammer.gestures.Transform = {
   }
 };
 
-  // Based off Lo-Dash's excellent UMD wrapper (slightly modified) - https://github.com/bestiejs/lodash/blob/master/lodash.js#L5515-L5543
-  // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
-  if(typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // define as an anonymous module
-    define(function() {
-      return Hammer;
-    });
-    // check for `exports` after `define` in case a build optimizer adds an `exports` object
-  }
-  else if(typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = Hammer;
-  }
-  else {
-    window.Hammer = Hammer;
-  }
-})(this);;
+// AMD export
+if(typeof define == 'function' && define.amd) {
+  define(function(){
+    return Hammer;
+  });
+}
+// commonjs export
+else if(typeof module == 'object' && module.exports) {
+  module.exports = Hammer;
+}
+// browser export
+else {
+  window.Hammer = Hammer;
+}
+
+})(window);;
 
     Polymer('route-ui-tile', {
       /**
@@ -2024,11 +2603,11 @@ Hammer.gestures.Transform = {
           tap: false,
           tap_always: false,
         });
-        this.hammer.on("touch", this.touch.bind(this));
-        this.hammer.on("drag", this.drag.bind(this));
-        this.hammer.on("release", this.release.bind(this));
-        this.hammer.on("tap", this.tap.bind(this));
-        this.hammer.on("swipe", this.swipe.bind(this));
+        // this.hammer.on("touch", this.touch.bind(this));
+        // this.hammer.on("drag", this.drag.bind(this));
+        // this.hammer.on("release", this.release.bind(this));
+        // this.hammer.on("tap", this.tap.bind(this));
+        // this.hammer.on("swipe", this.swipe.bind(this));
       },
       tap: function(e) {
         this.fire("route-ui-tile-tap");
@@ -2117,151 +2696,153 @@ Hammer.gestures.Transform = {
     });
   ;
 
-    (function() {
-      var socket;
+    Polymer('route-ui-alarm', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
+      hoursString: "6",
+      minutesString: "10",
+      timeOfDay: "am",
 
-      function init() {
-        if(!socket) {
-          socket = io.connect('http://'+location.host);
+      _hours: 6,
+      _minutes: 10,
+      editing: null,
+      on: false,
+
+      attached: function() {
+        this.startEditing();
+      },
+      update: function() {
+        if(this._hours == 24) {
+          this._hours = 0;
+        } else if(this._hours == -1) {
+          this._hours = 23;
         }
-      }
 
-      Polymer("route-socket", {
-        ready: function() {
-          init();
-        },
-        on: function() {
-          socket.on.apply(socket, arguments);
-        },
-        send: function() {
-          socket.send.apply(socket, arguments);
-        },
-        emit: function() {
-          socket.emit.apply(socket, arguments);
-        },
-        removeListener: function() {
-          socket.removeListener.apply(socket, arguments);
-        },
-        get socket() {
-          return socket;
-        },
-      })
-    })();
-  ;
-
-    (function(){
-      Polymer('polymer-signals', {
-        enteredView: function() {
-          signals.push(this);
-        },
-        removed: function() {
-          var i = signals.indexOf(this);
-          if (i >= 0) {
-            signals.splice(i, 1);
-          }
+        if(this._minutes == 60) {
+          this._minutes = 0;
+        } else if(this._minutes == -1) {
+          this._minutes = 59;
         }
-      });
-      // private shared database
-      var signals = [];
-      // signal dispatcher
-      function notify(name, data) {
-        // convert generic-signal event to named-signal event
-        var signal = new CustomEvent('polymer-signal-' + name, {
-          bubbles: true,
-          detail: data
-        });
-        // dispatch named-signal to all 'signals' instances,
-        // only interested listeners will react
-        signals.forEach(function(s) {
-          s.dispatchEvent(signal);
-        });
-      }
-      // signal listener at document
-      document.addEventListener('polymer-signal', function(e) {
-        notify(e.detail.name, e.detail.data);
-      });
-    })();
-  ;
 
-    (function() {
-      var events, state;
+        this.timeOfDay = (this._hours < 12) ? "am" : "pm";
+        if(this._hours > 12) {
+          this.hoursString = this._hours - 12;
+        } else if(this._hours == 0) {
+          this.hoursString = 12;
+        } else {
+          this.hoursString = this._hours;
+        }
+        this.minutesString = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
+      },
+      send: function() {
+        if(this.on) {
+          var hours = (this._hours < 10) ? "0"+this._hours : this._hours;
+          var minutes = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
+          var time = hours + "" + minutes;
+          this.messenger.emit("DeviceEvent", "SetAlarm", {
+            alarm: time,
+          });
+        } else {
+          this.messenger.emit("DeviceEvent", "ClearAlarm");
+        }
+      },
+      centerHandler: function(event, detail, sender) {
+        this.on = !this.on;
+        this.send();
+      },
+      topHandler: function(event, detail, sender) {
+        this.pauseEditing();
 
-      events = [
-        "pointerdown",
-        "pointerup",
-        "pointermove",
-      ];
-      state = "awake";
+        switch(this.editing) {
+          case "hours":
+            this._hours += 1;
+            break;
+          case "minutes":
+            this._minutes += 1;
+            break;
+        }
+        this.update();
+      },
+      bottomHandler: function(event, detail, sender) {
+        this.pauseEditing();
 
-      Polymer("route-power-manager", {
-        /**
-         * The amount of time to wait before dimming the screen, in milliseconds
-         *
-         * @attribute sleepDelay
-         * @type int
-         * @default 60000
-         */
-        sleepDelay: 60 * 1000,
-
-        /**
-         * Whether this power manager should automaticallly dim the screen
-         *
-         * @attribute auto
-         * @type bool
-         * @default false
-         */
-        auto: false,
-
-        enteredView: function() {
-          if(this.auto) {
-            var parent = this.parentNode;
-            for(var i = 0; i < events.length; i++) {
-              parent.addEventListener(events[i], this.activity.bind(this));
-            }
-          }
-          this.activity();
-        },
-        activity: function() {
-          if(state != "awake") {
-            this.wake();
-          }
-          if(this.auto) {
-            if(this.timer) {
-              clearTimeout(this.timer);
-            }
-            this.timer = setTimeout(this.sleep.bind(this), this.sleepDelay);
-          }
-        },
-        wake: function() {
-          state = "awake";
-          this.setBrightness(1);
-          this.fire("polymer-signal", {name: "wake"});
-        },
-        sleep: function() {
-          if(this.timer) {
-            clearTimeout(this.timer);
-          }
-          state = "asleep";
-          this.setBrightness(0);
-          this.fire("polymer-signal", {name: "sleep"});
-        },
-        setBrightness: function(brightness) {
-          if(window.brightness) {
-            window.brightness.setBrightness(brightness, function(status) {
-              console.log("setBrightness success: ", status);
-            }, function(status) {
-              console.log("setBrightness failure: ", status);
-            });
-          }
-        },
-        fireWake: function() {
-          this.fire("route-wake");
-        },
-        fireSleep: function() {
-          this.fire("route-sleep");
-        },
-      });
-    })();
+        switch(this.editing) {
+          case "hours":
+            this._hours -= 1;
+            break;
+          case "minutes":
+            this._minutes -= 1;
+            break;
+        }
+        this.update();
+      },
+      leftHandler: function(event, detail, sender) {
+        this.stopEditing();
+        if(this.editing === null) {
+          this.editing = "hours";
+          this.startEditing();
+        } else if(this.editing == "hours") {
+          this.editing = "minutes";
+          this.startEditing();
+        } else {
+          this.editing = null;
+          this.send();
+        }
+      },
+      rightHandler: function(event, detail, sender) {
+        this.stopEditing();
+        if(this.editing === null) {
+          this.editing = "minutes";
+          this.startEditing();
+        } else if(this.editing == "minutes") {
+          this.editing = "hours";
+          this.startEditing();
+        } else {
+          this.editing = null;
+          this.send();
+        }
+      },
+      stopEditing: function() {
+        clearTimeout(this.timer);
+        this.timer = null;
+        if(this.editing == "hours") {
+          style = this.$.hours.style;
+        } else if(this.editing == "minutes") {
+          style = this.$.minutes.style;
+        } else {
+          return
+        }
+        style.visibility = "visible";
+      },
+      pauseEditing: function() {
+        this.stopEditing();
+        this.timer = setTimeout(this.startEditing.bind(this), 1000);
+      },
+      startEditing: function() {
+        if(this.timer) {
+          clearTimeout(this.timer);
+        }
+        var style;
+        if(this.editing == "hours") {
+          style = this.$.hours.style;
+        } else if(this.editing == "minutes") {
+          style = this.$.minutes.style;
+        } else {
+          return
+        }
+        if(style.visibility) {
+          style.visibility = (style.visibility == "visible") ? "hidden" : "visible";
+        } else {
+          style.visibility = "hidden";
+        }
+        this.timer = setTimeout(this.startEditing.bind(this), 500);
+      },
+    });
   ;
 (function(global) {
   "use strict";
@@ -3016,6 +3597,197 @@ Hammer.gestures.Transform = {
     })();
   ;
 
+    Polymer("route-ui-bar", {
+      hours: "12",
+      minutes: "00",
+      temperatureString: "00",
+      colors: null,
+      enteredView: function() {
+        this.setTime();
+        this.invalidate();
+      },
+      colorsChanged: function(oldColors, newColors) {
+        if(newColors.vibrant) {
+          this.style.backgroundColor = newColors.vibrant.hex;
+        } else {
+          this.style.backgroundColor = newColors.dark.hex;
+        }
+
+      },
+      temperatureChanged: function(oldValue, newValue) {
+        this.temperatureString = Math.round(newValue);
+      },
+      invalidate: function() {
+        this.layoutJob = this.job(this.layoutJob, this.relayout);
+      },
+      relayout: function() {
+        this.$.content.style.width = this.offsetHeight + "px";
+        this.$.content.style.height = this.offsetWidth + "px";
+        this.$.content.style.left = this.offsetWidth + "px";
+      },
+      setTime: function() {
+        var now = new Date(),
+            hrs = now.getHours(),
+            mins = now.getMinutes();
+        if(hrs == 0) {
+          hrs = 12;
+        } else if(hrs > 12) {
+          hrs -= 12;
+        }
+        if(mins < 10) {
+          mins = "0" + mins;
+        }
+        this.hours = hrs;
+        this.minutes = mins;
+
+        setTimeout(this.setTime.bind(this), 1000);
+      },
+    });
+  ;
+
+    (function() {
+      var state = {};
+
+      function setValue(name, value) {
+        var snaker = state;
+        var parts = name.split(".");
+        var last = parts.pop();
+        parts.forEach(function(p) {
+          snaker = snaker[p];
+        });
+        snaker[last] = value;
+      }
+      function getValue(name) {
+        var snaker = state;
+        var parts = name.split(".");
+        for(var i = 0; i < parts.length; i++) {
+          var p = parts[i];
+          if(p in snaker) {
+            snaker = snaker[p];
+          } else {
+            return null;
+          }
+        }
+        return snaker;
+      }
+
+      document.addEventListener("route-state-change", function(e) {
+        var values = e.detail.data;
+        for(key in values) {
+          setValue(key, values[key]);
+        }
+        notify();
+      });
+
+      var listeners = [];
+
+      function notify() {
+        listeners.forEach(function(l) {
+          l.notify();
+        });
+      }
+
+      Polymer('route-state-value', {
+        name: null,
+        value: null,
+        attached: function() {
+          listeners.push(this);
+        },
+        detached: function() {
+          var i = listeners.indexOf(this);
+          if (i >= 0) {
+            listeners.splice(i, 1);
+          }
+        },
+        nameChanged: function() {
+          this.value = getValue(this.name);
+          this.fire("state-change", this.value);
+          console.log("nameChanged", this.name, this.value, state);
+        },
+        notify: function() {
+          this.value = getValue(this.name);
+          this.fire("state-change", this.value);
+          console.log("notify", this.name, this.value, state);
+        },
+      });
+    })();
+  ;
+
+    Polymer('route-ui-lights', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
+      name: "Lights",
+      /**
+       * Regex used to match the lights to control
+       *
+       * @attribute lights
+       * @type regex
+       * @default null
+       */
+      lights: null,
+
+      tmpBrightness: 100,
+      tmpState: false,
+      brightness: 100,
+      state: false,
+      mode: "Off",
+
+      lightsChanged: function(e, lights, sender) {
+        var brightness = 0;
+        var state = false;
+        for(var key in lights) {
+          var light = lights[key];
+          if(light.name.match(this.key) && light.state) {
+            state = state || light.state.on;
+            brightness = Math.ceil(Math.max(light.state.bri * 100 / 255, brightness));
+          }
+        }
+        this.tmpState = state;
+        this.tmpBrightness = brightness;
+        if(this.timer) {clearTimeout(this.timer);}
+        this.timer = setTimeout(function() {
+          this.state = this.tmpState;
+          this.brightness = this.tmpBrightness;
+        }.bind(this), 500);
+      },
+      stateChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      brightnessChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      tap: function(event, detail, sender) {
+        this.state = !this.state;
+        if(this.state) {
+          this.messenger.send(this.room+"."+this.name+"On");
+        } else {
+          this.messenger.send(this.room+"."+this.name+"Off");
+        }
+      },
+      swipeup: function(event, detail, sender) {
+        this.brightness = 100;
+        this.messenger.send(this.room+"."+this.name+"Bright");
+      },
+      swipedown: function(event, detail, sender) {
+        this.brightness = 30;
+        this.messenger.send(this.room+"."+this.name+"Dim");
+      },
+    });
+  ;
+
     Polymer('route-ui-lockscreen', {
       hours: "12",
       minutes: "00",
@@ -3086,110 +3858,6 @@ Hammer.gestures.Transform = {
         this.minutes = mins;
 
         setTimeout(this.setTime.bind(this), 1000);
-      },
-    });
-  ;
-
-    Polymer('route-state', {
-      name: null,
-      value: null,
-      attached: function() {
-        this.handler = this.stateHandler.bind(this);
-        this.$.socket.on('state', this.handler);
-      },
-      detached: function() {
-        this.$.socket.removeListener('state', this.handler);
-      },
-      stateHandler: function(data) {
-        if(this.name in data) {
-          this.value = data[this.name];
-          this.fire("state-change", data[this.name]);
-        } else {
-          var parts = this.name.split('.');
-          for(var i = 0; i < parts.length; i++) {
-            if(parts[i] in data) {
-              data = data[parts[i]];
-            } else {
-              return;
-            }
-          }
-          this.value = data;
-          this.fire("state-change", data);
-        }
-      },
-    });
-  ;
-
-    Polymer('route-ui-lights', {
-      /**
-       * Name to display on the tile
-       *
-       * @attribute name
-       * @type string
-       * @default "Lights"
-       */
-      name: "Lights",
-      /**
-       * Regex used to match the lights to control
-       *
-       * @attribute lights
-       * @type regex
-       * @default null
-       */
-      lights: null,
-
-      tmpBrightness: 100,
-      tmpState: false,
-      brightness: 100,
-      state: false,
-      mode: "Off",
-
-      lightsChanged: function(e, lights, sender) {
-        var brightness = 0;
-        var state = false;
-        for(var key in lights) {
-          if(key.match(this.lights) && lights[key].state) {
-            state = state || lights[key].state.on;
-            brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
-          }
-        }
-        this.tmpState = state;
-        this.tmpBrightness = brightness;
-        if(this.timer) {clearTimeout(this.timer);}
-        this.timer = setTimeout(function() {
-          this.state = this.tmpState;
-          this.brightness = this.tmpBrightness;
-        }.bind(this), 500);
-      },
-      stateChanged: function() {
-        if(this.state) {
-          this.mode = this.brightness >= 80 ? "On" : "Dim";
-        } else {
-          this.mode = "Off";
-        }
-      },
-      brightnessChanged: function() {
-        if(this.state) {
-          this.mode = this.brightness >= 80 ? "On" : "Dim";
-        } else {
-          this.mode = "Off";
-        }
-      },
-      tap: function(event, detail, sender) {
-        this.state = !this.state;
-        if(this.state) {
-          this.messenger.send("TomBedroom.LightsOn");
-        } else {
-          this.messenger.send("TomBedroom.LightsOff");
-        }
-      },
-      swipeup: function(event, detail, sender) {
-        this.brightness = 100;
-        this.messenger.send("TomBedroom.LightsBright");
-      },
-      swipedown: function(event, detail, sender) {
-        this.brightness = 30;
-        this.messenger.send("TomBedroom.LightsDim");
       },
     });
   ;
@@ -3332,13 +4000,13 @@ Hammer.gestures.Transform = {
         this.$.albumart.src = details.artwork;
       },
       playPause: function() {
-        this.messenger.send("TomBedroom.PlayPause");
+        this.messenger.send(this.room+".PlayPause");
       },
       nextTrack: function() {
-        this.messenger.send("TomBedroom.NextTrack");
+        this.messenger.send(this.room+".NextTrack");
       },
       prevTrack: function() {
-        this.messenger.send("TomBedroom.PrevTrack");
+        this.messenger.send(this.room+".PrevTrack");
       },
       imgLoaded: function() {
         var img = this.$.albumart;
@@ -3374,151 +4042,22 @@ Hammer.gestures.Transform = {
     });
   ;
 
-    Polymer('route-ui-alarm', {
-      /**
-       * Name to display on the tile
-       *
-       * @attribute name
-       * @type string
-       * @default "Lights"
-       */
-      hoursString: "6",
-      minutesString: "10",
-      timeOfDay: "am",
-
-      _hours: 6,
-      _minutes: 10,
-      editing: null,
-      on: false,
-
-      attached: function() {
-        this.startEditing();
-      },
-      update: function() {
-        if(this._hours == 24) {
-          this._hours = 0;
-        } else if(this._hours == -1) {
-          this._hours = 23;
-        }
-
-        if(this._minutes == 60) {
-          this._minutes = 0;
-        } else if(this._minutes == -1) {
-          this._minutes = 59;
-        }
-
-        this.timeOfDay = (this._hours < 12) ? "am" : "pm";
-        if(this._hours > 12) {
-          this.hoursString = this._hours - 12;
-        } else if(this._hours == 0) {
-          this.hoursString = 12;
-        } else {
-          this.hoursString = this._hours;
-        }
-        this.minutesString = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
-      },
-      send: function() {
-        if(this.on) {
-          var hours = (this._hours < 10) ? "0"+this._hours : this._hours;
-          var minutes = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
-          var time = hours + "" + minutes;
-          this.messenger.emit("DeviceEvent", "SetAlarm", {
-            alarm: time,
+    Polymer("route-ui-room-picker", {
+      rooms: null,
+      names: null,
+      roomsChanged: function() {
+        this.names = [];
+        for(var key in this.rooms) {
+          this.names.push({
+            key: key,
+            name: this.rooms[key].longName,
           });
-        } else {
-          this.messenger.emit("DeviceEvent", "ClearAlarm");
         }
       },
-      centerHandler: function(event, detail, sender) {
-        this.on = !this.on;
-        this.send();
-      },
-      topHandler: function(event, detail, sender) {
-        this.pauseEditing();
-
-        switch(this.editing) {
-          case "hours":
-            this._hours += 1;
-            break;
-          case "minutes":
-            this._minutes += 1;
-            break;
-        }
-        this.update();
-      },
-      bottomHandler: function(event, detail, sender) {
-        this.pauseEditing();
-
-        switch(this.editing) {
-          case "hours":
-            this._hours -= 1;
-            break;
-          case "minutes":
-            this._minutes -= 1;
-            break;
-        }
-        this.update();
-      },
-      leftHandler: function(event, detail, sender) {
-        this.stopEditing();
-        if(this.editing === null) {
-          this.editing = "hours";
-          this.startEditing();
-        } else if(this.editing == "hours") {
-          this.editing = "minutes";
-          this.startEditing();
-        } else {
-          this.editing = null;
-          this.send();
-        }
-      },
-      rightHandler: function(event, detail, sender) {
-        this.stopEditing();
-        if(this.editing === null) {
-          this.editing = "minutes";
-          this.startEditing();
-        } else if(this.editing == "minutes") {
-          this.editing = "hours";
-          this.startEditing();
-        } else {
-          this.editing = null;
-          this.send();
-        }
-      },
-      stopEditing: function() {
-        clearTimeout(this.timer);
-        this.timer = null;
-        if(this.editing == "hours") {
-          style = this.$.hours.style;
-        } else if(this.editing == "minutes") {
-          style = this.$.minutes.style;
-        } else {
-          return
-        }
-        style.visibility = "visible";
-      },
-      pauseEditing: function() {
-        this.stopEditing();
-        this.timer = setTimeout(this.startEditing.bind(this), 1000);
-      },
-      startEditing: function() {
-        if(this.timer) {
-          clearTimeout(this.timer);
-        }
-        var style;
-        if(this.editing == "hours") {
-          style = this.$.hours.style;
-        } else if(this.editing == "minutes") {
-          style = this.$.minutes.style;
-        } else {
-          return
-        }
-        if(style.visibility) {
-          style.visibility = (style.visibility == "visible") ? "hidden" : "visible";
-        } else {
-          style.visibility = "hidden";
-        }
-        this.timer = setTimeout(this.startEditing.bind(this), 500);
+      select: function(e, details, sender) {
+        this.fire("route-room-selected", {
+          room: sender.templateInstance.model.key
+        });
       },
     });
   ;
@@ -3553,54 +4092,6 @@ Hammer.gestures.Transform = {
     });
   ;
 
-    Polymer("route-ui-bar", {
-      hours: "12",
-      minutes: "00",
-      temperatureString: "00",
-      colors: null,
-      enteredView: function() {
-        this.setTime();
-        this.invalidate();
-      },
-      colorsChanged: function(oldColors, newColors) {
-        if(newColors.vibrant) {
-          this.style.backgroundColor = newColors.vibrant.hex;
-        } else {
-          this.style.backgroundColor = newColors.dark.hex;
-        }
-
-      },
-      temperatureChanged: function(oldValue, newValue) {
-        this.temperatureString = Math.round(newValue);
-      },
-      invalidate: function() {
-        this.layoutJob = this.job(this.layoutJob, this.relayout);
-      },
-      relayout: function() {
-        this.$.content.style.width = this.offsetHeight + "px";
-        this.$.content.style.height = this.offsetWidth + "px";
-        this.$.content.style.left = this.offsetWidth + "px";
-      },
-      setTime: function() {
-        var now = new Date(),
-            hrs = now.getHours(),
-            mins = now.getMinutes();
-        if(hrs == 0) {
-          hrs = 12;
-        } else if(hrs > 12) {
-          hrs -= 12;
-        }
-        if(mins < 10) {
-          mins = "0" + mins;
-        }
-        this.hours = hrs;
-        this.minutes = mins;
-
-        setTimeout(this.setTime.bind(this), 1000);
-      },
-    });
-  ;
-
     (function() {
       function transpose(arr) {
         var trans = [];
@@ -3631,8 +4122,8 @@ Hammer.gestures.Transform = {
             longName: "Tom's Bedroom",
             shortName: "Bedroom",
             controls: [
-              {type: "tile-lights", name: "Lights"},
-              {type: "tile-lights", name: "Lamp"},
+              {type: "tile-lights", name: "Lights", key: "TomBedroom"},
+              {type: "tile-lights", name: "Lamp", key: "TomLamp"},
               {type: "tile-media"},
               {type: "tile-power"},
               {type: "tile-blank"},
@@ -3659,6 +4150,7 @@ Hammer.gestures.Transform = {
 
         curRoom: {longName: "N/A", shortName: "N/A", controls: []},
         curLayout: [[]],
+        roomPickerActive: false,
 
         ready: function() {
           window.addEventListener("resize", this.resize.bind(this));
@@ -3671,14 +4163,17 @@ Hammer.gestures.Transform = {
           this.curRoom = this.rooms[this.room];
           this.curLayout = this.layouts[this.curRoom.controls.length];
           this.$.tileLayout.invalidate();
-
-          setTimeout(function() {
-            this.room = "Kitchen";
-          }.bind(this), 10 * 1000);
         },
         roomChanged: function(oldValue, newValue) {
           this.curRoom = this.rooms[this.room];
           this.curLayout = this.layouts[this.curRoom.controls.length];
+        },
+        roomSelected: function(e, details, sender) {
+          this.room = details.room;
+          this.toggleRoomPicker();
+        },
+        toggleRoomPicker: function() {
+          this.roomPickerActive = !this.roomPickerActive;
         },
         wake: function() {
           this.page = "panel";

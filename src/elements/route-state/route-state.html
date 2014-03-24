@@ -15,38 +15,23 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../route-socket/route-socket.html">
 
-<polymer-element name="route-state" attributes="name value">
+<polymer-element name="route-state" attributes="">
   <template>
     <route-socket id="socket"></route-socket>
   </template>
   <script>
-    Polymer('route-state', {
-      name: null,
-      value: null,
-      attached: function() {
-        this.handler = this.stateHandler.bind(this);
-        this.$.socket.on('state', this.handler);
-      },
-      detached: function() {
-        this.$.socket.removeListener('state', this.handler);
-      },
-      stateHandler: function(data) {
-        if(this.name in data) {
-          this.value = data[this.name];
-          this.fire("state-change", data[this.name]);
-        } else {
-          var parts = this.name.split('.');
-          for(var i = 0; i < parts.length; i++) {
-            if(parts[i] in data) {
-              data = data[parts[i]];
-            } else {
-              return;
-            }
-          }
-          this.value = data;
-          this.fire("state-change", data);
-        }
-      },
-    });
+    (function() {
+      Polymer('route-state', {
+        attached: function() {
+          this.handler = this.stateHandler.bind(this);
+          this.$.socket.on('state', this.handler);
+        },
+        stateHandler: function(values) {
+          this.fire("route-state-change", {
+            data: values,
+          });
+        },
+      });
+    })();
   </script>
 </polymer-element>
