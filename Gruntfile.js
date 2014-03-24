@@ -7,9 +7,6 @@ module.exports = function(grunt) {
       main: {
         options: {
           csp: true,
-          excludes: {
-            scripts: ["cordova.js"],
-          },
         },
         src: 'src/index.html',
         dest: 'build/index.html',
