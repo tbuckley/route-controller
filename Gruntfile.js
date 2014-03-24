@@ -61,7 +61,7 @@ module.exports = function(grunt) {
     copy: {
       main: {
         files: [
-          {expand: true, cwd: "src/", src: ["cordova_plugins.js"], dest: "build/"},
+          {expand: true, cwd: "src/", src: ["cordova_plugins.js", "cordova.js"], dest: "build/"},
           {expand: true, cwd: "src/plugins", src: ["**"], dest: "build/plugins"},
         ]
       }
