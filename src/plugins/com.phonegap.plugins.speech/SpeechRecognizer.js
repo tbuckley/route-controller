@@ -1,3 +1,5 @@
+cordova.define("com.phonegap.plugins.speech.SpeechRecognizer", function(require, exports, module) {
+
 /**
  * The MIT License
  *
@@ -35,7 +37,7 @@ SpeechRecognizer.prototype.startRecognize = function(successCallback, errorCallb
 
 /**
  * Get the list of the supported languages in IETF BCP 47 format
- * 
+ *
  * @param successCallback
  * @param errorCallback
  *
@@ -50,3 +52,4 @@ SpeechRecognizer.prototype.getSupportedLanguages = function(successCallback, err
  */
 module.exports = new SpeechRecognizer();
 
+});

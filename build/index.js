@@ -37,6 +37,11 @@ i(a,s,function(a){f(a),c.updateDependentAttributes(a.getAttribute("select"));for
     document.ontouchmove = function(e) {
       e.preventDefault();
     };
+    document.addEventListener("deviceready", function() {
+      console.log("DEVICE IS READY!!");
+      var app = document.createElement("route-app");
+      document.body.appendChild(app);
+    });
   ;
 
 

@@ -16,12 +16,17 @@
 </head>
 
 <body>
-  <route-app></route-app>
+  <!-- <route-app></route-app> -->
 
   <script type="text/javascript">
     document.ontouchmove = function(e) {
       e.preventDefault();
     };
+    document.addEventListener("deviceready", function() {
+      console.log("DEVICE IS READY!!");
+      var app = document.createElement("route-app");
+      document.body.appendChild(app);
+    });
   </script>
 </body>
 </html>
