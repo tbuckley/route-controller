@@ -1,0 +1,123 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-tile-layout" attributes="nodes layout auto">
+  <template>
+  </template>
+  <script>
+    (function() {
+      // Heavily based on polymer-grid-layout
+      Polymer("route-tile-layout", {
+        nodes: null,
+        layout: null,
+        auto: false,
+        created: function() {
+          this.layout = [];
+        },
+        nodesChanged: function() {
+          this.invalidate();
+        },
+        layoutChanged: function() {
+          this.invalidate();
+        },
+        autoNodes: function() {
+          this.nodes = this.parentNode.children.array().filter(function(node) {
+            switch(node.localName) {
+              case "route-tile-layout":
+              case "style":
+                return false
+            }
+            return true;
+          });
+        },
+        // invalidate will relayout the nodes. It debounces calls so that
+        // relayout isn't called too frequently
+        invalidate: function() {
+          if(this.layout && this.layout.length) {
+            // this.job debounces layout, only letting it occur every N ms
+            // debouncing: http://davidwalsh.name/function-debounce
+            this.layoutJob = this.job(this.layoutJob, this.relayout);
+          }
+        },
+        // Note: don't call directly, use invalidate() instead
+        relayout: function() {
+          if(!this.nodes || this.auto) {
+            this.autoNodes();
+          }
+          layout(this.layout, this.nodes, this.parentNode);
+          this.asyncFire("route-tile-layout");
+        }
+      });
+
+      var colCount, rowCount;
+      var offsetLeft, offsetTop;
+      var unit;
+      var m = 0;
+
+      // TODO: this code tries to preserve actual position,
+      // so 'unposition' is really 'naturalize' or something
+      function unposition(box) {
+        var style = box.style;
+        //style.right = style.bottom = style.width = style.height = '';
+        style.position = 'absolute';
+        style.display = 'inline-block';
+        style.boxSizing = style.mozBoxSizing = 'border-box';
+      }
+
+      function _position(style, maj, min, ext, a, b) {
+        style[maj] = a + "px";
+        // style[min] = b + "px";
+        style[ext] = (b - a) + "px";
+      }
+
+      function position(elt, left, right, top, bottom) {
+        elt.style["display"] = "block";
+        _position(elt.style, 'top', 'bottom', 'height', top * unit + offsetTop, bottom * unit + offsetTop);
+        _position(elt.style, 'left', 'right', 'width', left * unit + offsetLeft, right * unit + offsetLeft);
+      }
+
+      // Custom
+      function calculateUnit(node, cols, rows) {
+        var w = Math.floor(node.offsetWidth / cols),
+            h = Math.floor(node.offsetHeight / rows);
+        return Math.min(h, w);
+      }
+
+      function layout(matrix, anodes, parent) {
+        nodes = anodes;
+
+        rowCount = matrix.length;
+        colCount = rowCount && matrix[0].length || 0;
+
+        nodes.forEach(unposition);
+
+        unit = calculateUnit(parent, colCount, rowCount);
+        offsetLeft = Math.floor((parent.offsetWidth - colCount * unit) / 2);
+        offsetTop = Math.floor((parent.offsetHeight - rowCount * unit) / 2);
+
+        nodes.forEach(function(node, i) {
+          // node indices are 1-based
+          var n = i + 1;
+          // boundary rails
+          var l, r, t = 1e10, b = -1e10;
+          matrix.forEach(function(vector, i) {
+            var f = vector.indexOf(n);
+            if (f > -1) {
+              l = f;
+              r = vector.lastIndexOf(n) + 1;
+              t = Math.min(t, i);
+              b = Math.max(b, i) + 1;
+            }
+          });
+          if (l == undefined) {
+            node.style.position = 'absolute';
+            node.style.pointerEvents = 'none';
+          } else {
+            node.style.pointerEvents = '';
+            position(node, l, r, t, b);
+          }
+        });
+      }
+
+    })();
+  </script>
+</polymer-element>

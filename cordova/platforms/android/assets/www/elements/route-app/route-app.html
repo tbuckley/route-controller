@@ -1,0 +1,87 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-page/polymer-page.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../../components/polymer-ui-pages/polymer-ui-pages.html">
+<link rel="import" href="../route-tile-layout/route-tile-layout.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../route-socket/route-socket.html">
+<link rel="import" href="../route-power-manager/route-power-manager.html">
+<link rel="import" href="../route-ui-lockscreen/route-ui-lockscreen.html">
+<link rel="import" href="../route-ui-lights/route-ui-lights.html">
+<link rel="import" href="../route-ui-media/route-ui-media.html">
+<link rel="import" href="../route-ui-power/route-ui-power.html">
+<link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
+<link rel="import" href="../route-ui-speech/route-ui-speech.html">
+<link rel="import" href="../route-ui-bar/route-ui-bar.html">
+
+<polymer-element name="route-app" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-app.css">
+
+    <polymer-page></polymer-page>
+
+    <route-power-manager id="powerManager" auto
+        on-route-sleep="{{sleep}}" on-route-wake="{{wake}}">
+    </route-power-manager>
+
+    <route-socket id="socket"></route-socket>
+
+    <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
+
+      <div id="panel" class="page">
+        <polymer-flex-layout></polymer-flex-layout>
+
+        <div style="position: relative" flex>
+          <section id="tiles">
+            <route-tile-layout id="tileLayout" layout="{{layout}}"></route-tile-layout>
+            <route-ui-media messenger="{{$.socket}}"></route-ui-media>
+            <route-ui-speech messenger="{{$.socket}}"></route-ui-speech>
+            <route-ui-power></route-ui-power>
+
+           <!--  <route-ui-lights messenger="{{$.socket}}" lights="(1|2)" name="Lights"></route-ui-lights>
+            <route-ui-lights messenger="{{$.socket}}" lights="(3)" name="Lamp"></route-ui-lights>
+            <route-ui-media messenger="{{$.socket}}"></route-ui-media>
+            <route-ui-power></route-ui-power>
+            <route-ui-tile></route-ui-tile>
+            <route-ui-speech messenger="{{$.socket}}"></route-ui-speech> -->
+          </section>
+        </div>
+
+        <route-ui-bar id="bar"></route-ui-bar>
+      </div>
+
+      <route-ui-lockscreen id="clock"></route-ui-lockscreen>
+
+    </polymer-ui-pages>
+
+  </template>
+  <script>
+    (function() {
+      Polymer("route-app", {
+        layout: [
+          [1, 1, 2],
+          [1, 1, 3],
+        ],
+
+        page: "panel",
+        time: "",
+
+        ready: function() {
+          window.addEventListener("resize", this.resize.bind(this));
+          window.brightness = cordova.require("cordova.plugin.Brightness.Brightness");
+          window.brightness.setKeepScreenOn(true);
+        },
+        wake: function() {
+          this.page = "panel";
+        },
+        sleep: function() {
+          this.page = "clock";
+        },
+        resize: function(e) {
+          this.$.tileLayout.invalidate();
+          this.$.bar.invalidate();
+        },
+      });
+    })();
+  </script>
+</polymer-element>

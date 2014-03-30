@@ -1,0 +1,125 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-lights
+ *
+ * Example:
+ *
+ *     <route-ui-lights lights="(1|2)" name="Lights"></route-ui-lights>
+ *
+ * @class route-ui-lights
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../route-state/route-state.html">
+
+<polymer-element name="route-ui-lights" attributes="messenger lights name">
+  <template>
+    <link rel="stylesheet" href="route-ui-lights.css">
+
+    <route-state name="hueLights" on-state-change="{{lightsChanged}}"></route-state>
+
+    <route-ui-tile id="tile" on-route-ui-tile-tap="{{tap}}"
+        on-route-ui-tile-swipedown="{{swipedown}}"
+        on-route-ui-tile-swipeup="{{swipeup}}">
+
+      <div style="height: 100%">
+        <polymer-flex-layout vertical></polymer-flex-layout>
+
+        <div flex></div>
+        <div style="width: 128px; height: 128px; margin: auto;position: relative;">
+          <div class="left">Hue</div>
+          <div class="right">Hue</div>
+          <div class="top">Bright</div>
+          <div class="bottom">Dim</div>
+          <div class="icon">
+            <polymer-flex-layout vertical></polymer-flex-layout>
+            <div flex></div>
+            <div class="name">{{name}}<br/>{{mode}}</div>
+            <div flex></div>
+          </div>
+        </div>
+        <div flex></div>
+      </div>
+
+    </route-ui-tile>
+  </template>
+  <script>
+    Polymer('route-ui-lights', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
+      name: "Lights",
+      /**
+       * Regex used to match the lights to control
+       *
+       * @attribute lights
+       * @type regex
+       * @default null
+       */
+      lights: null,
+
+      tmpBrightness: 100,
+      tmpState: false,
+      brightness: 100,
+      state: false,
+      mode: "Off",
+
+      lightsChanged: function(e, lights, sender) {
+        var brightness = 0;
+        var state = false;
+        for(var key in lights) {
+          if(key.match(this.lights) && lights[key].state) {
+            state = state || lights[key].state.on;
+            brightness = Math.ceil(Math.max(lights[key].state.bri * 100 / 255, brightness));
+          }
+        }
+        this.tmpState = state;
+        this.tmpBrightness = brightness;
+        if(this.timer) {clearTimeout(this.timer);}
+        this.timer = setTimeout(function() {
+          this.state = this.tmpState;
+          this.brightness = this.tmpBrightness;
+        }.bind(this), 500);
+      },
+      stateChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      brightnessChanged: function() {
+        if(this.state) {
+          this.mode = this.brightness >= 80 ? "On" : "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      },
+      tap: function(event, detail, sender) {
+        this.state = !this.state;
+        if(this.state) {
+          this.messenger.send("TomBedroom.LightsOn");
+        } else {
+          this.messenger.send("TomBedroom.LightsOff");
+        }
+      },
+      swipeup: function(event, detail, sender) {
+        this.brightness = 100;
+        this.messenger.send("TomBedroom.LightsBright");
+      },
+      swipedown: function(event, detail, sender) {
+        this.brightness = 30;
+        this.messenger.send("TomBedroom.LightsDim");
+      },
+    });
+  </script>
+</polymer-element>

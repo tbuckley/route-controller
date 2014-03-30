@@ -1,0 +1,32 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-skycon" attributes="icon">
+  <template>
+    <canvas id="canvas" width="64" height="64"></canvas>
+  </template>
+  <script src="../../components/skycons/skycons.js"></script>
+  <script>
+    (function() {
+      function icon2drawing(name) {
+        name = name.toUpperCase();
+        name = name.replace(/-/g, "_");
+        return Skycons[name];
+      }
+
+      Polymer("route-skycon", {
+        icon: "fog",
+        attached: function() {
+          this.skycons = new Skycons({"color": "#FFF"});
+          this.skycons.add(this.$.canvas, icon2drawing(this.icon));
+          this.skycons.play();
+        },
+        detached: function() {
+
+        },
+        iconChanged: function() {
+          this.skycons.set(this.$.canvas, icon2drawing(this.icon));
+        },
+      })
+    })();
+  </script>
+</polymer-element>

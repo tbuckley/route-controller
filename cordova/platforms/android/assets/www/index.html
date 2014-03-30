@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Route Controller</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700|Roboto+Condensed:400,300' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="cordova.js"></script>
+  <script type="text/javascript" src="components/platform/platform.js"></script>
+  <link rel="import" href="elements/route-app/route-app.html" />
+</head>
+
+<body>
+  <route-app></route-app>
+
+  <script type="text/javascript">
+    document.ontouchmove = function(e) {
+      e.preventDefault();
+    };
+  </script>
+</body>
+</html>

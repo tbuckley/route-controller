@@ -1,0 +1,193 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-alarm
+ *
+ * Example:
+ *
+ *     <route-ui-alarm></route-ui-alarm>
+ *
+ * @class route-ui-alarm
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+
+<polymer-element name="route-ui-alarm" attributes="messenger">
+  <template>
+    <link rel="stylesheet" href="route-ui-alarm.css">
+
+    <route-ui-tile id="tile" autofire autofireInterval="100"
+        on-route-ui-tile-top="{{topHandler}}" on-route-ui-tile-bottom="{{bottomHandler}}"
+        on-route-ui-tile-left="{{leftHandler}}" on-route-ui-tile-right="{{rightHandler}}"
+        on-route-ui-tile-center="{{centerHandler}}" on-route-ui-tile-release="{{update}}">
+
+      <div style="height: 100%">
+        <polymer-flex-layout vertical></polymer-flex-layout>
+        <div flex></div>
+        <div class="time"><span id="hours">{{hoursString}}</span>:<span id="minutes">{{minutesString}}</span>{{timeOfDay}}</div>
+        <div flex>
+          <polymer-flex-layout vertical></polymer-flex-layout>
+          <div>
+            <template if="{{on}}">On</template>
+            <template if="{{!on}}">Off</template>
+          </div>
+          <div flex></div>
+        </div>
+      </div>
+
+    </route-ui-tile>
+  </template>
+  <script>
+    Polymer('route-ui-alarm', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
+      hoursString: "6",
+      minutesString: "10",
+      timeOfDay: "am",
+
+      _hours: 6,
+      _minutes: 10,
+      editing: null,
+      on: false,
+
+      attached: function() {
+        this.startEditing();
+      },
+      update: function() {
+        if(this._hours == 24) {
+          this._hours = 0;
+        } else if(this._hours == -1) {
+          this._hours = 23;
+        }
+
+        if(this._minutes == 60) {
+          this._minutes = 0;
+        } else if(this._minutes == -1) {
+          this._minutes = 59;
+        }
+
+        this.timeOfDay = (this._hours < 12) ? "am" : "pm";
+        if(this._hours > 12) {
+          this.hoursString = this._hours - 12;
+        } else if(this._hours == 0) {
+          this.hoursString = 12;
+        } else {
+          this.hoursString = this._hours;
+        }
+        this.minutesString = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
+      },
+      send: function() {
+        if(this.on) {
+          var hours = (this._hours < 10) ? "0"+this._hours : this._hours;
+          var minutes = (this._minutes < 10) ? "0"+this._minutes : this._minutes;
+          var time = hours + "" + minutes;
+          this.messenger.emit("DeviceEvent", "SetAlarm", {
+            alarm: time,
+          });
+        } else {
+          this.messenger.emit("DeviceEvent", "ClearAlarm");
+        }
+      },
+      centerHandler: function(event, detail, sender) {
+        this.on = !this.on;
+        this.send();
+      },
+      topHandler: function(event, detail, sender) {
+        this.pauseEditing();
+
+        switch(this.editing) {
+          case "hours":
+            this._hours += 1;
+            break;
+          case "minutes":
+            this._minutes += 1;
+            break;
+        }
+        this.update();
+      },
+      bottomHandler: function(event, detail, sender) {
+        this.pauseEditing();
+
+        switch(this.editing) {
+          case "hours":
+            this._hours -= 1;
+            break;
+          case "minutes":
+            this._minutes -= 1;
+            break;
+        }
+        this.update();
+      },
+      leftHandler: function(event, detail, sender) {
+        this.stopEditing();
+        if(this.editing === null) {
+          this.editing = "hours";
+          this.startEditing();
+        } else if(this.editing == "hours") {
+          this.editing = "minutes";
+          this.startEditing();
+        } else {
+          this.editing = null;
+          this.send();
+        }
+      },
+      rightHandler: function(event, detail, sender) {
+        this.stopEditing();
+        if(this.editing === null) {
+          this.editing = "minutes";
+          this.startEditing();
+        } else if(this.editing == "minutes") {
+          this.editing = "hours";
+          this.startEditing();
+        } else {
+          this.editing = null;
+          this.send();
+        }
+      },
+      stopEditing: function() {
+        clearTimeout(this.timer);
+        this.timer = null;
+        if(this.editing == "hours") {
+          style = this.$.hours.style;
+        } else if(this.editing == "minutes") {
+          style = this.$.minutes.style;
+        } else {
+          return
+        }
+        style.visibility = "visible";
+      },
+      pauseEditing: function() {
+        this.stopEditing();
+        this.timer = setTimeout(this.startEditing.bind(this), 1000);
+      },
+      startEditing: function() {
+        if(this.timer) {
+          clearTimeout(this.timer);
+        }
+        var style;
+        if(this.editing == "hours") {
+          style = this.$.hours.style;
+        } else if(this.editing == "minutes") {
+          style = this.$.minutes.style;
+        } else {
+          return
+        }
+        if(style.visibility) {
+          style.visibility = (style.visibility == "visible") ? "hidden" : "visible";
+        } else {
+          style.visibility = "hidden";
+        }
+        this.timer = setTimeout(this.startEditing.bind(this), 500);
+      },
+    });
+  </script>
+</polymer-element>

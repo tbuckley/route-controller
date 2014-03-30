@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.tbuckley.route" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>RouteController</name>
+    <description>A home automation controller for route.io</description>
+    <author href="http://github.com/tbuckley/route-controller">Tom Buckley</author>
+    <content src="http://10.1.1.65:8000/index.html" />
+    <access origin="*" />
+</widget>

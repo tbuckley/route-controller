@@ -1,0 +1,75 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-media
+ *
+ * Example:
+ *
+ *     <route-ui-media messenger="{{messenger}}"></route-ui-media>
+ *
+ * @class route-ui-media
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../polymer-image-search/polymer-image-search.html">
+<link rel="import" href="../route-state/route-state.html">
+
+<polymer-element name="route-ui-media" attributes="messenger">
+  <template>
+    <link rel="stylesheet" href="route-ui-media.css">
+
+    <route-state name="Sonos.Kitchen.trackInfo" on-state-change="{{trackChanged}}"></route-state>
+
+    <route-ui-tile id="tile" on-route-ui-tile-swipeleft="{{nextTrack}}" on-route-ui-tile-swiperight="{{prevTrack}}"
+        on-route-ui-tile-tap="{{playPause}}">
+      <div class="album-name">{{name}}</div>
+      <div id="artwork">
+        <img id="albumart" on-load="{{imgLoaded}}" />
+      </div>
+    </route-ui-tile>
+
+  </template>
+  <script>
+    Polymer('route-ui-media', {
+      trackChanged: function(event, details, sender) {
+        this.name = details.name;
+        this.$.albumart.src = details.artwork;
+      },
+      playPause: function() {
+        this.messenger.send("Kitchen.PlayPause");
+      },
+      nextTrack: function() {
+        this.messenger.send("Kitchen.NextTrack");
+      },
+      prevTrack: function() {
+        this.messenger.send("Kitchen.PrevTrack");
+      },
+      imgLoaded: function() {
+        var img = this.$.albumart;
+        img.style.height = "auto";
+        img.style.width = "auto";
+        var dim = this.offsetWidth - 8;
+        if(img.width > img.height) {
+          var width = (dim * img.width / img.height),
+              offset = -Math.floor((width - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.height = dim + "px";
+          img.style.width = "auto";
+          img.style.left = offset + "px";
+        } else {
+          var height = (dim * img.height / img.width),
+              offset = -Math.floor((height - dim) / 2);
+
+          img.style.position = "relative";
+          img.style.width = dim + "px";
+          img.style.height = "auto";
+          img.style.top = offset + "px";
+        }
+      },
+    });
+  </script>
+</polymer-element>
