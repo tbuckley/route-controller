@@ -16,7 +16,7 @@
 
 </head>
 
-<body><polymer-element name="polymer-body" extends="body" assetpath="../src/components/polymer/">
+<body><polymer-element name="polymer-body" extends="body" assetpath="../../tmp/components/polymer/">
 
   
 
@@ -130,7 +130,7 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-flex-layout" attributes="vertical align justify isContainer" assetpath="../src/components/polymer-flex-layout/">
+<polymer-element name="polymer-flex-layout" attributes="vertical align justify isContainer" assetpath="../../tmp/components/polymer-flex-layout/">
   <template>
     <style polymer-scope="controller">/*
 Copyright 2013 The Polymer Authors. All rights reserved.
@@ -510,7 +510,7 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-page" attributes="fullbleed" assetpath="../src/components/polymer-page/">
+<polymer-element name="polymer-page" attributes="fullbleed" assetpath="../../tmp/components/polymer-page/">
   
 </polymer-element>
 
@@ -585,7 +585,7 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-selection" attributes="multi" assetpath="../src/components/polymer-selection/">
+<polymer-element name="polymer-selection" attributes="multi" assetpath="../../tmp/components/polymer-selection/">
   <template>
     <style>
       :host {
@@ -659,7 +659,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="polymer-selector" attributes="selected multi valueattr selectedClass selectedProperty selectedItem selectedModel selectedIndex notap target itemsSelector activateEvent" assetpath="../src/components/polymer-selector/">
+<polymer-element name="polymer-selector" attributes="selected multi valueattr selectedClass selectedProperty selectedItem selectedModel selectedIndex notap target itemsSelector activateEvent" assetpath="../../tmp/components/polymer-selector/">
   <template>
     <polymer-selection id="selection" multi="{{multi}}" on-polymer-select="{{selectionSelect}}"></polymer-selection>
     <content id="items" select="*"></content>
@@ -688,7 +688,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="polymer-ui-pages" extends="polymer-selector" selected="0" notap="" noscript="" assetpath="../src/components/polymer-ui-pages/">
+<polymer-element name="polymer-ui-pages" extends="polymer-selector" selected="0" notap="" noscript="" assetpath="../../tmp/components/polymer-ui-pages/">
   <template>
     <style>/*
 Copyright 2013 The Polymer Authors. All rights reserved.
@@ -727,7 +727,7 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-key-helper" assetpath="../src/components/polymer-key-helper/">
+<polymer-element name="polymer-key-helper" assetpath="../../tmp/components/polymer-key-helper/">
 	
 </polymer-element>
 
@@ -803,7 +803,7 @@ license that can be found in the LICENSE file.
  * @param {Object} inDetail.opened the opened state
  */
 -->
-<polymer-element name="polymer-overlay" attributes="target opened autoCloseDisabled transitions" assetpath="../src/components/polymer-overlay/">
+<polymer-element name="polymer-overlay" attributes="target opened autoCloseDisabled transitions" assetpath="../../tmp/components/polymer-overlay/">
   <template>
     <style polymer-scope="controller">/*
  * Copyright 2013 The Polymer Authors. All rights reserved.
@@ -937,7 +937,7 @@ We address this by using script based positioning =(
 
 
 
-<polymer-element name="polymer-ui-overlay" attributes="active modal backdrop transitions" assetpath="../src/components/polymer-ui-overlay/">
+<polymer-element name="polymer-ui-overlay" attributes="active modal backdrop transitions" assetpath="../../tmp/components/polymer-ui-overlay/">
   <template>
     <style>
       #backdrop {
@@ -968,7 +968,7 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-signals" assetpath="../src/components/polymer-signals/">
+<polymer-element name="polymer-signals" assetpath="../../tmp/components/polymer-signals/">
   
 </polymer-element>
 
@@ -999,7 +999,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-power-manager" attributes="auto sleepDelay" assetpath="../src/elements/route-power-manager/">
+<polymer-element name="route-power-manager" attributes="auto sleepDelay" assetpath="../../tmp/elements/route-power-manager/">
   <template>
     <polymer-signals id="signals" on-polymer-signal-wake="{{fireWake}}" on-polymer-signal-sleep="{{fireSleep}}"></polymer-signals>
   </template>
@@ -1008,7 +1008,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-socket" assetpath="../src/elements/route-socket/">
+<polymer-element name="route-socket" assetpath="../../tmp/elements/route-socket/">
   <template>
 
   </template>
@@ -1031,7 +1031,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-state" attributes="" assetpath="../src/elements/route-state/">
+<polymer-element name="route-state" attributes="" assetpath="../../tmp/elements/route-state/">
   <template>
     <route-socket id="socket"></route-socket>
   </template>
@@ -1039,7 +1039,7 @@ license that can be found in the LICENSE file.
 </polymer-element>
 
 
-<polymer-element name="route-tile-layout" attributes="nodes layout auto" assetpath="../src/elements/route-tile-layout/">
+<polymer-element name="route-tile-layout" attributes="nodes layout auto" assetpath="../../tmp/elements/route-tile-layout/">
   <template>
   </template>
   
@@ -1078,7 +1078,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-ui-tile" attributes="maxRotation" touch-action="none" on-tap="{{tap}}" assetpath="../src/elements/route-ui-tile/">
+<polymer-element name="route-ui-tile" attributes="maxRotation" touch-action="none" on-tap="{{tap}}" assetpath="../../tmp/elements/route-ui-tile/">
   <template>
     <style>:host {
   position: relative;
@@ -1135,7 +1135,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-ui-alarm" attributes="messenger" assetpath="../src/elements/route-ui-alarm/">
+<polymer-element name="route-ui-alarm" attributes="messenger" assetpath="../../tmp/elements/route-ui-alarm/">
   <template>
     <style>@host {
   :scope {
@@ -1191,7 +1191,7 @@ route-ui-tile {
 </polymer-element>
 
 
-<polymer-element name="route-skycon" attributes="icon" assetpath="../src/elements/route-skycon/">
+<polymer-element name="route-skycon" attributes="icon" assetpath="../../tmp/elements/route-skycon/">
   <template>
     <canvas id="canvas" width="64" height="64"></canvas>
   </template>
@@ -1203,7 +1203,7 @@ route-ui-tile {
 
 
 
-<polymer-element name="route-ui-bar" attributes="" assetpath="../src/elements/route-ui-bar/">
+<polymer-element name="route-ui-bar" attributes="" assetpath="../../tmp/elements/route-ui-bar/">
   <template>
     <style>:host {
   background-color: #000;
@@ -1262,7 +1262,7 @@ route-ui-tile {
 -->
 
 
-<polymer-element name="route-state-value" attributes="name value" assetpath="../src/elements/route-state-value/">
+<polymer-element name="route-state-value" attributes="name value" assetpath="../../tmp/elements/route-state-value/">
   <template></template>
   
 </polymer-element>
@@ -1285,7 +1285,7 @@ route-ui-tile {
 
 
 
-<polymer-element name="route-ui-lights" attributes="messenger room lights name key" assetpath="../src/elements/route-ui-lights/">
+<polymer-element name="route-ui-lights" attributes="messenger room lights name key" assetpath="../../tmp/elements/route-ui-lights/">
   <template>
     <style>:host {
   position: relative;
@@ -1419,7 +1419,7 @@ route-ui-message {
 
 
 
-<polymer-element name="route-ui-lockscreen" attributes="" touch-action="none" assetpath="../src/elements/route-ui-lockscreen/">
+<polymer-element name="route-ui-lockscreen" attributes="" touch-action="none" assetpath="../../tmp/elements/route-ui-lockscreen/">
   <template>
     <style>:host {
   background-color: #000;
@@ -1490,14 +1490,14 @@ license that can be found in the LICENSE file.
 -->
 
 
-<polymer-element name="polymer-google-jsapi" assetpath="../src/elements/polymer-google-jsapi/">
+<polymer-element name="polymer-google-jsapi" assetpath="../../tmp/elements/polymer-google-jsapi/">
   
 </polymer-element>
 
 
 
 
-<polymer-element name="polymer-image-search" attributes="query" assetpath="../src/elements/polymer-image-search/">
+<polymer-element name="polymer-image-search" attributes="query" assetpath="../../tmp/elements/polymer-image-search/">
   <template>
     <polymer-google-jsapi id="jsapi" on-polymer-google-jsapi-loaded="{{googleLoaded}}"></polymer-google-jsapi>
   </template>
@@ -1522,7 +1522,7 @@ license that can be found in the LICENSE file.
 
 
 
-<polymer-element name="route-ui-media" attributes="messenger room" assetpath="../src/elements/route-ui-media/">
+<polymer-element name="route-ui-media" attributes="messenger room" assetpath="../../tmp/elements/route-ui-media/">
   <template>
     <style>:host {
   position: relative;
@@ -1583,7 +1583,7 @@ route-ui-tile {
 
 
 
-<polymer-element name="route-ui-power" attributes="" assetpath="../src/elements/route-ui-power/">
+<polymer-element name="route-ui-power" attributes="" assetpath="../../tmp/elements/route-ui-power/">
   <template>
     <style>:host {
   position: relative;
@@ -1696,7 +1696,7 @@ route-ui-message {
 </polymer-element>
 
 
-<polymer-element name="route-ui-room-picker" attributes="rooms" assetpath="../src/elements/route-ui-room-picker/">
+<polymer-element name="route-ui-room-picker" attributes="rooms" assetpath="../../tmp/elements/route-ui-room-picker/">
   <template>
     <style>:host {
   display: block;
@@ -1722,8 +1722,11 @@ ul {
   list-style-type: none;
 }
 li {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: -1px;
   font-size: 16px;
-  padding: 10px 0;
+  padding: 16px 0;
 }</style>
     <h1>Pick a room:</h1>
     <ul>
@@ -1752,7 +1755,7 @@ li {
 
 
 
-<polymer-element name="route-ui-speech" attributes="messenger" assetpath="../src/elements/route-ui-speech/">
+<polymer-element name="route-ui-speech" attributes="messenger" assetpath="../../tmp/elements/route-ui-speech/">
   <template>
     <style>:host {
   position: relative;
@@ -1831,7 +1834,7 @@ route-ui-tile.disabled {
 
 
 
-<polymer-element name="route-app" attributes="" assetpath="../src/elements/route-app/">
+<polymer-element name="route-app" attributes="" assetpath="../../tmp/elements/route-app/">
   <template>
     <style>@host {
   :scope {
@@ -1937,11 +1940,13 @@ polymer-ui-pages {
   </template>
   
 </polymer-element>
+  <!-- DESKTOP-ONLY -->
   <route-app></route-app>
+  <!-- /DESKTOP-ONLY -->
 
   
 
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script src="index.min.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
