@@ -18,6 +18,8 @@ voice commands
 
 ## Installation instructions
 
+* [HACKY] Change `rooms` property in `src/elements/route-app/route-app.html` to
+reflect your personal setup
 * Install Polymer dependencies: `bower install`
 * Install dev dependencies: `npm install`
 * Run Grunt
