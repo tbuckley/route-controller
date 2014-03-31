@@ -86,6 +86,7 @@
             row.push(arr[x][y]);
           }
         }
+        return trans;
       }
 
       Polymer("route-app", {
@@ -95,6 +96,15 @@
             shortName: "Kitchen",
             controls: [
               {type: "tile-media"},
+              {type: "tile-voice"},
+              {type: "tile-power"},
+            ]
+          },
+          "LivingRoom": {
+            longName: "Living Room",
+            shortName: "Living Room",
+            controls: [
+              {type: "tile-lights", name: "Lights", key: "LivingRoom"},
               {type: "tile-voice"},
               {type: "tile-power"},
             ]
@@ -134,20 +144,36 @@
         roomPickerActive: false,
 
         ready: function() {
+          // Set up event listener, set default orientation
           window.addEventListener("resize", this.resize.bind(this));
+          this.orientation = (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
+
+          // Run cordova plugins
           if("cordova" in window) {
             window.brightness = cordova.require("cordova.plugin.Brightness.Brightness");
             window.brightness.setKeepScreenOn(true);
           }
+          if(window.Immersify) {
+            Immersify.enableSticky(function() {console.log("Immersify success!");}, function() {console.log("Immersify failure...");});
+          }
 
           this.room = "TomBedroom";
           this.curRoom = this.rooms[this.room];
-          this.curLayout = this.layouts[this.curRoom.controls.length];
+          if(this.orientation === "landscape") {
+            this.curLayout = this.layouts[this.curRoom.controls.length];
+          } else {
+            this.curLayout = transpose(this.layouts[this.curRoom.controls.length]);
+          }
+
           this.$.tileLayout.invalidate();
         },
         roomChanged: function(oldValue, newValue) {
           this.curRoom = this.rooms[this.room];
-          this.curLayout = this.layouts[this.curRoom.controls.length];
+          if(this.orientation === "landscape") {
+            this.curLayout = this.layouts[this.curRoom.controls.length];
+          } else {
+            this.curLayout = transpose(this.layouts[this.curRoom.controls.length]);
+          }
         },
         roomSelected: function(e, details, sender) {
           this.room = details.room;
@@ -163,6 +189,15 @@
           this.page = "clock";
         },
         resize: function() {
+          console.log(this.curLayout);
+          if(window.innerWidth > window.innerHeight && this.orientation !== "landscape") {
+            this.orientation = "landscape";
+            this.curLayout = transpose(this.curLayout);
+          }
+          if(window.innerWidth < window.innerHeight && this.orientation !== "portrait") {
+            this.orientation = "portrait";
+            this.curLayout = transpose(this.curLayout);
+          }
           this.$.tileLayout.invalidate();
           this.$.bar.invalidate();
         },

@@ -22,7 +22,7 @@ package com.tbuckley.route;
 import android.os.Bundle;
 import org.apache.cordova.*;
 
-public class RouteController extends CordovaActivity
+public class RouteController extends CordovaActivity 
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
