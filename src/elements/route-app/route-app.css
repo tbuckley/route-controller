@@ -1,20 +1,18 @@
-@host {
-  :scope {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+:host {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
-    background: -webkit-linear-gradient(135deg, #006DB0, #006DB0);
+  background: -webkit-linear-gradient(135deg, #006DB0, #006DB0);
 
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 polymer-ui-pages {
@@ -44,8 +42,4 @@ polymer-ui-pages {
   bottom: 32px;
   left: 32px;
   right: 32px;
-}
-
-#bar {
-  width: 80px;
 }

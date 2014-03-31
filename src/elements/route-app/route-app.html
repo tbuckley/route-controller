@@ -16,11 +16,13 @@
 <link rel="import" href="../route-ui-room-picker/route-ui-room-picker.html">
 <link rel="import" href="../route-ui-speech/route-ui-speech.html">
 <link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../route-refresh/route-refresh.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
     <link rel="stylesheet" href="route-app.css">
 
+    <!-- Tile templates: current control is available as "control" -->
     <template id="tile-lights">
       <route-ui-lights messenger="{{$.socket}}" room="{{room}}" name="{{control.name}}" key="{{control.key}}"></route-ui-lights>
     </template>
@@ -45,6 +47,7 @@
 
     <route-socket id="socket"></route-socket>
     <route-state id="state"></route-state>
+    <route-refresh></route-refresh>
 
     <polymer-ui-overlay active="{{roomPickerActive}}" backdrop="true" modal="false">
       <route-ui-room-picker rooms="{{rooms}}" on-route-room-selected="{{ roomSelected }}"></route-ui-room-picker>
@@ -52,8 +55,9 @@
 
     <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
 
+      <!-- Page 1: Tiles -->
       <div id="panel" class="page">
-        <polymer-flex-layout></polymer-flex-layout>
+        <polymer-flex-layout vertical?="{{orientation == 'portrait'}}"></polymer-flex-layout>
 
         <div style="position: relative" flex>
           <section id="tiles" on-route-ui-tile-attached="{{tileAttached}}">
@@ -64,9 +68,10 @@
           </section>
         </div>
 
-        <route-ui-bar id="bar" on-tap="{{toggleRoomPicker}}">{{curRoom.shortName}}</route-ui-bar>
+        <route-ui-bar id="bar" on-tap="{{toggleRoomPicker}}" horizontal?="{{orientation == 'portrait'}}">{{curRoom.shortName}}</route-ui-bar>
       </div>
 
+      <!-- Page 2: Lockscreen -->
       <route-ui-lockscreen id="clock"></route-ui-lockscreen>
 
     </polymer-ui-pages>
@@ -149,9 +154,8 @@
           this.orientation = (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
 
           // Run cordova plugins
-          if("cordova" in window) {
-            window.brightness = cordova.require("cordova.plugin.Brightness.Brightness");
-            window.brightness.setKeepScreenOn(true);
+          if(window.Brightness) {
+            Brightness.setKeepScreenOn(true);
           }
           if(window.Immersify) {
             Immersify.enableSticky(function() {console.log("Immersify success!");}, function() {console.log("Immersify failure...");});
@@ -189,7 +193,6 @@
           this.page = "clock";
         },
         resize: function() {
-          console.log(this.curLayout);
           if(window.innerWidth > window.innerHeight && this.orientation !== "landscape") {
             this.orientation = "landscape";
             this.curLayout = transpose(this.curLayout);

@@ -4,6 +4,13 @@
   font-family: "Roboto", Helvetica, sans-serif;
   font-weight: 100;
   font-size: 32px;
+  width: 80px;
+  height: auto;
+}
+
+:host([horizontal]) {
+  width: auto;
+  height: 80px;
 }
 
 #room {
@@ -15,6 +22,10 @@
   -webkit-transform: rotate(90deg);
   transform-origin: 0% 0%;
   transform: rotate(90deg);
+}
+:host([horizontal]) #content {
+  -webkit-transform: rotate(0deg);
+  transform: rotate(0deg);
 }
 .spacer {
   width: 16px;

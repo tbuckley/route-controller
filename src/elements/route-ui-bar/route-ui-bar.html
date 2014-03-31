@@ -3,7 +3,7 @@
 <link rel="import" href="../route-skycon/route-skycon.html">
 <link rel="import" href="../route-state/route-state.html">
 
-<polymer-element name="route-ui-bar" attributes="">
+<polymer-element name="route-ui-bar" attributes="horizontal">
   <template>
     <link rel="stylesheet" href="route-ui-bar.css">
     <route-state-value name="Forecast.currently.apparentTemperature" value="{{temperature}}"></route-state-value>
@@ -27,6 +27,7 @@
       minutes: "00",
       temperatureString: "00",
       colors: null,
+      horizontal: false,
       enteredView: function() {
         this.setTime();
         this.invalidate();
@@ -46,9 +47,15 @@
         this.layoutJob = this.job(this.layoutJob, this.relayout);
       },
       relayout: function() {
-        this.$.content.style.width = this.offsetHeight + "px";
-        this.$.content.style.height = this.offsetWidth + "px";
-        this.$.content.style.left = this.offsetWidth + "px";
+        if(this.horizontal) {
+          this.$.content.style.left = "0px";
+          this.$.content.style.width = this.offsetWidth + "px";
+          this.$.content.style.height = this.offsetHeight + "px";
+        } else {
+          this.$.content.style.left = this.offsetWidth + "px";
+          this.$.content.style.width = this.offsetHeight + "px";
+          this.$.content.style.height = this.offsetWidth + "px";
+        }
       },
       setTime: function() {
         var now = new Date(),
