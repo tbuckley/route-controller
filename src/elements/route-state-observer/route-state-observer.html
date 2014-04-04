@@ -14,7 +14,7 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 
-<polymer-element name="route-state-value" attributes="name value">
+<polymer-element name="route-state-observer" attributes="name value">
   <template></template>
   <script>
     (function() {
@@ -59,7 +59,7 @@
         });
       }
 
-      Polymer('route-state-value', {
+      Polymer('route-state-observer', {
         name: null,
         value: null,
         attached: function() {

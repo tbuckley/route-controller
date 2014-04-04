@@ -1,0 +1,72 @@
+<!--
+/**
+ * @module Route Elements
+ */
+/**
+ * route-command
+ *
+ * Example:
+ *
+ *     <route-command name="LightsOn" room></route-command>
+ *
+ * @class route-command
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-command" attributes="name params room auto">
+  <template></template>
+  <script>
+    Polymer("route-command", {
+      /**
+       * Name of the command
+       *
+       * @attribute name
+       * @type string
+       * @default "Command"
+       */
+      name: "Command",
+      /**
+       * The parameters for the command
+       *
+       * @attribute params
+       * @type object
+       * @default {}
+       */
+      params: {},
+      /**
+       * If true, attach the command to the current room (eg. Kitchen.LightsOn)
+       *
+       * @attribute room
+       * @type bool
+       * @default false
+       */
+      room: false,
+      /**
+       * If true, automatically trigger the command when name or params are changed
+       *
+       * @attribute auto
+       * @type bool
+       * @default false
+       */
+      auto: false,
+      run: function() {
+        this.fire("route-command", {
+          name: this.name,
+          params: this.params,
+          room: this.room,
+        });
+      },
+      nameChanged: function() {
+        if(this.auto) {
+          this.run();
+        }
+      },
+      paramsChanged: function() {
+        if(this.auto) {
+          this.run();
+        }
+      }
+    });
+  </script>
+</polymer-element>

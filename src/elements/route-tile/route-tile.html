@@ -1,0 +1,102 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-tile
+ *
+ * Example:
+ *
+ *     <route-tile>
+ *       ...
+ *     </route-tile>
+ *
+ * @class route-tile
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-tile" attributes="disabled maxRotation" touch-action="none" on-pointerdown="{{pointerdown}}"
+    on-pointerup="{{pointerup}}" on-trackstart="{{trackstart}}" on-track="{{track}}" on-trackend="{{trackend}}">
+  <template>
+    <link rel="stylesheet" href="route-tile.css">
+    <div id="wrapper">
+      <content></content>
+    </div>
+  </template>
+  <script>
+    Polymer('route-tile', {
+      /**
+       * Degrees that the tile should be able to rotate around the X/Y axes
+       *
+       * @attribute maxRotation
+       * @type number
+       * @default 15
+       */
+      maxRotation: 15,
+      transform: function(rotateX, rotateY, translateZ) {
+        var transforms = [],
+            style = this.$.wrapper.style;
+        transforms.push("translate3d(0,0,"+translateZ+"px)");
+        transforms.push("rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)");
+        style.webkitTransform = style.transform = transforms.join(" ");
+      },
+      animate: function(percentX, percentY, raised) {
+        var bound = function(value, min, max) {
+          if(value < min) return min;
+          if(value > max) return max;
+          return value;
+        };
+
+        // Movement along X axis rotates around Y axis, and vice versa
+        var rotateY = bound(percentX, -1, 1) * 15,
+            rotateX = bound(percentY, -1, 1) * 15;
+
+        if(raised) {
+          this.transform(rotateX, rotateY, 20);
+        } else {
+          this.transform(rotateX, rotateY, 0);
+        }
+      },
+      updateDimensions: function() {
+        var x = 0, y = 0;
+        for(var el = this; el != null; x += el.offsetLeft, y += el.offsetTop, el = el.offsetParent);
+        this.dimensions = {
+          left: x,
+          top: y,
+          width: this.offsetWidth,
+          height: this.offsetHeight,
+          centerX: x + (this.offsetWidth / 2),
+          centerY: y + (this.offsetHeight / 2)
+        };
+      },
+      updateLatestPosition: function(clientX, clientY) {
+        this.latest = {
+          x: (clientX - this.dimensions.centerX) * 2 / this.dimensions.width,
+          y: -(clientY - this.dimensions.centerY) * 2 / this.dimensions.height,
+        };
+      },
+      pointerdown: function(e) {
+        this.updateDimensions();
+        this.updateLatestPosition(e.pageX, e.pageY);
+        this.animate(0, 0, true);
+        this.classList.add("animating");
+      },
+      trackstart: function(e) {
+        e.preventTap();
+      },
+      track: function(e) {
+        this.updateLatestPosition(e.pageX, e.pageY);
+        this.animate(this.latest.x, this.latest.y, true);
+      },
+      pointerup: function(e) {
+        this.classList.remove("animating");
+        this.animate(0, 0, false);
+      },
+      trackend: function(e) {
+        this.classList.remove("animating");
+        this.animate(0, 0, false);
+      },
+    });
+  </script>
+</polymer-element>

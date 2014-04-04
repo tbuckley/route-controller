@@ -1,0 +1,75 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-tile-speech
+ *
+ * Example:
+ *
+ *     <route-tile-speech></route-tile-speech>
+ *
+ * @class route-tile-speech
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-tile/route-tile.html">
+<link rel="import" href="../route-tile-content/route-tile-content.html">
+<link rel="import" href="../route-command/route-command.html">
+
+<polymer-element name="route-tile-speech" attributes="">
+  <template>
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="route-tile-speech.css">
+
+    <!-- Define commands -->
+    <route-command id="voiceCommand" name="Voice" params="{{command}}" room></route-command>
+    <route-command id="startCommand" name="VoiceStart" room></route-command>
+    <route-command id="endCommand" name="VoiceEnd" room></route-command>
+
+    <!-- Create tile -->
+    <route-tile id="tile" on-tap="{{tap}}" active?="{{active}}" disabled?="{{disabled}}">
+      <route-tile-content>
+        <div center>Voice</div>
+      </route-tile-content>
+    </route-tile>
+
+  </template>
+  <script>
+    Polymer('route-tile-speech', {
+      active: false,
+      disabled: false,
+      ready: function() {
+        if(!window.plugins || !window.plugins.speechrecognizer) {
+          this.disabled = true;
+        }
+      },
+      tap: function() {
+        if(window.plugins && window.plugins.speechrecognizer) {
+          this.active = true;
+          this.start();
+        }
+      },
+      start: function() {
+        this.$.startCommand.run();
+        var maxMatches = 1;
+        var promptString = "What can I do for you?";  // optional
+        var language = "en-US";  // optional
+        window.plugins.speechrecognizer.startRecognize(this.result.bind(this),
+            this.error.bind(this), maxMatches, promptString, language);
+      },
+      result: function(result) {
+        this.active = false;
+        this.command = {command: result};
+        this.$.voiceCommand.run()
+        this.$.endCommand.run();
+      },
+      error: function(e) {
+        this.active = false;
+        console.log(error);
+        this.$.endCommand.run();
+      },
+    });
+  </script>
+</polymer-element>

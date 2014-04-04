@@ -10,7 +10,6 @@
     "polymer-ui-pages": "Polymer/polymer-ui-pages#master",
     "polymer-google-jsapi": "Polymer/polymer-google-jsapi#master",
     "polymer-ui-overlay": "Polymer/polymer-ui-overlay#master",
-    "skycons": "darkskyapp/skycons#master",
-    "hammerjs": "EightMedia/hammer.js#master"
+    "skycons": "darkskyapp/skycons#master"
   }
 }

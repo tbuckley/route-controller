@@ -1,0 +1,39 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-tile-power
+ *
+ * Example:
+ *
+ *     <route-tile-power></route-tile-power>
+ *
+ * @class route-tile-power
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../route-power-manager/route-power-manager.html">
+<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+
+<polymer-element name="route-tile-power" attributes="">
+  <template>
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="route-tile-power.css">
+
+    <!-- Power manager to send signals -->
+    <route-power-manager id="powerManager"></route-power-manager>
+
+    <!-- Create tile -->
+    <route-ui-tile id="tile" on-tap="{{$.powerManager.sleep}}">
+      <route-tile-content>
+        <div center>Sleep</div>
+      </route-tile-content>
+    </route-ui-tile>
+
+  </template>
+  <script>
+    Polymer('route-tile-power', {});
+  </script>
+</polymer-element>

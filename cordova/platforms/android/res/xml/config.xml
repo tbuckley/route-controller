@@ -16,6 +16,6 @@
     <name>RouteController</name>
     <description>A home automation controller for route.io</description>
     <author href="http://github.com/tbuckley/route-controller">Tom Buckley</author>
-    <content src="http://10.1.1.65:8000/index.html" />
+    <content src="http://192.168.1.3:8000/index.html" />
     <access origin="*" />
 </widget>

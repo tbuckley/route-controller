@@ -1,0 +1,97 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-tile-lights
+ *
+ * Example:
+ *
+ *     <route-tile-lights lights="(1|2)" name="Lights"></route-tile-lights>
+ *
+ * @class route-tile-lights
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-command/route-command.html">
+<link rel="import" href="../route-state-observer/route-state-observer.html">
+<link rel="import" href="../route-tile/route-tile.html">
+<link rel="import" href="../route-tile-content/route-tile-content.html">
+
+<polymer-element name="route-tile-lights" attributes="name key">
+  <template>
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="route-tile-lights.css">
+
+    <!-- Observe hueLights property -->
+    <route-state-observer name="hueLights" on-state-change="{{lightsUpdated}}">
+    </route-state-observer>
+
+    <!-- Define commands -->
+    <route-command id="toggleCommand" name="LightsToggle" room></route-command>
+    <route-command id="dimCommand" name="LightsDim" room></route-command>
+    <route-command id="brightCommand" name="LightsBright" room></route-command>
+
+    <!-- Create tile -->
+    <route-tile id="tile" on-tap="{{$.toggleCommand.run}}" on-flickup="{{$.brightCommand}}" on-flickdown="{{$.dimCommand.run}}">
+      <route-tile-content>
+        <div center>{{name}}<br/>{{mode}}</div>
+        <div top>Bright</div>
+        <div bottom>Dim</div>
+      </route-tile-content>
+    </route-tile>
+
+  </template>
+
+  <script>
+    Polymer('route-tile-lights', {
+      /**
+       * Name to display on the tile
+       *
+       * @attribute name
+       * @type string
+       * @default "Lights"
+       */
+      name: "Lights",
+      /**
+       * Pattern that matches the names of the corresponding Hue bulbs
+       *
+       * @attribute key
+       * @type ( regex | string )
+       * @default null
+       */
+      key: null,
+      mode: "Off",
+      brightness: 100,
+      state: false,
+      lightsUpdated: function(e, lights, sender) {
+        var brightness = 0, state = false;
+        for(var key in lights) {
+          var light = lights[key];
+          if(light.name.match(this.key) && light.state) {
+            state = state || light.state.on;
+            // Hue emits brightness on 0-255 range, but Hue.setState expects 0-100...
+            brightness = Math.ceil(Math.max(light.state.bri * 100 / 255, brightness));
+          }
+        }
+        // Route.io will send a message for each bulb updated; need to make sure
+        // there aren't any more to come before updating UI.
+        if(this.timer) {clearTimeout(this.timer);}
+        this.timer = setTimeout(function() {
+          this.state = state;
+          this.brightness = brightness;
+          this.updateMode();
+        }.bind(this), 100);
+      },
+      updateMode: function() {
+        if(this.state && this.brightness >= 80) {
+          this.mode = "On";
+        } else if(this.state && this.brightness < 80) {
+          this.mode = "Dim";
+        } else {
+          this.mode = "Off";
+        }
+      }
+    });
+  </script>
+</polymer-element>

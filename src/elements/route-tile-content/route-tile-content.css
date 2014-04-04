@@ -1,0 +1,28 @@
+:host {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.state, .action {
+  font-size: 14px;
+  font-family: "Roboto Condensed";
+  font-weight: 300;
+  color: #FFF;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.state {
+
+}
+
+.action {
+  opacity: 0;
+}
+
+:host(.animating) .action {
+  opacity: 0.5;
+}

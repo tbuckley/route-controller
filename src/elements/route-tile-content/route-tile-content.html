@@ -1,0 +1,44 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-tile-content
+ *
+ * Example:
+ *
+ *     <route-tile-content>
+ *       <div center>Foo</div>
+ *     </route-tile-content>
+ *
+ * @class route-tile-content
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
+
+<polymer-element name="route-tile-content" attributes="">
+  <template>
+    <link rel="stylesheet" href="route-tile-content.css">
+    <polymer-flex-layout></polymer-flex-layout>
+    <div flex></div>
+    <div class="action"><content select="[left]"></content></div>
+    <div flex></div>
+    <div>
+      <polymer-flex-layout vertical></polymer-flex-layout>
+      <div flex></div>
+      <div class="action"><content select="[top]"></content></div>
+      <div flex></div>
+      <div class="state"><content select="[center]"></content></div>
+      <div flex></div>
+      <div class="action"><content select="[bottom]"></content></div>
+      <div flex></div>
+    </div>
+    <div flex></div>
+    <div class="action"><content select="[right]"></content></div>
+    <div flex></div>
+  </template>
+  <script>
+    Polymer("route-tile-content", {})
+  </script>
+</polymer-element>
