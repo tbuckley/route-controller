@@ -1,0 +1,96 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-controls
+ *
+ * Example:
+ *
+ *     <route-ui-controls></route-ui-controls>
+ *
+ * @class route-ui-controls
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-ui-controls" attributes="controls vertical">
+  <template>
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="route-ui-controls.css">
+
+    <!-- Tile templates -->
+    <template id="tile-lights">
+      <route-tile-lights name="{{control.name}}" key="{{control.key}}"></route-tile-lights>
+    </template>
+    <template id="tile-media">
+      <route-tile-media></route-tile-media>
+    </template>
+    <template id="tile-power">
+      <route-ui-power></route-ui-power>
+    </template>
+    <template id="tile-voice">
+      <route-tile-speech></route-tile-speech>
+    </template>
+    <template id="tile-blank">
+      <route-tile></route-tile>
+    </template>
+
+    <!-- Display tiles -->
+    <div id="wrapper">
+      <route-tile-layout layout="{{layout}}" auto></route-tile-layout>
+      <template repeat="{{control in controls}}">
+        <template ref="{{control.type}}" bind></template>
+      </template>
+    </div>
+  </template>
+  <script>
+    (function() {
+      var DEFAULT_LAYOUTS = {
+        1: [[1]],
+        2: [[1,2]],
+        3: [[1,1,2],
+            [1,1,3]],
+        4: [[1,2],
+            [3,4]],
+        5: [[1,1,2,3],
+            [1,1,4,5]],
+        6: [[1,2,3],
+            [4,5,6]]
+      };
+
+      function transpose(arr) {
+        var trans = [];
+
+        var rows = arr.length,
+            cols = arr[0].length;
+        for(var y = 0; y < cols; y++) {
+          var row = [];
+          trans.push(row);
+          for(var x = 0; x < arr.length; x++) {
+            row.push(arr[x][y]);
+          }
+        }
+        return trans;
+      }
+
+      Polymer("route-ui-controls", {
+        layout: DEFAULT_LAYOUTS[1],
+        vertical: false,
+        observe: {
+          vertical: "update",
+          controls: "update"
+        },
+        update: function() {
+          var numControls = this.controls.length;
+          var layout = DEFAULT_LAYOUTS[numControls];
+          if(this.vertical) {
+            this.layout = transpose(layout);
+          } else {
+            this.layout = layout;
+          }
+        },
+      });
+    })();
+  </script>
+</polymer-element>

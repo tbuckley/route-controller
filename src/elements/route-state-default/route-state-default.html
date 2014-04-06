@@ -1,0 +1,34 @@
+<!--
+/**
+ * @module Route Elements
+ */
+/**
+ * route-state
+ *
+ * Example:
+ *
+ *     <route-state-default name="Sonos.Main.trackInfo.artist" value="Pink Floyd"></route-state-default>
+ *
+ * @class route-state
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-state-default" attributes="name value">
+  <template></template>
+  <script>
+    Polymer("route-state-default", {
+      observe: {
+        "name": "update",
+        "value": "update",
+      },
+      update: function() {
+        var data = {};
+        data[this.name] = this.value;
+        this.fire("route-state-change", {
+          data: data,
+        });
+      },
+    });
+  </script>
+</polymer-element>

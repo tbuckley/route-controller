@@ -74,12 +74,10 @@
         nameChanged: function() {
           this.value = getValue(this.name);
           this.fire("state-change", this.value);
-          console.log("nameChanged", this.name, this.value, state);
         },
         notify: function() {
           this.value = getValue(this.name);
           this.fire("state-change", this.value);
-          console.log("notify", this.name, this.value, state);
         },
       });
     })();

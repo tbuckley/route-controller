@@ -10,6 +10,7 @@
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700|Roboto+Condensed:400,300' rel='stylesheet' type='text/css'>
   <script type="text/javascript" src="../../components/platform/platform.js"></script>
   <link rel="import" href="./route-tile-media.html" />
+  <link rel="import" href="../route-state-default/route-state-default.html" />
 
   <style>
     body {
@@ -30,6 +31,28 @@
 </head>
 
 <body>
-  <route-tile-media></route-tile-media>
+  <polymer-element name="demo-app">
+    <template>
+      <route-state-default name="trackInfo" value="{{trackInfo}}"></route-state-default>
+      <route-tile-media></route-tile-media>
+    </template>
+    <script>
+      Polymer("demo-app", {
+        trackInfo: {
+          artwork: "../route-ui-image/led-zeppelin-mothership.jpg",
+          name: "Stairway to Heaven",
+        },
+        ready: function() {
+          setTimeout(function() {
+            this.trackInfo = {
+              artwork: "../route-ui-image/Muse - Black Holes & Revelations.jpg",
+              name: "A really long song name that seems to go on and on...",
+            };
+          }.bind(this), 2000);
+        }
+      });
+    </script>
+  </polymer-element>
+  <demo-app></demo-app>
 </body>
 </html>
