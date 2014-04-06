@@ -33,8 +33,9 @@
     <route-command id="brightCommand" name="LightsBright" room></route-command>
 
     <!-- Create tile -->
-    <route-tile id="tile" on-tap="{{$.toggleCommand.run}}" on-flickup="{{$.brightCommand}}" on-flickdown="{{$.dimCommand.run}}">
-      <route-tile-content>
+    <route-tile id="tile" on-tap="{{$.toggleCommand.run}}" on-flickup="{{$.brightCommand}}"
+        on-flickdown="{{$.dimCommand.run}}" animating="{{animating}}">
+      <route-tile-content animating?="{{animating}}">
         <div center>{{name}}<br/>{{mode}}</div>
         <div top>Bright</div>
         <div bottom>Dim</div>

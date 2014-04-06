@@ -15,14 +15,11 @@
   text-align: center;
 }
 
-.state {
-
-}
-
 .action {
   opacity: 0;
+  -webkit-transition: opacity 0.28s linear;
 }
 
-:host(.animating) .action {
+:host([animating]) .action {
   opacity: 0.5;
 }

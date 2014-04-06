@@ -16,7 +16,7 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 
-<polymer-element name="route-tile" attributes="disabled maxRotation" touch-action="none" on-pointerdown="{{pointerdown}}"
+<polymer-element name="route-tile" attributes="disabled maxRotation animating" touch-action="none" on-pointerdown="{{pointerdown}}"
     on-pointerup="{{pointerup}}" on-trackstart="{{trackstart}}" on-track="{{track}}" on-trackend="{{trackend}}">
   <template>
     <link rel="stylesheet" href="route-tile.css">
@@ -81,6 +81,7 @@
         this.updateLatestPosition(e.pageX, e.pageY);
         this.animate(0, 0, true);
         this.classList.add("animating");
+        this.animating = true;
       },
       trackstart: function(e) {
         e.preventTap();
@@ -90,10 +91,12 @@
         this.animate(this.latest.x, this.latest.y, true);
       },
       pointerup: function(e) {
+        this.animating = false;
         this.classList.remove("animating");
         this.animate(0, 0, false);
       },
       trackend: function(e) {
+        this.animating = false;
         this.classList.remove("animating");
         this.animate(0, 0, false);
       },

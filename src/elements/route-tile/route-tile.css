@@ -1,8 +1,6 @@
 :host {
   position: relative;
 
-  background-color: rgba(0,0,0,.5);
-
   -webkit-perspective: 600px;
   perspective: 600px;
   -webkit-perspective-origin: 50% 50%;

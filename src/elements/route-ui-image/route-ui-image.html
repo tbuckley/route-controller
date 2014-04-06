@@ -1,0 +1,79 @@
+<!--
+/**
+ * @module Route UI Elements
+ */
+/**
+ * route-ui-image
+ *
+ * Example:
+ *
+ *     <route-ui-image src="/path/to/img.png"></route-ui-image>
+ *
+ * @class route-ui-image
+ */
+-->
+<link rel="import" href="../../components/polymer/polymer.html">
+
+<polymer-element name="route-ui-image" attributes="src effect default">
+  <template>
+    <link rel="stylesheet" href="route-ui-image.css">
+    <div id="wrapper"></div>
+  </template>
+  <script>
+    Polymer("route-ui-image", {
+      effect: "none",
+      imageCounter: 0,
+      srcChanged: function(oldSrc, newSrc) {
+        // Create a new image and start loading it
+        var img = document.createElement("img");
+        img.src = newSrc;
+        this.imageCounter += 1;
+        img.addEventListener("load", this.load.bind(this, this.imageCounter, img));
+      },
+      load: function(counter, img) {
+        // Add image to page as long as we haven't already started loading a newer image
+        if(counter === this.imageCounter) {
+          // Resize & center image
+          var ratio = this.offsetWidth / this.offsetHeight,
+              imgRatio = img.width / img.height;
+          if(ratio > imgRatio) {
+            img.style.left = 0;
+            img.style.top = -((Math.floor(this.offsetWidth / imgRatio) - this.offsetHeight) / 2) + "px";
+            img.style.width = this.offsetWidth + "px";
+            img.style.height = "auto";
+          } else {
+            img.style.top = 0;
+            img.style.left = -((Math.floor(this.offsetHeight * imgRatio) - this.offsetWidth) / 2) + "px";
+            img.style.height = this.offsetHeight + "px";
+            img.style.width = "auto";
+          }
+
+          // Find the previous image we added
+          var lastImage = this.$.wrapper.firstChild;
+          while(lastImage !== null && lastImage.nodeName !== "IMG") {
+            lastImage = lastImage.nextSibling;
+          }
+
+          // Add the image below the previous image in the stack
+          this.$.wrapper.insertBefore(img, lastImage);
+
+          // Start fading out the previous image
+          if(lastImage && lastImage.nodeName === "IMG") {
+            lastImage.addEventListener("webkitTransitionEnd", this.transitionEnd.bind(this));
+            lastImage.addEventListener("transitionend", this.transitionEnd.bind(this));
+            lastImage.style.opacity = 0;
+          }
+        }
+      },
+      transitionEnd: function(e) {
+        var el = e.srcElement;
+        el.parentNode.removeChild(el);
+      },
+      invalidate: function() {
+        var w = this.offsetWidth,
+            h = this.offsetHeight;
+
+      },
+    });
+  </script>
+</polymer>

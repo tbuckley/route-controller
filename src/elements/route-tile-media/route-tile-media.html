@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="route-tile-media.css">
 
     <!-- Observe Sonos object -->
-    <route-state-observer name="Sonos.__ROOM__.trackInfo" value="{{trackInfo}}" room></route-state-observer>
+    <route-state-observer room-key="sonos" name="trackInfo" value="{{trackInfo}}"></route-state-observer>
 
     <!-- Define commands -->
     <route-command id="playPauseCommand" name="PlayPause" room></route-command>

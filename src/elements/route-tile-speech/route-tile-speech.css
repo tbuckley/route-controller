@@ -2,34 +2,10 @@
   position: relative;
 }
 
-route-ui-tile {
+route-tile {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-route-ui-tile.active #tile {
-  background-color: rgba(255,0,0,.5);
-}
-route-ui-tile.disabled {
-  opacity: 0.5;
-}
-
-.icon {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 20px;
-  bottom: 20px;
-  /*background-image: -webkit-radial-gradient(center center, circle contain, rgba(0,0,0,.5) 0%, rgba(0,0,0,.5) 70%, rgba(0,0,0,0) 100%); /* New WebKit syntax */*/
-}
-.icon .name {
-  text-align: center;
-  font-family: "Roboto Condensed";
-  font-weight: 300;
-  color: #FFF;
-  text-transform: uppercase;
-  font-size: 18px;
 }

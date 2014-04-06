@@ -2,3 +2,5 @@ src/components/
 node_modules/
 tmp/
 build/
+
+.DS_Store

@@ -1,0 +1,17 @@
+:host {
+  position: relative;
+}
+
+#wrapper {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#wrapper img {
+  position: absolute;
+  -webkit-transition: opacity .5s linear;
+}
