@@ -14,7 +14,7 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 
-<polymer-element name="route-state-default" attributes="name value">
+<polymer-element name="route-state-default" attributes="name value model">
   <template></template>
   <script>
     Polymer("route-state-default", {
@@ -23,11 +23,9 @@
         "value": "update",
       },
       update: function() {
-        var data = {};
-        data[this.name] = this.value;
-        this.fire("route-state-change", {
-          data: data,
-        });
+        var values = {};
+        values[this.name] = this.value;
+        this.model.handleState(values);
       },
     });
   </script>

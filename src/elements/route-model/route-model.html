@@ -1,0 +1,120 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+<polymer-element name="route-model" attributes="socket">
+  <script>
+    (function() {
+
+      function iterKeypath(keypath, fn) {
+        var components = keypath.split(".");
+        var length = components.length;
+        for(var i = 0; i < length; i++) {
+          fn(components[i], i, length);
+        }
+      }
+
+      function valueForKeyPath(object, keypath) {
+        var snaker = object;
+        iterKeypath(keypath, function(key, index, length) {
+          if(!snaker || !snaker[key]) {
+            snaker = null;
+          } else {
+            snaker = snaker[key];
+          }
+        });
+        return snaker;
+      }
+
+      function setValueForKeyPath(object, keypath, value) {
+        var snaker = object;
+        iterKeypath(keypath, function(key, index, length) {
+          if(index < length - 1) {
+            // Earlier parts of keypath
+            if(!snaker[key]) {
+              snaker[key] = {};
+            }
+            snaker = snaker[key];
+          } else {
+            // Last part of keypath
+            snaker[key] = value;
+          }
+        });
+      }
+
+      function iterTree(keytree, valuetrees, fn) {
+        fn(valuetrees);
+        if(!keytree) {
+          return;
+        }
+        for(var key in keytree) {
+          if(key[0] === "_") {
+            continue;
+          }
+          var subKeytree = keytree[key];
+          var subValuetrees = valuetrees.filter(function(t) {
+              return (typeof t === "object" && key in t);
+            }).map(function(t) {
+              return t[key];
+            });
+          if(subValuetrees.length == valuetrees.length) {
+            iterTree(subKeytree, subValuetrees, fn);
+          }
+        }
+      }
+
+      Polymer("route-model", {
+        ready: function() {
+          this.state = {};
+          this.observers = {};
+          this.socket = io.connect('http://'+location.host);
+          this.socket.on("state", this.handleState.bind(this));
+        },
+        handleState: function(values) {
+          console.log("handleState", values);
+          var changes = {};
+          for(keypath in values) {
+            setValueForKeyPath(this.state, keypath, values[keypath]);
+            setValueForKeyPath(changes, keypath, values[keypath]);
+          }
+          iterTree(changes, [this.state, this.observers], function(nodes) {
+            var stateNode = nodes[0];
+            var observerNode = nodes[1];
+            if(observerNode._callbacks && observerNode._callbacks.length) {
+              observerNode._callbacks.forEach(function(callback) {
+                callback(stateNode);
+              });
+            }
+          });
+        },
+        addStateListener: function(keypath, callback) {
+          console.log("addStateListener", keypath);
+          var node = valueForKeyPath(this.observers, keypath);
+          if(!node) {
+            node = {};
+            node._callbacks = [];
+            setValueForKeyPath(this.observers, keypath, node);
+          }
+          node._callbacks.push(callback);
+          var value = valueForKeyPath(this.state, keypath);
+          if(value) {
+            callback(value);
+          }
+        },
+        removeStateListener: function(keypath, callback) {
+          console.log("removeStateListener", keypath);
+          var node = valueForKeyPath(this.observers, keypath);
+          if(node && node._callbacks) {
+            var i = node._callbacks.indexOf(callback);
+            if(i >= 0) {
+              node._callbacks.splice(i, 1);
+            }
+          }
+        },
+        sendCommand: function(command, params) {
+          console.log("COMMAND", command, params);
+          this.socket.emit("DeviceEvent", command, params);
+        },
+      });
+    })();
+  </script>
+</polymer-element>

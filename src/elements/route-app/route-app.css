@@ -23,23 +23,23 @@ polymer-ui-pages {
   right: 0;
 }
 
-#panel {
+/*#tiles {
   z-index: 0;
   visibility: visible;
 }
-#clock {
+#screensaver {
   opacity: 0;
   -webkit-transition: opacity 3s ease-in;
 }
-#clock.polymer-selected {
+#screensaver.polymer-selected {
   opacity: 1;
   z-index: 1000;
-}
+}*/
 
-#tiles {
+/*#tiles {
   position: absolute;
   top: 32px;
   bottom: 32px;
   left: 32px;
   right: 32px;
-}
+}*/

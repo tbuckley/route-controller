@@ -1,33 +1,31 @@
 <link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-state-observer/route-state-observer.html">
 
-<polymer-element name="route-ui-room-picker" attributes="rooms">
+<polymer-element name="route-ui-room-picker" attributes="room model">
   <template>
+    <!-- Import CSS -->
     <link rel="stylesheet" href="route-ui-room-picker.css">
+
+    <!-- Monitor state -->
+    <route-state-observer model="{{model}}" name="rooms" value="{{rooms}}" on-state-change="{{stateChange}}"></route-state-observer>
+
+    <!-- UI -->
     <h1>Pick a room:</h1>
     <ul>
-      <template repeat="{{names}}">
-        <li on-tap="{{select}}">{{name}}</li>
+      <template repeat="{{rooms}}">
+        <li on-tap="{{select}}">{{longName}}</li>
       </template>
     </ul>
   </template>
   <script>
     Polymer("route-ui-room-picker", {
-      rooms: null,
-      names: null,
-      roomsChanged: function() {
-        this.names = [];
-        for(var key in this.rooms) {
-          this.names.push({
-            key: key,
-            name: this.rooms[key].longName,
-          });
-        }
-      },
+      room: null,
       select: function(e, details, sender) {
-        this.fire("route-room-selected", {
-          room: sender.templateInstance.model.key
-        });
+        this.room = sender.templateInstance.model;
       },
+      stateChange: function(e, rooms) {
+        this.room = rooms[0];
+      }
     });
   </script>
 </polymer-element>

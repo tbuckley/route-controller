@@ -14,72 +14,29 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 
-<polymer-element name="route-state-observer" attributes="name value">
+<polymer-element name="route-state-observer" attributes="name value model">
   <template></template>
   <script>
-    (function() {
-      var state = {};
-
-      function setValue(name, value) {
-        var snaker = state;
-        var parts = name.split(".");
-        var last = parts.pop();
-        parts.forEach(function(p) {
-          snaker = snaker[p];
-        });
-        snaker[last] = value;
-      }
-      function getValue(name) {
-        var snaker = state;
-        var parts = name.split(".");
-        for(var i = 0; i < parts.length; i++) {
-          var p = parts[i];
-          if(p in snaker) {
-            snaker = snaker[p];
-          } else {
-            return null;
-          }
-        }
-        return snaker;
-      }
-
-      document.addEventListener("route-state-change", function(e) {
-        var values = e.detail.data;
-        for(key in values) {
-          setValue(key, values[key]);
-        }
-        notify();
-      });
-
-      var listeners = [];
-
-      function notify() {
-        listeners.forEach(function(l) {
-          l.notify();
-        });
-      }
-
-      Polymer('route-state-observer', {
-        name: null,
-        value: null,
-        attached: function() {
-          listeners.push(this);
-        },
-        detached: function() {
-          var i = listeners.indexOf(this);
-          if (i >= 0) {
-            listeners.splice(i, 1);
-          }
-        },
-        nameChanged: function() {
-          this.value = getValue(this.name);
-          this.fire("state-change", this.value);
-        },
-        notify: function() {
-          this.value = getValue(this.name);
-          this.fire("state-change", this.value);
-        },
-      });
-    })();
+    Polymer('route-state-observer', {
+      name: "default",
+      value: null,
+      attached: function() {
+        this.listener = this.handleState.bind(this);
+        this.model.addStateListener(this.name, this.listener);
+      },
+      detached: function() {
+        console.log("DETACHED", this.name);
+        this.model.removeStateListener(this.name, this.listener);
+      },
+      nameChanged: function(oldName, newName) {
+        console.log("NAMECHANGED", oldName, newName);
+        this.model.removeStateListener(oldName, this.listener);
+        this.model.addStateListener(newName, this.listener);
+      },
+      handleState: function(value) {
+        this.value = value;
+        this.fire("state-change", this.value);
+      },
+    });
   </script>
 </polymer-element>

@@ -3,27 +3,26 @@
  * @module Route UI Elements
  */
 /**
- * route-ui-lockscreen
+ * route-ui-screensaver
  *
  * Example:
  *
- *     <route-ui-lockscreen></route-ui-lockscreen>
+ *     <route-ui-screensaver></route-ui-screensaver>
  *
- * @class route-ui-lockscreen
+ * @class route-ui-screensaver
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
-<link rel="import" href="../route-socket/route-socket.html">
 <link rel="import" href="../route-skycon/route-skycon.html">
 
-<polymer-element name="route-ui-lockscreen" attributes="" touch-action="none">
+<polymer-element name="route-ui-screensaver" attributes="model" touch-action="none">
   <template>
-    <link rel="stylesheet" href="route-ui-lockscreen.css">
+    <link rel="stylesheet" href="route-ui-screensaver.css">
 
-    <route-state-value name="Forecast.currently.apparentTemperature" value="{{temperature}}"></route-state-value>
-    <route-state-value name="Forecast.currently.icon" value="{{forecastIcon}}"></route-state-value>
-    <route-state-value name="SunEvent" on-state-change="{{sunChanged}}"></route-state-value>
+    <route-state-observer name="Forecast.currently.apparentTemperature" value="{{temperature}}" model="{{model}}"></route-state-observer>
+    <route-state-observer name="Forecast.currently.icon" value="{{forecastIcon}}" model="{{model}}"></route-state-observer>
+    <route-state-observer name="SunEvent" on-state-change="{{sunChanged}}" model="{{model}}"></route-state-observer>
 
     <polymer-flex-layout vertical></polymer-flex-layout>
     <div flex></div>
@@ -40,7 +39,7 @@
     </div>
   </template>
   <script>
-    Polymer('route-ui-lockscreen', {
+    Polymer('route-ui-screensaver', {
       hours: "12",
       minutes: "00",
       temperatureString: "00",

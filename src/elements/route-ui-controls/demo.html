@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Route Controller</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700|Roboto+Condensed:400,300' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="../../components/platform/platform.js"></script>
+  <link rel="import" href="./route-ui-controls.html" />
+
+  <style>
+    body {
+      background-color: blue;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    demo-app, route-ui-controls {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <polymer-element name="demo-app">
+    <template>
+      <route-ui-controls id="controls" controls="{{controls}}" vertical?="{{vertical}}"></route-ui-controls>
+    </template>
+    <script>
+      Polymer("demo-app", {
+        controls: [
+          {type: "tile-lights", name: "Lights", key: "Bedroom"},
+          {type: "tile-lights", name: "Lamp", key: "Lamp"},
+          {type: "tile-media"},
+          {type: "tile-power"},
+          {type: "tile-blank"},
+          {type: "tile-speech"},
+        ],
+        ready: function() {
+          window.addEventListener("resize", this.resize.bind(this));
+          this.resize();
+          this.vertical = window.innerHeight > window.innerWidth;
+        },
+        resize: function() {
+          this.vertical = window.innerHeight > window.innerWidth;
+          this.$.controls.invalidate();
+        },
+      });
+    </script>
+  </polymer-element>
+  <demo-app></demo-app>
+</body>
+</html>

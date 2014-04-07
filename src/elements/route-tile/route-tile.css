@@ -7,7 +7,7 @@
   perspective-origin: 50% 50%;
 }
 
-#wrapper {
+:host > #wrapper {
   position: absolute;
   top: 4px;
   left: 4px;
@@ -23,6 +23,8 @@
 
   overflow: hidden;
   background-color: rgba(255,255,255,0.5);
+
+  pointer-events: none;
 }
 :host(.animating) #wrapper {
   -webkit-transition: none;

@@ -13,20 +13,19 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../route-tile/route-tile.html">
 <link rel="import" href="../route-tile-content/route-tile-content.html">
 <link rel="import" href="../route-command/route-command.html">
 
-<polymer-element name="route-tile-speech" attributes="">
+<polymer-element name="route-tile-speech" attributes="model">
   <template>
     <!-- Import CSS -->
     <link rel="stylesheet" href="route-tile-speech.css">
 
     <!-- Define commands -->
-    <route-command id="voiceCommand" name="Voice" params="{{command}}" room></route-command>
-    <route-command id="startCommand" name="VoiceStart" room></route-command>
-    <route-command id="endCommand" name="VoiceEnd" room></route-command>
+    <route-command id="voiceCommand" name="Voice" params="{{command}}" model="{{model}}" room></route-command>
+    <route-command id="startCommand" name="VoiceStart" model="{{model}}" room></route-command>
+    <route-command id="endCommand" name="VoiceEnd" model="{{model}}" room></route-command>
 
     <!-- Create tile -->
     <route-tile id="tile" on-tap="{{tap}}" active?="{{active}}" disabled?="{{disabled}}">

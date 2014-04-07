@@ -11,7 +11,7 @@
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700|Roboto+Condensed:400,300' rel='stylesheet' type='text/css'>
 
   <!-- MOBILE-ONLY -->
-  <script type="text/javascript" src="/cordova.js"></script>
+  <!-- <script type="text/javascript" src="/cordova.js"></script> -->
   <!-- /MOBILE-ONLY -->
   <script type="text/javascript" src="components/platform/platform.js"></script>
   <link rel="import" href="elements/route-app/route-app.html" />
@@ -24,14 +24,14 @@
 
   <!-- MOBILE-ONLY -->
   <script type="text/javascript">
-    document.ontouchmove = function(e) {
-      e.preventDefault();
-    };
-    document.addEventListener("deviceready", function() {
-      console.log("DEVICE IS READY!!");
-      var app = document.createElement("route-app");
-      document.body.appendChild(app);
-    });
+    // document.ontouchmove = function(e) {
+    //   e.preventDefault();
+    // };
+    // document.addEventListener("deviceready", function() {
+    //   console.log("DEVICE IS READY!!");
+    //   var app = document.createElement("route-app");
+    //   document.body.appendChild(app);
+    // });
   </script>
   <!-- /MOBILE-ONLY -->
 </body>

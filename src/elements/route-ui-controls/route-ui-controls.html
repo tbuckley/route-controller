@@ -13,24 +13,30 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../route-tile/route-tile.html">
+<link rel="import" href="../route-tile-layout/route-tile-layout.html">
+<link rel="import" href="../route-tile-lights/route-tile-lights.html">
+<link rel="import" href="../route-tile-media/route-tile-media.html">
+<link rel="import" href="../route-tile-power/route-tile-power.html">
+<link rel="import" href="../route-tile-speech/route-tile-speech.html">
 
-<polymer-element name="route-ui-controls" attributes="controls vertical">
+<polymer-element name="route-ui-controls" attributes="controls vertical model">
   <template>
     <!-- Import CSS -->
     <link rel="stylesheet" href="route-ui-controls.css">
 
     <!-- Tile templates -->
     <template id="tile-lights">
-      <route-tile-lights name="{{control.name}}" key="{{control.key}}"></route-tile-lights>
+      <route-tile-lights name="{{control.name}}" key="{{control.key}}" model="{{model}}"></route-tile-lights>
     </template>
     <template id="tile-media">
-      <route-tile-media></route-tile-media>
+      <route-tile-media model="{{model}}"></route-tile-media>
     </template>
     <template id="tile-power">
-      <route-ui-power></route-ui-power>
+      <route-tile-power></route-tile-power>
     </template>
-    <template id="tile-voice">
-      <route-tile-speech></route-tile-speech>
+    <template id="tile-speech">
+      <route-tile-speech model="{{model}}"></route-tile-speech>
     </template>
     <template id="tile-blank">
       <route-tile></route-tile>
@@ -38,7 +44,7 @@
 
     <!-- Display tiles -->
     <div id="wrapper">
-      <route-tile-layout layout="{{layout}}" auto></route-tile-layout>
+      <route-tile-layout id="tileLayout" layout="{{layout}}" auto></route-tile-layout>
       <template repeat="{{control in controls}}">
         <template ref="{{control.type}}" bind></template>
       </template>
@@ -89,6 +95,9 @@
           } else {
             this.layout = layout;
           }
+        },
+        invalidate: function() {
+          this.$.tileLayout.invalidate();
         },
       });
     })();

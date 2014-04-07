@@ -13,9 +13,9 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../route-power-manager/route-power-manager.html">
-<link rel="import" href="../route-ui-tile/route-ui-tile.html">
+<link rel="import" href="../route-tile/route-tile.html">
+<link rel="import" href="../route-tile-content/route-tile-content.html">
 
 <polymer-element name="route-tile-power" attributes="">
   <template>
@@ -26,11 +26,11 @@
     <route-power-manager id="powerManager"></route-power-manager>
 
     <!-- Create tile -->
-    <route-ui-tile id="tile" on-tap="{{$.powerManager.sleep}}">
+    <route-tile id="tile" on-tap="{{$.powerManager.sleep}}">
       <route-tile-content>
         <div center>Sleep</div>
       </route-tile-content>
-    </route-ui-tile>
+    </route-tile>
 
   </template>
   <script>

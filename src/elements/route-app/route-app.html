@@ -1,52 +1,48 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
 <link rel="import" href="../../components/polymer-page/polymer-page.html">
-<link rel="import" href="../../components/polymer-ui-pages/polymer-ui-pages.html">
 <link rel="import" href="../../components/polymer-ui-overlay/polymer-ui-overlay.html">
+<link rel="import" href="../../components/polymer-ui-pages/polymer-ui-pages.html">
+<link rel="import" href="../route-model/route-model.html">
 <link rel="import" href="../route-power-manager/route-power-manager.html">
-<link rel="import" href="../route-socket/route-socket.html">
-<link rel="import" href="../route-state/route-state.html">
-<link rel="import" href="../route-tile-layout/route-tile-layout.html">
-<link rel="import" href="../route-ui-alarm/route-ui-alarm.html">
-<link rel="import" href="../route-ui-bar/route-ui-bar.html">
-<link rel="import" href="../route-ui-lights/route-ui-lights.html">
-<link rel="import" href="../route-ui-lockscreen/route-ui-lockscreen.html">
-<link rel="import" href="../route-ui-media/route-ui-media.html">
-<link rel="import" href="../route-ui-power/route-ui-power.html">
-<link rel="import" href="../route-ui-room-picker/route-ui-room-picker.html">
-<link rel="import" href="../route-ui-speech/route-ui-speech.html">
-<link rel="import" href="../route-ui-tile/route-ui-tile.html">
 <link rel="import" href="../route-refresh/route-refresh.html">
+<link rel="import" href="../route-state-default/route-state-default.html">
+<link rel="import" href="../route-state-observer/route-state-observer.html">
+<link rel="import" href="../route-ui-bar/route-ui-bar.html">
+<link rel="import" href="../route-ui-controls/route-ui-controls.html">
+<link rel="import" href="../route-ui-screensaver/route-ui-screensaver.html">
+<link rel="import" href="../route-ui-room-picker/route-ui-room-picker.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
+    <!-- Import CSS -->
     <link rel="stylesheet" href="route-app.css">
 
     <polymer-page></polymer-page>
 
-    <route-power-manager id="powerManager" auto on-route-sleep="{{sleep}}" on-route-wake="{{wake}}">
-    </route-power-manager>
+    <route-power-manager id="powerManager" auto on-route-sleep="{{sleep}}" on-route-wake="{{wake}}"></route-power-manager>
 
-    <route-state></route-state>
-    <route-commander></route-commander>
+    <!-- Create model for app -->
+    <route-model id="model"></route-model>
+    <route-state-default model="{{$.model}}" name="rooms" value="{{rooms}}"></route-state-default>
 
-    <route-state-observer name="rooms" value="{{rooms}}"></route-state-observer>
-
+    <!-- Create room picker -->
     <polymer-ui-overlay active="{{roomPickerActive}}" backdrop="true" modal="false">
-      <route-ui-room-picker rooms="{{rooms}}" current-room="{{room}}"></route-ui-room-picker>
+      <route-ui-room-picker model="{{$.model}}" room="{{room}}"></route-ui-room-picker>
     </polymer-ui-overlay>
 
+    <!-- Decide which page to display -->
     <polymer-ui-pages valueattr="id" selected="{{page}}" style="background-color: rgba(0,0,0,.4);">
 
       <!-- Page 1: Tiles -->
-      <div id="panel" class="page">
+      <div id="tiles">
         <polymer-flex-layout vertical?="{{vertical}}"></polymer-flex-layout>
-        <route-ui-controls controls="{{room.controls}}" vertical?="{{vertical}}"></route-ui-controls>
-        <route-ui-bar id="bar" on-tap="{{toggleRoomPicker}}" horizontal?="{{orientation == 'portrait'}}">{{curRoom.shortName}}</route-ui-bar>
+        <route-ui-controls id="controls" model="{{$.model}}" controls="{{room.controls}}" vertical?="{{vertical}}" flex></route-ui-controls>
+        <route-ui-bar id="bar" model="{{$.model}}" on-tap="{{toggleRoomPicker}}" vertical?="{{vertical}}">{{room.shortName}}</route-ui-bar>
       </div>
 
-      <!-- Page 2: Lockscreen -->
-      <route-ui-lockscreen id="clock"></route-ui-lockscreen>
+      <!-- Page 2: Screensaver -->
+      <route-ui-screensaver id="screensaver" model="{{$.model}}"></route-ui-screensaver>
 
     </polymer-ui-pages>
 
@@ -56,26 +52,29 @@
 
 
       Polymer("route-app", {
-        rooms: {
-          "Kitchen": {
+        rooms: [
+          {
+            id: "Kitchen",
             longName: "Kitchen",
             shortName: "Kitchen",
             controls: [
               {type: "tile-media"},
-              {type: "tile-voice"},
+              {type: "tile-speech"},
               {type: "tile-power"},
             ]
           },
-          "LivingRoom": {
+          {
+            id: "LivingRoom",
             longName: "Living Room",
             shortName: "Living Room",
             controls: [
               {type: "tile-lights", name: "Lights", key: "LivingRoom"},
-              {type: "tile-voice"},
+              {type: "tile-speech"},
               {type: "tile-power"},
             ]
           },
-          "TomBedroom": {
+          {
+            id: "TomBedroom",
             longName: "Tom's Bedroom",
             shortName: "Bedroom",
             controls: [
@@ -84,69 +83,43 @@
               {type: "tile-media"},
               {type: "tile-power"},
               {type: "tile-blank"},
-              {type: "tile-voice"},
+              {type: "tile-speech"},
             ]
           },
-        },
-
-        page: "panel",
-
-        roomPickerActive: false,
-
+        ],
         ready: function() {
-          // Set up event listener, set default orientation
           window.addEventListener("resize", this.resize.bind(this));
-          this.orientation = (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
-
-          // Run cordova plugins
+          this.page = "tiles";
+          this.roomPickerActive = false;
+          this.initCordovaPlugins();
+          this.resize();
+        },
+        initCordovaPlugins: function() {
           if(window.Brightness) {
             Brightness.setKeepScreenOn(true);
           }
           if(window.Immersify) {
-            Immersify.enableSticky(function() {console.log("Immersify success!");}, function() {console.log("Immersify failure...");});
+            var success = function() {console.log("Immersify success!");};
+            var error = function() {console.log("Immersify failure...");};
+            Immersify.enableSticky(success, error);
           }
-
-          this.room = "TomBedroom";
-          this.curRoom = this.rooms[this.room];
-          if(this.orientation === "landscape") {
-            this.curLayout = this.layouts[this.curRoom.controls.length];
-          } else {
-            this.curLayout = transpose(this.layouts[this.curRoom.controls.length]);
-          }
-
-          this.$.tileLayout.invalidate();
-        },
-        roomChanged: function(oldValue, newValue) {
-          this.curRoom = this.rooms[this.room];
-          if(this.orientation === "landscape") {
-            this.curLayout = this.layouts[this.curRoom.controls.length];
-          } else {
-            this.curLayout = transpose(this.layouts[this.curRoom.controls.length]);
-          }
-        },
-        roomSelected: function(e, details, sender) {
-          this.room = details.room;
-          this.toggleRoomPicker();
         },
         toggleRoomPicker: function() {
           this.roomPickerActive = !this.roomPickerActive;
         },
+        roomChanged: function() {
+          this.roomPickerActive = false;
+        },
         wake: function() {
-          this.page = "panel";
+          this.page = "tiles";
         },
         sleep: function() {
-          this.page = "clock";
+          this.page = "screensaver";
         },
         resize: function() {
-          if(window.innerWidth > window.innerHeight && this.orientation !== "landscape") {
-            this.orientation = "landscape";
-            this.curLayout = transpose(this.curLayout);
-          }
-          if(window.innerWidth < window.innerHeight && this.orientation !== "portrait") {
-            this.orientation = "portrait";
-            this.curLayout = transpose(this.curLayout);
-          }
-          this.$.tileLayout.invalidate();
+          this.vertical = window.innerHeight > window.innerWidth;
+          console.log(this.$.controls);
+          this.$.controls.invalidate();
           this.$.bar.invalidate();
         },
       });

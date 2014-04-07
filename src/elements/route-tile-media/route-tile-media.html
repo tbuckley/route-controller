@@ -18,18 +18,18 @@
 <link rel="import" href="../route-tile/route-tile.html">
 <link rel="import" href="../route-ui-image/route-ui-image.html">
 
-<polymer-element name="route-tile-media" attributes="">
+<polymer-element name="route-tile-media" attributes="model">
   <template>
     <!-- Import CSS -->
     <link rel="stylesheet" href="route-tile-media.css">
 
     <!-- Observe Sonos object -->
-    <route-state-observer room-key="sonos" name="trackInfo" value="{{trackInfo}}"></route-state-observer>
+    <route-state-observer room-key="sonos" name="trackInfo" value="{{trackInfo}}" model="{{model}}"></route-state-observer>
 
     <!-- Define commands -->
-    <route-command id="playPauseCommand" name="PlayPause" room></route-command>
-    <route-command id="prevCommand" name="PrevTrack" room></route-command>
-    <route-command id="nextCommand" name="NextTrack" room></route-command>
+    <route-command id="playPauseCommand" name="PlayPause" model="{{model}}" room></route-command>
+    <route-command id="prevCommand" name="PrevTrack" model="{{model}}" room></route-command>
+    <route-command id="nextCommand" name="NextTrack" model="{{model}}" room></route-command>
 
     <!-- Create tile -->
     <route-tile id="tile" on-tap="{{$.playPauseCommand.run}}" on-flickleft="{{$.nextCommand.run}}" on-flickright="{{$.prevCommand.run}}">

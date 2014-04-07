@@ -8,7 +8,7 @@
   height: auto;
 }
 
-:host([horizontal]) {
+:host([vertical]) {
   width: auto;
   height: 80px;
 }
@@ -23,7 +23,7 @@
   transform-origin: 0% 0%;
   transform: rotate(90deg);
 }
-:host([horizontal]) #content {
+:host([vertical]) #content {
   -webkit-transform: rotate(0deg);
   transform: rotate(0deg);
 }

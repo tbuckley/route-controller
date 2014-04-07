@@ -17,7 +17,8 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 
 <polymer-element name="route-tile" attributes="disabled maxRotation animating" touch-action="none" on-pointerdown="{{pointerdown}}"
-    on-pointerup="{{pointerup}}" on-trackstart="{{trackstart}}" on-track="{{track}}" on-trackend="{{trackend}}">
+    on-pointerup="{{pointerup}}" on-trackstart="{{trackstart}}" on-track="{{track}}" on-trackend="{{trackend}}"
+    on-flick="{{flick}}">
   <template>
     <link rel="stylesheet" href="route-tile.css">
     <div id="wrapper">
@@ -82,6 +83,7 @@
         this.animate(0, 0, true);
         this.classList.add("animating");
         this.animating = true;
+        console.log("POINTERDOWN");
       },
       trackstart: function(e) {
         e.preventTap();
@@ -94,11 +96,29 @@
         this.animating = false;
         this.classList.remove("animating");
         this.animate(0, 0, false);
+        console.log("POINTERUP");
       },
       trackend: function(e) {
         this.animating = false;
         this.classList.remove("animating");
         this.animate(0, 0, false);
+      },
+      flick: function(e) {
+        var angle = e.angle;
+        if(angle < 0) {
+          angle = -angle;
+        } else {
+          angle = 360 - angle;
+        }
+        if(angle < 10 || angle > 350) {
+          this.fire("flickright");
+        } else if(angle > 80 && angle < 100) {
+          this.fire("flickup");
+        } else if(angle > 170 && angle < 190) {
+          this.fire("flickleft");
+        } else if(angle > 260 && angle < 280) {
+          this.fire("flickdown");
+        }
       },
     });
   </script>
