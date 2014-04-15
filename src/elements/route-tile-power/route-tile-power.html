@@ -26,7 +26,7 @@
     <route-power-manager id="powerManager"></route-power-manager>
 
     <!-- Create tile -->
-    <route-tile id="tile" on-tap="{{$.powerManager.sleep}}">
+    <route-tile id="tile" on-tap="{{sleep}}">
       <route-tile-content>
         <div center>Sleep</div>
       </route-tile-content>
@@ -34,6 +34,10 @@
 
   </template>
   <script>
-    Polymer('route-tile-power', {});
+    Polymer('route-tile-power', {
+      sleep: function() {
+        this.$.powerManager.sleep();
+      }
+    });
   </script>
 </polymer-element>

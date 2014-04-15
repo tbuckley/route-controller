@@ -1,22 +1,22 @@
-<link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../components/polymer-flex-layout/polymer-flex-layout.html">
-<link rel="import" href="../../components/polymer-page/polymer-page.html">
-<link rel="import" href="../../components/polymer-ui-overlay/polymer-ui-overlay.html">
-<link rel="import" href="../../components/polymer-ui-pages/polymer-ui-pages.html">
-<link rel="import" href="../route-model/route-model.html">
-<link rel="import" href="../route-power-manager/route-power-manager.html">
-<link rel="import" href="../route-refresh/route-refresh.html">
-<link rel="import" href="../route-state-default/route-state-default.html">
-<link rel="import" href="../route-state-observer/route-state-observer.html">
-<link rel="import" href="../route-ui-bar/route-ui-bar.html">
-<link rel="import" href="../route-ui-controls/route-ui-controls.html">
-<link rel="import" href="../route-ui-screensaver/route-ui-screensaver.html">
-<link rel="import" href="../route-ui-room-picker/route-ui-room-picker.html">
+<link rel="import" href="../../../components/polymer/polymer.html">
+<link rel="import" href="../../../components/polymer-flex-layout/polymer-flex-layout.html">
+<link rel="import" href="../../../components/polymer-page/polymer-page.html">
+<link rel="import" href="../../../components/polymer-ui-overlay/polymer-ui-overlay.html">
+<link rel="import" href="../../../components/polymer-ui-pages/polymer-ui-pages.html">
+<link rel="import" href="../../route-model/dummy/route-model.html">
+<link rel="import" href="../../route-power-manager/route-power-manager.html">
+<link rel="import" href="../../route-refresh/route-refresh.html">
+<link rel="import" href="../../route-state-default/route-state-default.html">
+<link rel="import" href="../../route-state-observer/route-state-observer.html">
+<link rel="import" href="../../route-ui-bar/route-ui-bar.html">
+<link rel="import" href="../../route-ui-controls/route-ui-controls.html">
+<link rel="import" href="../../route-ui-screensaver/route-ui-screensaver.html">
+<link rel="import" href="../../route-ui-room-picker/route-ui-room-picker.html">
 
 <polymer-element name="route-app" attributes="">
   <template>
     <!-- Import CSS -->
-    <link rel="stylesheet" href="route-app.css">
+    <link rel="stylesheet" href="../route-app.css">
 
     <polymer-page></polymer-page>
 
@@ -25,6 +25,11 @@
     <!-- Create model for app -->
     <route-model id="model"></route-model>
     <route-state-default model="{{$.model}}" name="rooms" value="{{rooms}}"></route-state-default>
+    <route-state-default model="{{$.model}}" name="Sonos.TomBedroom.trackInfo" value="{{trackInfo}}"></route-state-default>
+    <route-state-default model="{{$.model}}" name="Sonos.Kitchen.trackInfo" value="{{trackInfo}}"></route-state-default>
+    <route-state-default model="{{$.model}}" name="Forecast.currently.apparentTemperature" value="71"></route-state-default>
+    <route-state-default model="{{$.model}}" name="Forecast.currently.icon" value="clear-day"></route-state-default>
+
 
     <!-- Create room picker -->
     <polymer-ui-overlay active="{{roomPickerActive}}" backdrop="true" modal="false">
@@ -52,6 +57,10 @@
 
 
       Polymer("route-app", {
+        trackInfo: {
+          artwork: "../route-ui-image/led-zeppelin-mothership.jpg",
+          name: "Stairway to Heaven",
+        },
         rooms: [
           {
             id: "Kitchen",

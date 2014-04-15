@@ -28,12 +28,13 @@
     </route-state-observer>
 
     <!-- Define commands -->
-    <route-command id="toggleCommand" name="LightsToggle" model="{{model}}" room></route-command>
+    <route-command id="onCommand" name="LightsOn" model="{{model}}" room></route-command>
+    <route-command id="offCommand" name="LightsOff" model="{{model}}" room></route-command>
     <route-command id="dimCommand" name="LightsDim" model="{{model}}" room></route-command>
     <route-command id="brightCommand" name="LightsBright" model="{{model}}" room></route-command>
 
     <!-- Create tile -->
-    <route-tile id="tile" on-tap="{{$.toggleCommand.run}}" on-flickup="{{$.brightCommand.run}}"
+    <route-tile id="tile" on-tap="{{toggleLights}}" on-flickup="{{$.brightCommand.run}}"
         on-flickdown="{{$.dimCommand.run}}" animating="{{animating}}">
       <route-tile-content animating?="{{animating}}">
         <div center>{{name}}<br/>{{mode}}</div>
@@ -92,7 +93,14 @@
         } else {
           this.mode = "Off";
         }
-      }
+      },
+      toggleLights: function() {
+        if(this.state) {
+          this.$.offCommand.run();
+        } else {
+          this.$.onCommand.run();
+        }
+      },
     });
   </script>
 </polymer-element>

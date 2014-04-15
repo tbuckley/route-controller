@@ -14,26 +14,64 @@
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
 
-<polymer-element name="route-state-observer" attributes="name value model">
-  <template></template>
+<polymer-element name="route-state-observer" attributes="room room-key name value model">
   <script>
     Polymer('route-state-observer', {
-      name: "default",
+      name: null,
+      room: false,
+      "room-key": null,
       value: null,
+      keyPath: null,
+      observe: {
+        "name": "update",
+        "room": "update",
+        "room-key": "update",
+      },
+      isAttached: false,
       attached: function() {
+        this.isAttached =  true;
         this.listener = this.handleState.bind(this);
-        this.model.addStateListener(this.name, this.listener);
+        if(this.keyPath) {
+          console.log("ATTACHED", this.keyPath);
+          this.model.addStateListener(this.keyPath, this.listener);
+        }
       },
       detached: function() {
-        console.log("DETACHED", this.name);
-        this.model.removeStateListener(this.name, this.listener);
+        this.isAttached =  false;
+        if(this.keyPath) {
+          console.log("DETACHED", this.keyPath);
+          this.model.removeStateListener(this.keyPath, this.listener);
+        }
       },
-      nameChanged: function(oldName, newName) {
-        console.log("NAMECHANGED", oldName, newName);
-        this.model.removeStateListener(oldName, this.listener);
-        this.model.addStateListener(newName, this.listener);
+      update: function() {
+        var key = this.name;
+        var room = this.room;
+        var roomKey = this.getAttribute("room-key");
+        var parts = [];
+        if(room) {
+          parts.push(this.model.getRoomID());
+        }
+        if(roomKey) {
+          parts.push(this.model.getRoomValue(roomKey));
+        }
+        if(key) {
+          parts.push(key);
+        }
+        this.keyPath = parts.join(".");
+      },
+      keyPathChanged: function(oldKeyPath, newKeyPath) {
+        if(this.isAttached) {
+          console.log("NAMECHANGED", oldKeyPath, newKeyPath);
+          if(oldKeyPath) {
+            this.model.removeStateListener(oldKeyPath, this.listener);
+          }
+          if(newKeyPath) {
+            this.model.addStateListener(newKeyPath, this.listener);
+          }
+        }
       },
       handleState: function(value) {
+        console.log("NEW STATE", this.name, value);
         this.value = value;
         this.fire("state-change", this.value);
       },

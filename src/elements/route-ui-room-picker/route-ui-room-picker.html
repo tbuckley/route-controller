@@ -22,9 +22,11 @@
       room: null,
       select: function(e, details, sender) {
         this.room = sender.templateInstance.model;
+        this.model.setRoom(this.room);
       },
       stateChange: function(e, rooms) {
         this.room = rooms[0];
+        this.model.setRoom(this.room);
       }
     });
   </script>

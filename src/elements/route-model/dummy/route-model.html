@@ -1,4 +1,4 @@
-<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../../components/polymer/polymer.html">
 
 <polymer-element name="route-model" attributes="socket">
   <script>
@@ -62,6 +62,20 @@
       }
 
       Polymer("route-model", {
+        tracks: [
+          {
+            artwork: "../route-ui-image/led-zeppelin-mothership.jpg",
+            name: "Stairway to Heaven",
+          },
+          {
+            artwork: "../route-ui-image/Muse - Black Holes & Revelations.jpg",
+            name: "A really long song name that seems to go on and on...",
+          },
+          {
+            artwork: "../route-ui-image/Muse - The Resistance.jpg",
+            name: "Another song",
+          },
+        ],
         ready: function() {
           this.state = {};
           this.observers = {};
@@ -109,6 +123,27 @@
         },
         sendCommand: function(command, params) {
           console.log("COMMAND", command, params);
+          if(command.match(/NextTrack/)) {
+            this.trackNum = this.trackNum || 0;
+            this.trackNum = (this.trackNum + 1) % this.tracks.length;
+          }
+          if(command.match(/PrevTrack/)) {
+            this.trackNum = this.trackNum || 0;
+            this.trackNum = (this.trackNum - 1 + this.tracks.length) % this.tracks.length;
+          }
+          this.handleState({
+            "Sonos.TomBedroom.trackInfo": this.tracks[this.trackNum],
+            "Sonos.Kitchen.trackInfo": this.tracks[this.trackNum],
+          });
+        },
+        setRoom: function(room) {
+          this.room = room;
+        },
+        getRoomID: function() {
+          return this.room.id;
+        },
+        getRoomValue: function(roomKey) {
+          return this.room.values[roomKey];
         },
       });
     })();

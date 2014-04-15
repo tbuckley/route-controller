@@ -8,6 +8,7 @@
   font-size: 64px;
   color: white;
   text-align: center;
+  -webkit-transition: opacity 5s ease-in;
 }
 .hours {
   font-weight: 400;

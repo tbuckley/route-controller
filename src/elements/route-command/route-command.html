@@ -13,12 +13,8 @@
  */
 -->
 <link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../route-room-aware/route-room-aware.html">
 
 <polymer-element name="route-command" attributes="name params room auto model">
-  <template>
-    <route-room-aware room="{{currentRoom}}"></route-room-aware>
-  </template>
   <script>
     Polymer("route-command", {
       /**
@@ -59,7 +55,7 @@
       _run: function() {
         var command = this.name;
         if(this.room) {
-          //command = this.currentRoom.id + "." + command;
+          command = this.model.getRoomID() + "." + command;
         }
         this.model.sendCommand(command, this.params);
       },

@@ -13,5 +13,5 @@
 
 #wrapper img {
   position: absolute;
-  -webkit-transition: opacity .5s linear;
+  -webkit-transition: opacity .5s cubic-bezier(0.4, 0.0, 0.2, 1);
 }

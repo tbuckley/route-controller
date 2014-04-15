@@ -112,7 +112,24 @@
         },
         sendCommand: function(command, params) {
           console.log("COMMAND", command, params);
-          this.socket.emit("DeviceEvent", command, params);
+          var url = command;
+          var queryArgs = [];
+          for(key in params) {
+            queryArgs.push(key + "=" + params[key]);
+          }
+          if(queryArgs.length > 0) {
+            var url = command + "?" + queryArgs.join("&");
+          }
+          this.socket.send(url);
+        },
+        setRoom: function(room) {
+          this.room = room;
+        },
+        getRoomID: function() {
+          return this.room.id;
+        },
+        getRoomValue: function(roomKey) {
+          return this.room.values[roomKey];
         },
       });
     })();

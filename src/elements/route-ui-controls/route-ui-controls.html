@@ -53,6 +53,7 @@
   <script>
     (function() {
       var DEFAULT_LAYOUTS = {
+        0: [[]],
         1: [[1]],
         2: [[1,2]],
         3: [[1,1,2],
@@ -88,7 +89,7 @@
           controls: "update"
         },
         update: function() {
-          var numControls = this.controls.length;
+          var numControls = this.controls ? this.controls.length : 0;
           var layout = DEFAULT_LAYOUTS[numControls];
           if(this.vertical) {
             this.layout = transpose(layout);
